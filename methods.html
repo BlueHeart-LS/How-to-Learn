@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>學習方法｜如何學 How to Learn</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="brand" href="index.html" aria-label="如何學首頁">
+          <img src="images/LOGO.png" alt="如何學 How to Learn" />
+        </a>
+
+        <nav class="main-nav" aria-label="主要導覽">
+          <a href="index.html">首頁</a>
+          <a href="explore.html">學習探索</a>
+          <a class="active" href="methods.html">學習方法</a>
+          <a href="community.html">學習社群</a>
+          <a href="resources.html">資源專區</a>
+          <a href="about.html">關於我們</a>
+        </nav>
+
+        <div class="header-actions">
+          <button class="icon-button" type="button" aria-label="搜尋">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m16.5 16.5 4 4"></path></svg>
+          </button>
+          <button class="login-button" type="button" data-login-modal>會員登入</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="blog-hero">
+          <p class="section-kicker">Learning Methods</p>
+          <h1>學習方法</h1>
+          <p>用清楚、可練習的方法，把學習拆成每天都能前進的一小步。</p>
+        </section>
+
+        <section class="blog-layout">
+          <aside class="blog-sidebar" aria-label="文章分類">
+            <h2>文章分類</h2>
+            <div data-blog-sidebar></div>
+          </aside>
+
+          <div class="blog-list" data-blog-list></div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <a class="brand footer-brand" href="index.html">
+          <img src="images/LOGO.png" alt="如何學 How to Learn" />
+        </a>
+        <nav aria-label="頁尾導覽">
+          <a href="index.html">首頁</a>
+          <a href="explore.html">學習探索</a>
+          <a href="methods.html">學習方法</a>
+          <a href="community.html">學習社群</a>
+          <a href="resources.html">資源專區</a>
+          <a href="about.html">關於我們</a>
+        </nav>
+        <div class="socials" aria-label="社群連結">
+          <a href="#" aria-label="Instagram">◎</a>
+          <a href="#" aria-label="Facebook">f</a>
+          <a href="#" aria-label="YouTube">▶</a>
+          <a href="#" aria-label="Email">✉</a>
+        </div>
+      </footer>
+
+      <div class="modal-overlay" data-modal-overlay hidden>
+        <div class="coming-soon-modal" role="dialog" aria-modal="true" aria-labelledby="coming-soon-title">
+          <button class="modal-close" type="button" data-modal-close aria-label="關閉">×</button>
+          <h2 id="coming-soon-title">開發中，敬請期待</h2>
+        </div>
+      </div>
+    </div>
+    <script src="js/articles.js"></script>
+    <script src="js/methods.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>

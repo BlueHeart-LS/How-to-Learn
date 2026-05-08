@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>文章管理測試｜如何學 How to Learn</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="brand" href="index.html" aria-label="如何學首頁">
+          <img src="images/LOGO.png" alt="如何學 How to Learn" />
+        </a>
+
+        <nav class="main-nav" aria-label="主要導覽">
+          <a href="index.html">首頁</a>
+          <a href="explore.html">學習探索</a>
+          <a href="methods.html">學習方法</a>
+          <a href="community.html">學習社群</a>
+          <a href="resources.html">資源專區</a>
+          <a href="about.html">關於我們</a>
+        </nav>
+
+        <div class="header-actions">
+          <button class="login-button" type="button" data-login-modal>會員登入</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="admin-hero">
+          <p class="section-kicker">Front-end Demo</p>
+          <h1>文章管理測試</h1>
+          <p>這個頁面用瀏覽器本機儲存模擬資料庫，適合先測試文章新增與編輯流程。</p>
+        </section>
+
+        <section class="admin-layout">
+          <aside class="admin-list">
+            <h2>文章列表</h2>
+            <div data-admin-list></div>
+            <button class="primary-button small" type="button" data-new-article>新增文章</button>
+          </aside>
+
+          <form class="admin-form" data-article-form>
+            <label>
+              文章代號
+              <input name="slug" required placeholder="例如：memory-tips" />
+            </label>
+            <label>
+              標題
+              <input name="title" required placeholder="文章標題" />
+            </label>
+            <div class="admin-form-grid">
+              <label>
+                分類
+                <input name="category" placeholder="學習方法" />
+              </label>
+              <label>
+                作者
+                <input name="author" placeholder="如何學編輯部" />
+              </label>
+            </div>
+            <div class="admin-form-grid">
+              <label>
+                上傳日期
+                <input name="date" placeholder="2024.06.01" />
+              </label>
+              <label>
+                瀏覽數
+                <input name="views" placeholder="例如：1.2K" />
+              </label>
+            </div>
+            <div class="admin-form-grid">
+              <label>
+                封面樣式
+                <select name="coverClass">
+                  <option value="people">人物</option>
+                  <option value="calendar">行事曆</option>
+                  <option value="tomato">番茄</option>
+                </select>
+              </label>
+            </div>
+            <label>
+              標籤
+              <input name="tags" placeholder="用逗號分隔，例如：記憶,複習,練習" />
+            </label>
+            <label>
+              卡片摘要
+              <input name="excerpt" placeholder="顯示在學習方法文章卡上的簡短摘要" />
+            </label>
+            <label>
+              內文
+              <textarea name="body" rows="10" placeholder="每一段用空行分隔"></textarea>
+            </label>
+            <div class="admin-actions">
+              <button class="primary-button" type="submit">儲存文章</button>
+              <a class="secondary-button" data-preview-link href="article.html" target="_blank">預覽文章</a>
+            </div>
+            <p class="admin-note" data-save-status>尚未儲存變更</p>
+          </form>
+        </section>
+      </main>
+
+      <div class="modal-overlay" data-modal-overlay hidden>
+        <div class="coming-soon-modal" role="dialog" aria-modal="true" aria-labelledby="coming-soon-title">
+          <button class="modal-close" type="button" data-modal-close aria-label="關閉">×</button>
+          <h2 id="coming-soon-title">開發中，敬請期待</h2>
+        </div>
+      </div>
+    </div>
+    <script src="js/admin.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>
