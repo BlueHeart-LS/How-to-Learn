@@ -28,9 +28,10 @@ function renderBlogList() {
   blogList.replaceChildren();
 
   articles.forEach((article) => {
-    const post = document.createElement("article");
+    const post = document.createElement("a");
     post.className = "blog-post";
     post.id = article.slug;
+    post.href = `article.html?slug=${encodeURIComponent(article.slug)}`;
 
     const thumb = document.createElement("div");
     thumb.className = `blog-post-thumb ${article.coverClass || "people"}`;
@@ -52,9 +53,8 @@ function renderBlogList() {
     const excerpt = document.createElement("p");
     excerpt.textContent = article.excerpt || article.body?.[0] || "這篇文章尚未設定摘要。";
 
-    const link = document.createElement("a");
+    const link = document.createElement("span");
     link.className = "read-more";
-    link.href = `article.html?slug=${encodeURIComponent(article.slug)}`;
     link.textContent = "閱讀文章 →";
 
     content.append(tag, title, meta, excerpt, link);
