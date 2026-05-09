@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>文章｜如何學 How to Learn</title>
+    <title>學習風格探索｜如何學 How to Learn</title>
     <link rel="icon" type="image/png" href="images/icon_logo.png" />
     <link rel="stylesheet" href="css/styles.css" />
   </head>
@@ -16,8 +16,8 @@
 
         <nav class="main-nav" aria-label="主要導覽">
           <a href="start.html">如何開始</a>
-          <a href="explore.html">自我探索</a>
-          <a class="active" href="methods.html">學習方法</a>
+          <a class="active" href="explore.html">自我探索</a>
+          <a href="methods.html">學習方法</a>
           <a href="games.html">遊戲練習</a>
           <a href="resources.html">資源專區</a>
           <a href="about.html">關於我們</a>
@@ -32,33 +32,44 @@
       </header>
 
       <main>
-        <article class="article-layout">
-          <div class="article-main">
-            <div class="article-cover" data-article-cover></div>
-            <p class="section-kicker" data-article-category>學習方法</p>
-            <h1 data-article-title>文章標題</h1>
-            <div class="article-body" data-article-body></div>
+        <section class="quiz-hero">
+          <p class="section-kicker">Learning Style Quiz</p>
+          <h1>學習風格探索</h1>
+          <p>回答幾個直覺問題，看看你現在比較適合從哪一種學習資源開始。</p>
+        </section>
+
+        <section class="quiz-panel" data-quiz>
+          <div class="quiz-progress">
+            <span data-quiz-count>第 1 題 / 共 6 題</span>
+            <div class="quiz-progress-track" aria-hidden="true">
+              <span data-quiz-progress></span>
+            </div>
           </div>
 
-          <aside class="article-sidebar" aria-label="文章資訊">
-            <h2>文章資訊</h2>
-            <dl>
-              <div>
-                <dt>作者</dt>
-                <dd data-article-author>如何學編輯部</dd>
-              </div>
-              <div>
-                <dt>上傳日期</dt>
-                <dd data-article-date>2026.05.12</dd>
-              </div>
-              <div>
-                <dt>標籤</dt>
-                <dd class="article-tags" data-article-tags></dd>
-              </div>
-            </dl>
-            <a class="secondary-button" href="methods.html">返回學習方法</a>
-          </aside>
-        </article>
+          <div class="quiz-question-card">
+            <p class="section-kicker" data-quiz-kicker>Question 01</p>
+            <h2 data-quiz-question>題目載入中</h2>
+            <div class="quiz-options" data-quiz-options></div>
+          </div>
+
+          <div class="quiz-actions">
+            <button class="secondary-button quiz-nav-button" type="button" data-quiz-prev>上一題</button>
+            <button class="primary-button quiz-nav-button" type="button" data-quiz-next disabled>下一題 <span aria-hidden="true">→</span></button>
+          </div>
+        </section>
+
+        <section class="quiz-result" data-quiz-result hidden>
+          <p class="section-kicker">Result</p>
+          <h2 data-result-title>你的探索結果</h2>
+          <p data-result-copy></p>
+          <div class="result-recommendation">
+            <span>推薦起點</span>
+            <h3 data-result-recommendation></h3>
+            <p data-result-reason></p>
+            <a class="primary-button small" data-result-link href="#">前往推薦頁面 <span aria-hidden="true">→</span></a>
+          </div>
+          <button class="secondary-button quiz-restart" type="button" data-quiz-restart>重新測驗</button>
+        </section>
       </main>
 
       <footer class="site-footer">
@@ -87,7 +98,7 @@
         </div>
       </div>
     </div>
-    <script src="js/articles.js"></script>
+    <script src="js/learning-style-quiz.js"></script>
     <script src="js/main.js"></script>
   </body>
 </html>

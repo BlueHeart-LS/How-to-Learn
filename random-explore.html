@@ -1,9 +1,9 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-Hant">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>文章｜如何學 How to Learn</title>
+    <title>隨機探索｜如何學 How to Learn</title>
     <link rel="icon" type="image/png" href="images/icon_logo.png" />
     <link rel="stylesheet" href="css/styles.css" />
   </head>
@@ -16,8 +16,8 @@
 
         <nav class="main-nav" aria-label="主要導覽">
           <a href="start.html">如何開始</a>
-          <a href="explore.html">自我探索</a>
-          <a class="active" href="methods.html">學習方法</a>
+          <a class="active" href="explore.html">自我探索</a>
+          <a href="methods.html">學習方法</a>
           <a href="games.html">遊戲練習</a>
           <a href="resources.html">資源專區</a>
           <a href="about.html">關於我們</a>
@@ -32,33 +32,43 @@
       </header>
 
       <main>
-        <article class="article-layout">
-          <div class="article-main">
-            <div class="article-cover" data-article-cover></div>
-            <p class="section-kicker" data-article-category>學習方法</p>
-            <h1 data-article-title>文章標題</h1>
-            <div class="article-body" data-article-body></div>
+        <section class="gacha-hero">
+          <div>
+            <p class="section-kicker">Random Discovery</p>
+            <h1>隨機探索扭蛋機</h1>
+            <p>按下扭蛋，抽一個平常不一定會碰到的主題，再用一兩個入門資源打開新的視野。</p>
+          </div>
+        </section>
+
+        <section class="gacha-layout">
+          <div class="gacha-machine" aria-hidden="true">
+            <div class="gacha-dome">
+              <span class="gacha-ball pink"></span>
+              <span class="gacha-ball blue"></span>
+              <span class="gacha-ball green"></span>
+              <span class="gacha-ball yellow"></span>
+            </div>
+            <div class="gacha-body">
+              <div class="gacha-window" data-gacha-label>?</div>
+              <div class="gacha-knob"></div>
+            </div>
+            <div class="gacha-tray">DROP</div>
           </div>
 
-          <aside class="article-sidebar" aria-label="文章資訊">
-            <h2>文章資訊</h2>
-            <dl>
-              <div>
-                <dt>作者</dt>
-                <dd data-article-author>如何學編輯部</dd>
-              </div>
-              <div>
-                <dt>上傳日期</dt>
-                <dd data-article-date>2026.05.12</dd>
-              </div>
-              <div>
-                <dt>標籤</dt>
-                <dd class="article-tags" data-article-tags></dd>
-              </div>
-            </dl>
-            <a class="secondary-button" href="methods.html">返回學習方法</a>
-          </aside>
-        </article>
+          <div class="gacha-panel">
+            <p class="section-kicker">Try Your Luck</p>
+            <h2>今天會抽到什麼？</h2>
+            <p>主題可能來自科技、設計、金融、環境、太空、生物等領域。抽到後可以先看推薦資源，再決定要不要深入探索。</p>
+            <button class="primary-button" type="button" data-gacha-button>轉一下扭蛋 <span aria-hidden="true">→</span></button>
+          </div>
+        </section>
+
+        <section class="gacha-result" data-gacha-result hidden>
+          <p class="section-kicker">Your Topic</p>
+          <h2 data-topic-title></h2>
+          <p data-topic-summary></p>
+          <div class="topic-resource-list" data-topic-resources></div>
+        </section>
       </main>
 
       <footer class="site-footer">
@@ -87,7 +97,7 @@
         </div>
       </div>
     </div>
-    <script src="js/articles.js"></script>
+    <script src="js/random-explore.js"></script>
     <script src="js/main.js"></script>
   </body>
 </html>
