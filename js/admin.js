@@ -1,4 +1,4 @@
-const seedArticles = {
+﻿const seedArticles = {
   feynman: {
     title: "費曼學習法：用教會別人的方式，真正學會一件事",
     category: "學習方法",

@@ -1,4 +1,4 @@
-const blogList = document.querySelector("[data-blog-list]");
+﻿const blogList = document.querySelector("[data-blog-list]");
 const blogSidebar = document.querySelector("[data-blog-sidebar]");
 
 const tagClassByCategory = {

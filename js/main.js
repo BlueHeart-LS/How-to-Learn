@@ -1,4 +1,4 @@
-const loginButtons = document.querySelectorAll("[data-login-modal]");
+﻿const loginButtons = document.querySelectorAll("[data-login-modal]");
 const modalOverlay = document.querySelector("[data-modal-overlay]");
 let modalTimer;
 
