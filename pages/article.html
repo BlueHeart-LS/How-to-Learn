@@ -1,0 +1,93 @@
+﻿<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>文章｜如何學 How to Learn</title>
+    <link rel="icon" type="image/png" href="../images/icon_logo.png" />
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="brand" href="../index.html" aria-label="如何學首頁">
+          <img src="../images/LOGO.png" alt="如何學 How to Learn" />
+        </a>
+
+        <nav class="main-nav" aria-label="主要導覽">
+          <a href="start.html">如何開始</a>
+          <a href="explore.html">自我探索</a>
+          <a class="active" href="methods.html">學習方法</a>
+          <a href="games.html">遊戲練習</a>
+          <a href="resources.html">資源專區</a>
+          <a href="about.html">關於我們</a>
+        </nav>
+
+        <div class="header-actions">
+          <button class="icon-button" type="button" aria-label="搜尋">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m16.5 16.5 4 4"></path></svg>
+          </button>
+          <button class="login-button" type="button" data-login-modal>會員登入</button>
+        </div>
+      </header>
+
+      <main>
+        <article class="article-layout">
+          <div class="article-main">
+            <div class="article-cover" data-article-cover></div>
+            <p class="section-kicker" data-article-category>學習方法</p>
+            <h1 data-article-title>文章標題</h1>
+            <div class="article-body" data-article-body></div>
+          </div>
+
+          <aside class="article-sidebar" aria-label="文章資訊">
+            <h2>文章資訊</h2>
+            <dl>
+              <div>
+                <dt>作者</dt>
+                <dd data-article-author>如何學編輯部</dd>
+              </div>
+              <div>
+                <dt>上傳日期</dt>
+                <dd data-article-date>2026.05.12</dd>
+              </div>
+              <div>
+                <dt>標籤</dt>
+                <dd class="article-tags" data-article-tags></dd>
+              </div>
+            </dl>
+            <a class="secondary-button" href="methods.html">返回學習方法</a>
+          </aside>
+        </article>
+      </main>
+
+      <footer class="site-footer">
+        <a class="brand footer-brand" href="../index.html">
+          <img src="../images/LOGO.png" alt="如何學 How to Learn" />
+        </a>
+        <nav aria-label="頁尾導覽">
+          <a href="start.html">如何開始</a>
+          <a href="explore.html">自我探索</a>
+          <a href="methods.html">學習方法</a>
+          <a href="games.html">遊戲練習</a>
+          <a href="resources.html">資源專區</a>
+          <a href="about.html">關於我們</a>
+        </nav>
+        <div class="socials" aria-label="社群連結">
+          <a href="#" aria-label="Instagram"><img src="../images/icon_instagram.png" alt="" /></a>
+          <a href="#" aria-label="Facebook"><img src="../images/icon_facebook.png" alt="" /></a>
+          <a href="#" aria-label="YouTube"><img src="../images/icon_youtube.png" alt="" /></a>
+          <a href="#" aria-label="Email"><img src="../images/icon_email.png" alt="" /></a>
+        </div>
+      </footer>
+
+      <div class="modal-overlay" data-modal-overlay hidden>
+        <div class="coming-soon-modal" role="dialog" aria-modal="true" aria-labelledby="coming-soon-title">
+          <h2 id="coming-soon-title">開發中，敬請期待</h2>
+        </div>
+      </div>
+    </div>
+    <script src="../js/articles.js"></script>
+    <script src="../js/main.js"></script>
+  </body>
+</html>

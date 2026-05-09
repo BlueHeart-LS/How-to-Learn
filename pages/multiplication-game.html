@@ -1,0 +1,111 @@
+﻿<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>九九乘法練習｜如何學 How to Learn</title>
+    <link rel="icon" type="image/png" href="../images/icon_logo.png" />
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="brand" href="../index.html" aria-label="如何學首頁">
+          <img src="../images/LOGO.png" alt="如何學 How to Learn" />
+        </a>
+
+        <nav class="main-nav" aria-label="主要導覽">
+          <a href="start.html">如何開始</a>
+          <a href="explore.html">自我探索</a>
+          <a href="methods.html">學習方法</a>
+          <a class="active" href="games.html">遊戲練習</a>
+          <a href="resources.html">資源專區</a>
+          <a href="about.html">關於我們</a>
+        </nav>
+
+        <div class="header-actions">
+          <button class="icon-button" type="button" aria-label="搜尋">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m16.5 16.5 4 4"></path></svg>
+          </button>
+          <button class="login-button" type="button" data-login-modal>會員登入</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="multiplication-hero">
+          <p class="section-kicker">Math Game</p>
+          <h1>九九乘法練習</h1>
+          <p>30 秒限時挑戰。觀察算式中的空格，用數字字卡拼出正確答案。</p>
+        </section>
+
+        <section class="math-game-shell" data-math-game>
+          <div class="math-game-topbar">
+            <div>
+              <span>剩餘時間</span>
+              <strong data-game-time>30</strong>
+            </div>
+            <div>
+              <span>答對題數</span>
+              <strong data-game-score>0</strong>
+            </div>
+            <div>
+              <span>連續答對</span>
+              <strong data-game-streak>0</strong>
+            </div>
+          </div>
+
+          <div class="math-game-screen">
+            <div class="game-state-panel" data-game-intro>
+              <h2>準備開始</h2>
+              <p>按下開始後會倒數 30 秒。每題會隱藏被乘數、乘數或積，請用下方 10 張數字字卡輸入答案。</p>
+              <button class="primary-button" type="button" data-game-start>開始遊戲 <span aria-hidden="true">→</span></button>
+            </div>
+
+            <div class="game-play-area" data-game-play hidden>
+              <div class="equation-display" aria-live="polite" data-equation-display></div>
+              <div class="number-card-grid" aria-label="數字字卡" data-number-cards></div>
+              <div class="math-game-actions">
+                <button class="secondary-button" type="button" data-game-clear>清除</button>
+              </div>
+              <p class="game-feedback" data-game-feedback></p>
+            </div>
+
+            <div class="game-state-panel" data-game-result hidden>
+              <h2 data-result-heading>時間到</h2>
+              <p data-result-summary></p>
+              <button class="primary-button" type="button" data-game-restart>再玩一次 <span aria-hidden="true">→</span></button>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <a class="brand footer-brand" href="../index.html">
+          <img src="../images/LOGO.png" alt="如何學 How to Learn" />
+        </a>
+        <nav aria-label="頁尾導覽">
+          <a href="start.html">如何開始</a>
+          <a href="explore.html">自我探索</a>
+          <a href="methods.html">學習方法</a>
+          <a href="games.html">遊戲練習</a>
+          <a href="resources.html">資源專區</a>
+          <a href="about.html">關於我們</a>
+        </nav>
+        <div class="socials" aria-label="社群連結">
+          <a href="#" aria-label="Instagram"><img src="../images/icon_instagram.png" alt="" /></a>
+          <a href="#" aria-label="Facebook"><img src="../images/icon_facebook.png" alt="" /></a>
+          <a href="#" aria-label="YouTube"><img src="../images/icon_youtube.png" alt="" /></a>
+          <a href="#" aria-label="Email"><img src="../images/icon_email.png" alt="" /></a>
+        </div>
+      </footer>
+
+      <div class="modal-overlay" data-modal-overlay hidden>
+        <div class="coming-soon-modal" role="dialog" aria-modal="true" aria-labelledby="coming-soon-title">
+          <h2 id="coming-soon-title">開發中，敬請期待</h2>
+        </div>
+      </div>
+    </div>
+    <script src="../js/multiplication-game.js"></script>
+    <script src="../js/main.js"></script>
+  </body>
+</html>

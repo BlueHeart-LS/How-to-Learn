@@ -1,0 +1,103 @@
+﻿<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>隨機探索｜如何學 How to Learn</title>
+    <link rel="icon" type="image/png" href="../images/icon_logo.png" />
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="brand" href="../index.html" aria-label="如何學首頁">
+          <img src="../images/LOGO.png" alt="如何學 How to Learn" />
+        </a>
+
+        <nav class="main-nav" aria-label="主要導覽">
+          <a href="start.html">如何開始</a>
+          <a class="active" href="explore.html">自我探索</a>
+          <a href="methods.html">學習方法</a>
+          <a href="games.html">遊戲練習</a>
+          <a href="resources.html">資源專區</a>
+          <a href="about.html">關於我們</a>
+        </nav>
+
+        <div class="header-actions">
+          <button class="icon-button" type="button" aria-label="搜尋">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m16.5 16.5 4 4"></path></svg>
+          </button>
+          <button class="login-button" type="button" data-login-modal>會員登入</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="gacha-hero">
+          <div>
+            <p class="section-kicker">Random Discovery</p>
+            <h1>隨機探索扭蛋機</h1>
+            <p>按下扭蛋，抽一個平常不一定會碰到的主題，再用一兩個入門資源打開新的視野。</p>
+          </div>
+        </section>
+
+        <section class="gacha-layout">
+          <div class="gacha-machine" aria-hidden="true">
+            <div class="gacha-dome">
+              <span class="gacha-ball pink"></span>
+              <span class="gacha-ball blue"></span>
+              <span class="gacha-ball green"></span>
+              <span class="gacha-ball yellow"></span>
+            </div>
+            <div class="gacha-body">
+              <div class="gacha-window" data-gacha-label>?</div>
+              <div class="gacha-knob"></div>
+            </div>
+            <div class="gacha-tray">DROP</div>
+          </div>
+
+          <div class="gacha-panel">
+            <p class="section-kicker">Try Your Luck</p>
+            <h2>今天會抽到什麼？</h2>
+            <p>主題可能來自科技、設計、金融、環境、太空、生物等領域。抽到後可以先看推薦資源，再決定要不要深入探索。</p>
+            <button class="primary-button" type="button" data-gacha-button>轉一下扭蛋 <span aria-hidden="true">→</span></button>
+          </div>
+        </section>
+
+        <section class="gacha-result" data-gacha-result hidden>
+          <p class="section-kicker">Your Topic</p>
+          <h2 data-topic-title></h2>
+          <p data-topic-summary></p>
+          <div class="topic-resource-list" data-topic-resources></div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <a class="brand footer-brand" href="../index.html">
+          <img src="../images/LOGO.png" alt="如何學 How to Learn" />
+        </a>
+        <nav aria-label="頁尾導覽">
+          <a href="start.html">如何開始</a>
+          <a href="explore.html">自我探索</a>
+          <a href="methods.html">學習方法</a>
+          <a href="games.html">遊戲練習</a>
+          <a href="resources.html">資源專區</a>
+          <a href="about.html">關於我們</a>
+        </nav>
+        <div class="socials" aria-label="社群連結">
+          <a href="#" aria-label="Instagram"><img src="../images/icon_instagram.png" alt="" /></a>
+          <a href="#" aria-label="Facebook"><img src="../images/icon_facebook.png" alt="" /></a>
+          <a href="#" aria-label="YouTube"><img src="../images/icon_youtube.png" alt="" /></a>
+          <a href="#" aria-label="Email"><img src="../images/icon_email.png" alt="" /></a>
+        </div>
+      </footer>
+
+      <div class="modal-overlay" data-modal-overlay hidden>
+        <div class="coming-soon-modal" role="dialog" aria-modal="true" aria-labelledby="coming-soon-title">
+          <h2 id="coming-soon-title">開發中，敬請期待</h2>
+        </div>
+      </div>
+    </div>
+    <script src="../js/random-explore.js"></script>
+    <script src="../js/main.js"></script>
+  </body>
+</html>
