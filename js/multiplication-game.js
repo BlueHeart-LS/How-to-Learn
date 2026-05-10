@@ -29,9 +29,13 @@ function randomNumber(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function randomFactor() {
+  return Math.random() < 0.12 ? 1 : randomNumber(2, 9);
+}
+
 function createQuestion() {
-  const left = randomNumber(1, 9);
-  const right = randomNumber(1, 9);
+  const left = randomFactor();
+  const right = randomFactor();
   const product = left * right;
   const hiddenPart = ["left", "right", "product"][randomNumber(0, 2)];
 
@@ -158,16 +162,16 @@ function buildNumberCards() {
   if (!numberCards) return;
 
   numberCards.innerHTML = "";
-  for (let number = 0; number <= 9; number += 1) {
+  [7, 8, 9, 4, 5, 6, 1, 2, 3, 0].forEach((number) => {
     const button = document.createElement("button");
-    button.className = "number-card";
+    button.className = number === 0 ? "number-card number-card-zero" : "number-card";
     button.type = "button";
     button.textContent = number;
     button.addEventListener("click", () => {
       addDigit(number);
     });
     numberCards.append(button);
-  }
+  });
 }
 
 startButton?.addEventListener("click", startGame);

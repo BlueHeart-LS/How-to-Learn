@@ -89,6 +89,17 @@ function renderStats() {
   gameStreak.textContent = streak;
 }
 
+function isCorrectOperation(operation) {
+  const { left, right, result } = currentQuestion;
+
+  if (operation === "+") return left + right === result;
+  if (operation === "-") return left - right === result;
+  if (operation === "×") return left * right === result;
+  if (operation === "÷") return right !== 0 && left / right === result;
+
+  return false;
+}
+
 function newRound() {
   currentQuestion = createQuestion();
   currentAnswer = "";
@@ -105,7 +116,11 @@ function checkAnswer(answer) {
   isChecking = true;
   renderEquation();
 
-  if (currentAnswer === currentQuestion.answer) {
+  const isCorrect = currentMode === "operator"
+    ? isCorrectOperation(currentAnswer)
+    : currentAnswer === currentQuestion.answer;
+
+  if (isCorrect) {
     score += 1;
     streak += 1;
     bestStreak = Math.max(bestStreak, streak);
@@ -174,7 +189,7 @@ function buildNumberCards() {
   if (!numberCards) return;
 
   numberCards.innerHTML = "";
-  for (let number = 1; number <= 9; number += 1) {
+  [7, 8, 9, 4, 5, 6, 1, 2, 3].forEach((number) => {
     const button = document.createElement("button");
     button.className = "number-card";
     button.type = "button";
@@ -184,7 +199,7 @@ function buildNumberCards() {
       checkAnswer(number);
     });
     numberCards.append(button);
-  }
+  });
 }
 
 function buildOperationCards() {

@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preload" as="image" href="../images/mouse_cursor.png" />
+    <link rel="preload" as="image" href="../images/mouse_touch_cursor.png" />
+    <style>
+      html, body, body * { cursor: url("../images/mouse_cursor.png") 4 4, auto !important; }
+      a, button, input, select, textarea, [role="button"] { cursor: url("../images/mouse_cursor.png") 4 4, pointer !important; }
+      html:active, body:active, body:active *, a:active, button:active, input:active, select:active, textarea:active, [role="button"]:active { cursor: url("../images/mouse_touch_cursor.png") 4 4, pointer !important; }
+    </style>
+    <title>時間節奏規劃｜如何學 How to Learn</title>
+    <link rel="icon" type="image/png" href="../images/icon_logo.png" />
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="brand" href="../index.html" aria-label="如何學首頁">
+          <img src="../images/LOGO.png" alt="如何學 How to Learn" />
+        </a>
+
+        <nav class="main-nav" aria-label="主要導覽">
+          <a href="start.html">如何開始</a>
+          <a class="active" href="explore.html">自我探索</a>
+          <a href="methods.html">學習方法</a>
+          <a href="games.html">遊戲練習</a>
+          <a href="resources.html">資源專區</a>
+          <a href="about.html">關於我們</a>
+        </nav>
+
+        <div class="header-actions">
+          <button class="icon-button" type="button" aria-label="搜尋">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m16.5 16.5 4 4"></path></svg>
+          </button>
+          <button class="login-button" type="button" data-login-modal>會員登入</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="time-rhythm-hero">
+          <p class="section-kicker">Time Rhythm Planner</p>
+          <h1>時間節奏規劃</h1>
+          <p>把學習任務放進適合的時段，練習安排讀書、練習、休息與整理。完成後會得到一份你的節奏分析。</p>
+        </section>
+
+        <section class="time-rhythm-game" data-time-rhythm>
+          <div class="rhythm-status">
+            <div><span>已安排</span><strong data-rhythm-progress>0 / 8</strong></div>
+            <div><span>節奏平衡</span><strong data-rhythm-balance>0%</strong></div>
+            <div><span>目前狀態</span><strong data-rhythm-energy>穩定</strong></div>
+          </div>
+
+          <div class="energy-picker" aria-label="選擇今天的能量狀態">
+            <p>今天比較像哪一種狀態？</p>
+            <div>
+              <button class="energy-option active" type="button" data-energy="high">精神很好</button>
+              <button class="energy-option" type="button" data-energy="steady">普通穩定</button>
+              <button class="energy-option" type="button" data-energy="low">有點疲累</button>
+            </div>
+          </div>
+
+          <div class="rhythm-board">
+            <div class="rhythm-task-panel">
+              <h2>待安排任務</h2>
+              <p>先選一張任務卡，再放進右邊的時間區塊。</p>
+              <div class="rhythm-task-list" data-rhythm-tasks></div>
+            </div>
+
+            <div class="rhythm-slots" aria-label="時間區塊">
+              <button class="rhythm-slot" type="button" data-slot="morning">
+                <span>早上</span>
+                <small>適合專注、理解、需要腦力的任務</small>
+                <ul data-slot-list="morning"></ul>
+              </button>
+              <button class="rhythm-slot" type="button" data-slot="afternoon">
+                <span>下午</span>
+                <small>適合練習、訂正、完成具體進度</small>
+                <ul data-slot-list="afternoon"></ul>
+              </button>
+              <button class="rhythm-slot" type="button" data-slot="evening">
+                <span>晚上</span>
+                <small>適合複習、整理、收尾與輕量記憶</small>
+                <ul data-slot-list="evening"></ul>
+              </button>
+              <button class="rhythm-slot" type="button" data-slot="rest">
+                <span>休息與補能</span>
+                <small>安排休息，讓下一段學習能繼續</small>
+                <ul data-slot-list="rest"></ul>
+              </button>
+            </div>
+          </div>
+
+          <p class="rhythm-feedback" data-rhythm-feedback></p>
+
+          <div class="rhythm-result" data-rhythm-result hidden>
+            <h2>節奏分析完成</h2>
+            <p data-rhythm-summary></p>
+            <div class="rhythm-result-actions">
+              <button class="primary-button" type="button" data-rhythm-restart>重新規劃 <span aria-hidden="true">→</span></button>
+              <a class="secondary-button" href="methods.html">看學習方法</a>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <a class="brand footer-brand" href="../index.html">
+          <img src="../images/LOGO.png" alt="如何學 How to Learn" />
+        </a>
+        <nav aria-label="頁尾導覽">
+          <a href="start.html">如何開始</a>
+          <a href="explore.html">自我探索</a>
+          <a href="methods.html">學習方法</a>
+          <a href="games.html">遊戲練習</a>
+          <a href="resources.html">資源專區</a>
+          <a href="about.html">關於我們</a>
+        </nav>
+        <div class="socials" aria-label="社群連結">
+          <a href="#" aria-label="Instagram"><img src="../images/icon_instagram.png" alt="" /></a>
+          <a href="#" aria-label="Facebook"><img src="../images/icon_facebook.png" alt="" /></a>
+          <a href="#" aria-label="YouTube"><img src="../images/icon_youtube.png" alt="" /></a>
+          <a href="#" aria-label="Email"><img src="../images/icon_email.png" alt="" /></a>
+        </div>
+      </footer>
+
+      <div class="modal-overlay" data-modal-overlay hidden>
+        <div class="coming-soon-modal" role="dialog" aria-modal="true" aria-labelledby="coming-soon-title">
+          <h2 id="coming-soon-title">開發中，敬請期待</h2>
+        </div>
+      </div>
+    </div>
+    <script src="../js/time-rhythm.js"></script>
+    <script src="../js/main.js"></script>
+  </body>
+</html>

@@ -3,6 +3,11 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      html, body, body * { cursor: url("../images/mouse_cursor.png") 4 4, auto !important; }
+      a, button, input, select, textarea, [role="button"] { cursor: url("../images/mouse_cursor.png") 4 4, pointer !important; }
+      html:active, body:active, body:active *, a:active, button:active, input:active, select:active, textarea:active, [role="button"]:active { cursor: url("../images/mouse_touch_cursor.png") 4 4, pointer !important; }
+    </style>
     <title>遊戲練習｜如何學 How to Learn</title>
     <link rel="icon" type="image/png" href="../images/icon_logo.png" />
     <link rel="stylesheet" href="../css/styles.css" />
@@ -115,6 +120,30 @@
             <h2 id="mixed-games">綜合練習</h2>
           </div>
           <div class="game-grid">
+            <article class="game-card" id="focus-challenge">
+              <span class="game-badge playable">可遊玩</span>
+              <h3>專注力挑戰</h3>
+              <p>在限時符號任務中練習辨識目標、避開干擾，觀察自己的專注節奏。</p>
+              <ul>
+                <li>短時間任務</li>
+                <li>即時回饋</li>
+                <li>專注訓練</li>
+              </ul>
+              <a class="tool-button" href="focus-challenge.html">開始挑戰</a>
+            </article>
+
+            <article class="game-card">
+              <span class="game-badge playable">可遊玩</span>
+              <h3>筆記整理實驗室</h3>
+              <p>把零散資訊分類成核心概念、例子、疑問與下一步行動，練習建立清楚的知識架構。</p>
+              <ul>
+                <li>分類整理</li>
+                <li>概念判斷</li>
+                <li>學習策略</li>
+              </ul>
+              <a class="tool-button" href="note-lab.html">開始整理</a>
+            </article>
+
             <article class="game-card">
               <span class="game-badge idea">可新增</span>
               <h3>每日挑戰</h3>

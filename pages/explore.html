@@ -3,6 +3,11 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      html, body, body * { cursor: url("../images/mouse_cursor.png") 4 4, auto !important; }
+      a, button, input, select, textarea, [role="button"] { cursor: url("../images/mouse_cursor.png") 4 4, pointer !important; }
+      html:active, body:active, body:active *, a:active, button:active, input:active, select:active, textarea:active, [role="button"]:active { cursor: url("../images/mouse_touch_cursor.png") 4 4, pointer !important; }
+    </style>
     <title>自我探索｜如何學 How to Learn</title>
     <link rel="icon" type="image/png" href="../images/icon_logo.png" />
     <link rel="stylesheet" href="../css/styles.css" />
@@ -63,31 +68,7 @@
               <li>任務排序</li>
               <li>休息安排</li>
             </ul>
-            <button class="tool-button" type="button">即將推出</button>
-          </article>
-
-          <article class="topic-card explore-tool-card" id="focus-challenge">
-            <span class="mini-icon purple"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="15"/><circle cx="24" cy="24" r="6"/><path d="M34 14 41 7M37 7h4v4"/></svg></span>
-            <h2>專注力挑戰</h2>
-            <p>設計短時間任務挑戰，幫助學生觀察自己的分心模式與專注習慣。</p>
-            <ul>
-              <li>小任務</li>
-              <li>專注紀錄</li>
-              <li>即時回饋</li>
-            </ul>
-            <button class="tool-button" type="button">即將推出</button>
-          </article>
-
-          <article class="topic-card explore-tool-card" id="note-lab">
-            <span class="mini-icon peach"><svg viewBox="0 0 48 48"><path d="m12 35 4 4 24-24-4-4-24 24Z"/><path d="m10 41 6-2-4-4-2 6ZM32 15l4 4"/></svg></span>
-            <h2>筆記整理實驗室</h2>
-            <p>透過拖曳、配對或排序練習，把零散資訊整理成清楚的知識架構。</p>
-            <ul>
-              <li>拖曳整理</li>
-              <li>概念配對</li>
-              <li>結構練習</li>
-            </ul>
-            <button class="tool-button" type="button">即將推出</button>
+            <a class="tool-button" href="time-rhythm.html">開始規劃</a>
           </article>
 
           <article class="topic-card explore-tool-card" id="career-explore">
@@ -99,7 +80,7 @@
               <li>能力盤點</li>
               <li>未來想像</li>
             </ul>
-            <button class="tool-button" type="button">即將推出</button>
+            <a class="tool-button" href="career-explore.html">開始探索</a>
           </article>
 
           <article class="topic-card explore-tool-card" id="random-explore">

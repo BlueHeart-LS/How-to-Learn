@@ -1,14 +1,16 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-Hant">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preload" as="image" href="../images/mouse_cursor.png" />
+    <link rel="preload" as="image" href="../images/mouse_touch_cursor.png" />
     <style>
       html, body, body * { cursor: url("../images/mouse_cursor.png") 4 4, auto !important; }
       a, button, input, select, textarea, [role="button"] { cursor: url("../images/mouse_cursor.png") 4 4, pointer !important; }
       html:active, body:active, body:active *, a:active, button:active, input:active, select:active, textarea:active, [role="button"]:active { cursor: url("../images/mouse_touch_cursor.png") 4 4, pointer !important; }
     </style>
-    <title>隨機探索｜如何學 How to Learn</title>
+    <title>筆記整理實驗室｜如何學 How to Learn</title>
     <link rel="icon" type="image/png" href="../images/icon_logo.png" />
     <link rel="stylesheet" href="../css/styles.css" />
   </head>
@@ -37,42 +39,52 @@
       </header>
 
       <main>
-        <section class="gacha-hero">
-          <div>
-            <p class="section-kicker">Random Discovery</p>
-            <h1>隨機探索扭蛋機</h1>
-            <p>按下扭蛋，抽一個平常不一定會碰到的主題，再用一兩個入門資源打開新的視野。</p>
-          </div>
+        <section class="note-lab-hero">
+          <p class="section-kicker">Note Lab</p>
+          <h1>筆記整理實驗室</h1>
+          <p>把零散資訊整理成清楚的知識架構。點選一張筆記，再放到你覺得最適合的分類區。</p>
         </section>
 
-        <section class="gacha-layout">
-          <div class="gacha-machine" aria-hidden="true">
-            <div class="gacha-dome">
-              <span class="gacha-ball pink"></span>
-              <span class="gacha-ball blue"></span>
-              <span class="gacha-ball green"></span>
-              <span class="gacha-ball yellow"></span>
-            </div>
-            <div class="gacha-body">
-              <div class="gacha-window" data-gacha-label>?</div>
-              <div class="gacha-knob"></div>
-            </div>
-            <div class="gacha-tray">DROP</div>
+        <section class="note-lab-game" data-note-lab>
+          <div class="note-lab-status">
+            <div><span>已整理</span><strong data-note-progress>0 / 8</strong></div>
+            <div><span>正確率</span><strong data-note-accuracy>0%</strong></div>
           </div>
 
-          <div class="gacha-panel">
-            <p class="section-kicker">Try Your Luck</p>
-            <h2>今天會抽到什麼？</h2>
-            <p>主題可能來自科技、設計、金融、環境、太空、生物等領域。抽到後可以先看推薦資源，再決定要不要深入探索。</p>
-            <button class="primary-button" type="button" data-gacha-button>轉一下扭蛋 <span aria-hidden="true">→</span></button>
-          </div>
-        </section>
+          <div class="note-lab-board">
+            <div class="note-stack" aria-label="待整理筆記">
+              <h2>零散筆記</h2>
+              <p>先選一張，再選右邊分類。</p>
+              <div class="note-card-list" data-note-cards></div>
+            </div>
 
-        <section class="gacha-result" data-gacha-result hidden>
-          <p class="section-kicker">Your Topic</p>
-          <h2 data-topic-title></h2>
-          <p data-topic-summary></p>
-          <div class="topic-resource-list" data-topic-resources></div>
+            <div class="note-categories" aria-label="筆記分類區" data-note-categories>
+              <button class="note-category" type="button" data-category="concept">
+                <span>核心概念</span>
+                <small>定義、原理、重要觀念</small>
+              </button>
+              <button class="note-category" type="button" data-category="example">
+                <span>例子與應用</span>
+                <small>情境、案例、可以怎麼用</small>
+              </button>
+              <button class="note-category" type="button" data-category="question">
+                <span>疑問與待查</span>
+                <small>還不懂、需要確認的內容</small>
+              </button>
+              <button class="note-category" type="button" data-category="action">
+                <span>下一步行動</span>
+                <small>練習、複習、要做的事</small>
+              </button>
+            </div>
+          </div>
+
+          <p class="note-lab-feedback" data-note-feedback></p>
+
+          <div class="note-lab-result" data-note-result hidden>
+            <h2>整理完成</h2>
+            <p data-note-summary></p>
+            <button class="primary-button" type="button" data-note-restart>再整理一次 <span aria-hidden="true">→</span></button>
+          </div>
         </section>
       </main>
 
@@ -102,7 +114,7 @@
         </div>
       </div>
     </div>
-    <script src="../js/random-explore.js"></script>
+    <script src="../js/note-lab.js"></script>
     <script src="../js/main.js"></script>
   </body>
 </html>
