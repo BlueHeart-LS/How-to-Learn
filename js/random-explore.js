@@ -175,6 +175,30 @@ const topics = [
       { label: "生醫工程未來機會", url: "https://www.ganjingworld.com/video/1hg792q83s44QvDXXqFVA120r1kr1c" },
     ],
   },
+  {
+    title: "畫畫創作",
+    summary: "從線條、形狀、顏色開始觀察世界，畫畫不是比誰畫得像，而是練習把想法變成看得見的作品。",
+    resources: [
+      { label: "色鉛筆暖身入門：畫水滴", url: "https://www.calligraphy01.com/drop/" },
+      { label: "花草繪入門：火鶴花練習", url: "https://www.calligraphy01.com/anthurium/" },
+    ],
+  },
+  {
+    title: "音樂入門",
+    summary: "先從節奏、音階與基礎樂理開始，慢慢理解旋律為什麼會動人，也能更自在地接觸樂器。",
+    resources: [
+      { label: "中文基礎樂理入門影片", url: "https://www.youtube.com/watch?v=PNsFI7W-kCo" },
+      { label: "初學者樂理觀念整理", url: "https://musikershop.com/goods.php?id=105603" },
+    ],
+  },
+  {
+    title: "跳舞律動",
+    summary: "跳舞可以從最簡單的節拍與基本步開始，重點不是一開始就很厲害，而是讓身體逐漸抓到節奏。",
+    resources: [
+      { label: "Shuffle Dance 超入門教學", url: "https://www.bilibili.com/video/av94085757" },
+      { label: "Popping 基礎震點入門", url: "https://www.bilibili.com/video/BV1K64y1r71G/" },
+    ],
+  },
 ];
 
 const button = document.querySelector("[data-gacha-button]");

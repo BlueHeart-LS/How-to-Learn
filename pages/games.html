@@ -61,102 +61,162 @@
           </div>
         </section>
 
-        <section class="game-category" aria-labelledby="math-games">
+        <div class="game-catalog-layout">
+          <aside class="game-filter-panel" aria-label="遊戲篩選">
+            <div class="game-filter-group">
+              <p>推薦年齡</p>
+              <div class="game-filter-buttons">
+                <button class="game-filter-button active" type="button" data-game-age-filter="all" aria-pressed="true">全部年齡</button>
+                <button class="game-filter-button" type="button" data-game-age-filter="preschool" aria-pressed="false">學前</button>
+                <button class="game-filter-button" type="button" data-game-age-filter="lower" aria-pressed="false">國小低年級</button>
+                <button class="game-filter-button" type="button" data-game-age-filter="middle" aria-pressed="false">國小中年級</button>
+                <button class="game-filter-button" type="button" data-game-age-filter="upper" aria-pressed="false">國小高年級</button>
+                <button class="game-filter-button" type="button" data-game-age-filter="junior" aria-pressed="false">國中</button>
+                <button class="game-filter-button" type="button" data-game-age-filter="general" aria-pressed="false">通用</button>
+              </div>
+            </div>
+            <div class="game-filter-group">
+              <p>難度分級</p>
+              <div class="game-filter-buttons">
+                <button class="game-filter-button active" type="button" data-game-level-filter="all" aria-pressed="true">全部難度</button>
+                <button class="game-filter-button" type="button" data-game-level-filter="starter" aria-pressed="false">入門</button>
+                <button class="game-filter-button" type="button" data-game-level-filter="basic" aria-pressed="false">基礎</button>
+                <button class="game-filter-button" type="button" data-game-level-filter="challenge" aria-pressed="false">挑戰</button>
+              </div>
+            </div>
+          </aside>
+
+          <div class="game-catalog-content">
+        <section class="game-category" aria-labelledby="math-games" data-game-category>
           <div class="game-category-heading">
             <p class="section-kicker">Math</p>
             <h2 id="math-games">數學</h2>
           </div>
           <div class="game-grid">
-            <article class="game-card">
+            <article class="game-card" data-game-ages="lower middle general" data-game-level="starter">
               <span class="game-badge playable">可遊玩</span>
+              <div class="game-meta-tags"><span>國小低中年級</span><span>入門</span></div>
               <h3>九九乘法練習</h3>
               <p>用限時答題與連續命中挑戰，熟悉乘法表與基本乘法反應。</p>
-              <ul>
-                <li>乘法表</li>
-                <li>速度練習</li>
-                <li>正確率</li>
-              </ul>
               <a class="tool-button" href="multiplication-game.html">開始遊戲</a>
               <a class="tool-button"  href="../images/resource/board_9x9.png" download>下載九九乘法表 →</a>
             </article>
 
-            <article class="game-card">
+            <article class="game-card" data-game-ages="lower middle upper general" data-game-level="challenge">
               <span class="game-badge playable">可遊玩</span>
+              <div class="game-meta-tags"><span>國小以上</span><span>挑戰</span></div>
               <h3>加減乘除練習</h3>
               <p>混合四則運算題目，練習看懂題型、選擇運算並穩定計算。</p>
-              <ul>
-                <li>四則運算</li>
-                <li>混合題型</li>
-                <li>基礎計算</li>
-              </ul>
               <a class="tool-button" href="operation-game.html">開始遊戲</a>
+            </article>
+
+            <article class="game-card" data-game-ages="middle upper general" data-game-level="starter">
+              <span class="game-badge playable">可遊玩</span>
+              <div class="game-meta-tags"><span>國小中高年級</span><span>入門</span></div>
+              <h3>乘除互換練習</h3>
+              <p>先看乘法關係，再快速回答互換後的除法題，建立乘除之間的連結。</p>
+              <a class="tool-button" href="fact-family-game.html">開始遊戲</a>
             </article>
           </div>
         </section>
 
-        <section class="game-category" aria-labelledby="language-games">
+        <section class="game-category" aria-labelledby="language-games" data-game-category>
           <div class="game-category-heading">
             <p class="section-kicker">Chinese</p>
             <h2 id="language-games">國語文</h2>
           </div>
           <div class="game-grid">
-            <article class="game-card">
-              <span class="game-badge ready">規劃中</span>
-              <h3>字音字形練習</h3>
-              <p>透過選擇題、配對與錯字辨識，練習常見字音、字形與容易混淆的用字。</p>
-              <ul>
-                <li>字音</li>
-                <li>字形</li>
-                <li>錯字辨識</li>
-              </ul>
-              <button class="tool-button" type="button" data-login-modal>選擇遊戲</button>
+            <article class="game-card" data-game-ages="lower middle upper general" data-game-level="starter">
+              <span class="game-badge playable">可遊玩</span>
+              <div class="game-meta-tags"><span>國小</span><span>入門</span></div>
+              <h3>國小字音字形</h3>
+              <p>可選擇練字音或字形，字形以句子挖空方式選出正確的字。</p>
+              <a class="tool-button" href="chinese-elementary-game.html">開始遊戲</a>
+            </article>
+
+            <article class="game-card" data-game-ages="junior general" data-game-level="basic">
+              <span class="game-badge playable">可遊玩</span>
+              <div class="game-meta-tags"><span>國中</span><span>基礎</span></div>
+              <h3>國中字音字形</h3>
+              <p>針對常見易混讀音與用字，依模式切換成字音或字形練習。</p>
+              <a class="tool-button" href="chinese-junior-game.html">開始遊戲</a>
+            </article>
+
+            <article class="game-card" data-game-ages="general" data-game-level="challenge">
+              <span class="game-badge playable">可遊玩</span>
+              <div class="game-meta-tags"><span>高中</span><span>挑戰</span></div>
+              <h3>高中字音字形</h3>
+              <p>聚焦較高階的讀音與成語用字，練習精準判斷與穩定作答。</p>
+              <a class="tool-button" href="chinese-senior-game.html">開始遊戲</a>
             </article>
           </div>
         </section>
 
-        <section class="game-category" aria-labelledby="mixed-games">
+        <section class="game-category" aria-labelledby="english-games" data-game-category>
+          <div class="game-category-heading">
+            <p class="section-kicker">English</p>
+            <h2 id="english-games">英語文</h2>
+          </div>
+          <div class="game-grid">
+            <article class="game-card" data-game-ages="lower middle upper general" data-game-level="starter">
+              <span class="game-badge playable">可遊玩</span>
+              <div class="game-meta-tags"><span>國小</span><span>入門</span></div>
+              <h3>國小英文單字</h3>
+              <p>從生活高頻字出發，進行英翻中選擇題，建立單字辨識速度。</p>
+              <a class="tool-button" href="english-elementary-game.html">開始遊戲</a>
+            </article>
+
+            <article class="game-card" data-game-ages="junior general" data-game-level="basic">
+              <span class="game-badge playable">可遊玩</span>
+              <div class="game-meta-tags"><span>國中</span><span>基礎</span></div>
+              <h3>國中英文單字</h3>
+              <p>依常用 2000 字詞方向設計，練習考試常見單字與快速判讀。</p>
+              <a class="tool-button" href="english-junior-game.html">開始遊戲</a>
+            </article>
+
+            <article class="game-card" data-game-ages="general" data-game-level="challenge">
+              <span class="game-badge playable">可遊玩</span>
+              <div class="game-meta-tags"><span>高中</span><span>挑戰</span></div>
+              <h3>高中英文單字</h3>
+              <p>依 Level 1 到 Level 6 設定出題範圍，可複選級別後進行英翻中挑戰。</p>
+              <a class="tool-button" href="english-senior-game.html">開始遊戲</a>
+            </article>
+          </div>
+        </section>
+
+        <section class="game-category" aria-labelledby="mixed-games" data-game-category>
           <div class="game-category-heading">
             <p class="section-kicker">Mixed</p>
             <h2 id="mixed-games">綜合練習</h2>
           </div>
           <div class="game-grid">
-            <article class="game-card" id="focus-challenge">
+            <article class="game-card" id="focus-challenge" data-game-ages="upper junior general" data-game-level="challenge">
               <span class="game-badge playable">可遊玩</span>
+              <div class="game-meta-tags"><span>國小高年級以上</span><span>挑戰</span></div>
               <h3>專注力挑戰</h3>
               <p>在限時符號任務中練習辨識目標、避開干擾，觀察自己的專注節奏。</p>
-              <ul>
-                <li>短時間任務</li>
-                <li>即時回饋</li>
-                <li>專注訓練</li>
-              </ul>
               <a class="tool-button" href="focus-challenge.html">開始挑戰</a>
             </article>
 
-            <article class="game-card">
+            <article class="game-card" data-game-ages="middle upper junior general" data-game-level="basic">
               <span class="game-badge playable">可遊玩</span>
+              <div class="game-meta-tags"><span>國小中年級以上</span><span>基礎</span></div>
               <h3>筆記整理實驗室</h3>
               <p>把零散資訊分類成核心概念、例子、疑問與下一步行動，練習建立清楚的知識架構。</p>
-              <ul>
-                <li>分類整理</li>
-                <li>概念判斷</li>
-                <li>學習策略</li>
-              </ul>
               <a class="tool-button" href="note-lab.html">開始整理</a>
             </article>
 
-            <article class="game-card">
+            <article class="game-card" data-game-ages="lower middle upper general" data-game-level="starter">
               <span class="game-badge idea">可新增</span>
+              <div class="game-meta-tags"><span>國小以上</span><span>入門</span></div>
               <h3>每日挑戰</h3>
               <p>每天混合數學與國語文短題目，用少量題目維持練習節奏。</p>
-              <ul>
-                <li>每日任務</li>
-                <li>混合練習</li>
-                <li>學習紀錄</li>
-              </ul>
               <button class="tool-button" type="button" data-login-modal>選擇遊戲</button>
             </article>
           </div>
         </section>
+          </div>
+        </div>
       </main>
 
       <footer class="site-footer">
@@ -185,6 +245,7 @@
         </div>
       </div>
     </div>
+    <script src="../js/games-filter.js"></script>
     <script src="../js/main.js"></script>
   </body>
 </html>

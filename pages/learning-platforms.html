@@ -40,66 +40,147 @@
         <section class="resource-hero">
           <p class="section-kicker">Open Learning</p>
           <h1>開放課程與學習平台</h1>
-          <p>整理幾個台灣常用的開放課程與線上學習網站，適合用來補強學科、探索大學課程或安排自主學習。</p>
+          <p>整理台灣常用平台，也補上近期值得關注的國際線上課程入口，方便依照學習目的挑選合適資源。</p>
         </section>
 
-        <section class="platform-grid" aria-label="台灣學習網站">
-          <article class="platform-card">
+        <div class="platform-layout">
+          <aside class="platform-filter-panel" aria-label="學習平台分類">
+            <p>分類篩選</p>
+            <div class="platform-filter-buttons">
+              <button class="platform-filter-button active" type="button" data-platform-filter="all" aria-pressed="true">全部平台</button>
+              <button class="platform-filter-button" type="button" data-platform-filter="taiwan" aria-pressed="false">台灣平台</button>
+              <button class="platform-filter-button" type="button" data-platform-filter="open-course" aria-pressed="false">開放課程</button>
+              <button class="platform-filter-button" type="button" data-platform-filter="mooc" aria-pressed="false">MOOC / 線上課程</button>
+              <button class="platform-filter-button" type="button" data-platform-filter="school" aria-pressed="false">中小學學習</button>
+              <button class="platform-filter-button" type="button" data-platform-filter="career" aria-pressed="false">科技與職涯</button>
+              <button class="platform-filter-button" type="button" data-platform-filter="language" aria-pressed="false">語言與人文</button>
+            </div>
+          </aside>
+
+          <div class="platform-content">
+        <section class="platform-section" aria-labelledby="taiwan-platforms" data-platform-section>
+          <div class="platform-section-heading">
+            <p class="section-kicker">Taiwan</p>
+            <h2 id="taiwan-platforms">台灣學習網站</h2>
+          </div>
+          <div class="platform-grid" aria-label="台灣學習網站">
+          <article class="platform-card" data-platform-categories="taiwan open-course">
             <span class="resource-type">大學開放課程</span>
             <h2>臺大開放式課程</h2>
             <p>收錄臺灣大學各學系開放課程，適合想接觸大學基礎課、通識課與專業知識的自學者。</p>
             <a class="primary-button small" href="https://www.dlc.ntu.edu.tw/ntu-ocw/" target="_blank" rel="noopener">前往網站 <span aria-hidden="true">→</span></a>
           </article>
 
-          <article class="platform-card">
+          <article class="platform-card" data-platform-categories="taiwan open-course">
             <span class="resource-type">大學開放課程</span>
             <h2>清華大學開放式課程</h2>
             <p>提供工程、自然科學、人文社會等課程，適合想用大學課程建立系統知識的人。</p>
             <a class="primary-button small" href="https://ocw.nthu.edu.tw/ocw/" target="_blank" rel="noopener">前往網站 <span aria-hidden="true">→</span></a>
           </article>
 
-          <article class="platform-card">
+          <article class="platform-card" data-platform-categories="taiwan mooc">
             <span class="resource-type">MOOC 平台</span>
             <h2>ewant 育網</h2>
             <p>台灣大型磨課師平台，整合多所大學與機構課程，適合找主題式線上課程與跨校資源。</p>
             <a class="primary-button small" href="https://www.ewant.org/" target="_blank" rel="noopener">前往網站 <span aria-hidden="true">→</span></a>
           </article>
 
-          <article class="platform-card">
+          <article class="platform-card" data-platform-categories="taiwan mooc">
             <span class="resource-type">MOOC 平台</span>
             <h2>中華開放教育平台</h2>
             <p>依學門整理開放課程，包含自然科學、資訊工程、商學管理、人文藝術等類別。</p>
             <a class="primary-button small" href="https://www.openedu.tw/" target="_blank" rel="noopener">前往網站 <span aria-hidden="true">→</span></a>
           </article>
 
-          <article class="platform-card">
+          <article class="platform-card" data-platform-categories="taiwan school">
             <span class="resource-type">中小學學習</span>
             <h2>均一教育平台</h2>
             <p>提供國小到高中學科影片、題目與個人化練習，適合補強基礎與每天固定練習。</p>
             <a class="primary-button small" href="https://www.junyiacademy.org/" target="_blank" rel="noopener">前往網站 <span aria-hidden="true">→</span></a>
           </article>
 
-          <article class="platform-card">
+          <article class="platform-card" data-platform-categories="taiwan school">
             <span class="resource-type">中小學學習</span>
             <h2>因材網</h2>
             <p>教育部數位學習平台，適合搭配學校課程、診斷學習狀況與進行適性化練習。</p>
             <a class="primary-button small" href="https://adl.edu.tw/" target="_blank" rel="noopener">前往網站 <span aria-hidden="true">→</span></a>
           </article>
 
-          <article class="platform-card">
+          <article class="platform-card" data-platform-categories="taiwan school">
             <span class="resource-type">教學資源</span>
             <h2>學習吧</h2>
             <p>提供中小學各學科與素養課程資源，也有閱讀、語音與課堂互動等教學工具。</p>
             <a class="primary-button small" href="https://www.learnmode.net/" target="_blank" rel="noopener">前往網站 <span aria-hidden="true">→</span></a>
           </article>
 
-          <article class="platform-card">
+          <article class="platform-card" data-platform-categories="taiwan school">
             <span class="resource-type">遊戲化學習</span>
             <h2>PaGamO 素養學習</h2>
             <p>以遊戲機制帶動練習與任務挑戰，適合想用較有互動感的方式練習學科與素養題。</p>
             <a class="primary-button small" href="https://school.pagamo.org/" target="_blank" rel="noopener">前往網站 <span aria-hidden="true">→</span></a>
           </article>
+
+          <article class="platform-card" data-platform-categories="taiwan career mooc">
+            <span class="resource-type">數位教育</span>
+            <h2>Google 數位人才探索計畫</h2>
+            <p>Google 台灣的數位教育活動入口，適合想關注數位技能、科技素養與相關培力機會的學習者。</p>
+            <a class="primary-button small" href="https://growonairtw.withgoogle.com/events/digitaleducation" target="_blank" rel="noopener">前往網站 <span aria-hidden="true">→</span></a>
+          </article>
+          </div>
         </section>
+
+        <section class="platform-section" aria-labelledby="global-learning" data-platform-section>
+          <div class="platform-section-heading">
+            <p class="section-kicker">Global Picks</p>
+            <h2 id="global-learning">國際線上課程推薦</h2>
+            <p>參考 Skyline 近期整理的公開線上學習機會，補入適合自學、跨域探索與職涯延伸的入口。</p>
+          </div>
+          <div class="platform-grid" aria-label="國際線上課程推薦">
+            <article class="platform-card" data-platform-categories="mooc career">
+              <span class="resource-type">公共衛生</span>
+              <h2>OpenWHO</h2>
+              <p>世界衛生組織的線上學習平台，適合想接觸公共衛生、疫情應對與健康議題的學習者。</p>
+              <a class="primary-button small" href="https://openwho.org/" target="_blank" rel="noopener">前往網站 <span aria-hidden="true">→</span></a>
+            </article>
+
+            <article class="platform-card" data-platform-categories="open-course">
+              <span class="resource-type">大學開放課程</span>
+              <h2>MIT OpenCourseWare</h2>
+              <p>免費瀏覽 MIT 課程教材與講義，適合想深入理工、商管、人文等大學級主題的人。</p>
+              <a class="primary-button small" href="https://ocw.mit.edu/" target="_blank" rel="noopener">前往網站 <span aria-hidden="true">→</span></a>
+            </article>
+
+            <article class="platform-card" data-platform-categories="mooc career">
+              <span class="resource-type">國際組織課程</span>
+              <h2>World Bank Group on edX</h2>
+              <p>涵蓋國際發展、政策、經濟與永續議題，適合對全球治理和公共議題有興趣的學生。</p>
+              <a class="primary-button small" href="https://www.edx.org/school/wbgx" target="_blank" rel="noopener">前往網站 <span aria-hidden="true">→</span></a>
+            </article>
+
+            <article class="platform-card" data-platform-categories="mooc career">
+              <span class="resource-type">科技技能</span>
+              <h2>Microsoft on edX</h2>
+              <p>可探索雲端、AI、資料科學與資安主題，適合作為科技技能入門與職涯補強。</p>
+              <a class="primary-button small" href="https://www.edx.org/school/microsoft" target="_blank" rel="noopener">前往網站 <span aria-hidden="true">→</span></a>
+            </article>
+
+            <article class="platform-card" data-platform-categories="mooc career">
+              <span class="resource-type">AI 入門</span>
+              <h2>Foundations of Generative AI</h2>
+              <p>由 Georgia Tech 提供的生成式 AI 基礎課程，適合想建立現代 AI 核心理解的初學者。</p>
+              <a class="primary-button small" href="https://www.edx.org/learn/artificial-intelligence/the-georgia-institute-of-technology-introduction-to-genai" target="_blank" rel="noopener">前往網站 <span aria-hidden="true">→</span></a>
+            </article>
+
+            <article class="platform-card" data-platform-categories="mooc language">
+              <span class="resource-type">語言學習</span>
+              <h2>OpenLearn 法語入門</h2>
+              <p>適合剛開始接觸法語的人，從基礎詞彙與簡單會話切入，作為第二外語起點。</p>
+              <a class="primary-button small" href="https://www.open.edu/openlearn/mod/oucontent/view.php?id=126010&amp;section=2" target="_blank" rel="noopener">前往網站 <span aria-hidden="true">→</span></a>
+            </article>
+          </div>
+        </section>
+          </div>
+        </div>
       </main>
 
       <footer class="site-footer">
@@ -128,6 +209,7 @@
         </div>
       </div>
     </div>
+    <script src="../js/platform-filter.js"></script>
     <script src="../js/main.js"></script>
   </body>
 </html>

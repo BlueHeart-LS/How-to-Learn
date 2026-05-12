@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preload" as="image" href="../images/mouse_cursor.png" />
+    <link rel="preload" as="image" href="../images/mouse_touch_cursor.png" />
+    <style>
+      html, body, body * { cursor: url("../images/mouse_cursor.png") 4 4, auto !important; }
+      a, button, input, select, textarea, [role="button"] { cursor: url("../images/mouse_cursor.png") 4 4, pointer !important; }
+      html:active, body:active, body:active *, a:active, button:active, input:active, select:active, textarea:active, [role="button"]:active { cursor: url("../images/mouse_touch_cursor.png") 4 4, pointer !important; }
+    </style>
+    <title>國小英文單字遊戲｜如何學 How to Learn</title>
+    <link rel="icon" type="image/png" href="../images/icon_logo.png" />
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="brand" href="../index.html" aria-label="如何學首頁"><img src="../images/LOGO.png" alt="如何學 How to Learn" /></a>
+        <nav class="main-nav" aria-label="主要導覽">
+          <a href="start.html">如何開始</a><a href="explore.html">自我探索</a><a href="methods.html">學習方法</a><a class="active" href="games.html">遊戲練習</a><a href="resources.html">資源專區</a><a href="about.html">關於我們</a>
+        </nav>
+        <div class="header-actions"><button class="icon-button" type="button" aria-label="搜尋"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m16.5 16.5 4 4"></path></svg></button><button class="login-button" type="button" data-login-modal>會員登入</button></div>
+      </header>
+      <main>
+        <section class="word-game-hero vocab-game-hero"><p class="section-kicker">English Game</p><h1>國小英文單字遊戲</h1><p>看英文選中文，從生活高頻字出發，練習快速辨識基本單字。</p></section>
+        <section class="word-game-shell vocab-game-shell" data-vocab-game data-vocab-mode="elementary">
+          <div class="word-game-status vocab-game-status"><div><span>目前進度</span><strong data-vocab-progress>0 / 5</strong></div><div><span>答對題數</span><strong data-vocab-score>0</strong></div><div><span>作答時間</span><strong data-vocab-time>0:00</strong></div></div>
+          <div class="word-game-intro" data-vocab-intro>
+            <h2>選擇題數開始</h2><p data-vocab-selection></p>
+            <div class="vocab-setting-row" aria-label="選擇題數"><button class="vocab-chip active" type="button" data-vocab-count="5">5 題</button><button class="vocab-chip" type="button" data-vocab-count="10">10 題</button><button class="vocab-chip" type="button" data-vocab-count="20">20 題</button></div>
+            <button class="primary-button" type="button" data-vocab-start>開始遊戲</button>
+          </div>
+          <div class="word-question-panel" data-vocab-play hidden><p class="word-question-type">英翻中</p><h2 class="vocab-word" data-vocab-question></h2><div class="word-options" data-vocab-options></div><p class="word-feedback" data-vocab-feedback aria-live="polite"></p><p class="word-explanation" data-vocab-answer></p></div>
+          <div class="word-game-result" data-vocab-result hidden><p class="section-kicker">Result</p><h2>練習完成</h2><p data-vocab-summary></p><div class="result-action-row"><button class="primary-button" type="button" data-vocab-replay>再玩一次</button><button class="secondary-button" type="button" data-vocab-restart>重選題數</button></div></div>
+        </section>
+      </main>
+      <footer class="site-footer"><a class="brand footer-brand" href="../index.html"><img src="../images/LOGO.png" alt="如何學 How to Learn" /></a><nav aria-label="頁尾導覽"><a href="start.html">如何開始</a><a href="explore.html">自我探索</a><a href="methods.html">學習方法</a><a href="games.html">遊戲練習</a><a href="resources.html">資源專區</a><a href="about.html">關於我們</a></nav><div class="socials" aria-label="社群連結"><a href="#" aria-label="Instagram"><img src="../images/icon_instagram.png" alt="" /></a><a href="#" aria-label="Facebook"><img src="../images/icon_facebook.png" alt="" /></a><a href="#" aria-label="YouTube"><img src="../images/icon_youtube.png" alt="" /></a><a href="#" aria-label="Email"><img src="../images/icon_email.png" alt="" /></a></div></footer>
+      <div class="modal-overlay" data-modal-overlay hidden><div class="coming-soon-modal" role="dialog" aria-modal="true" aria-labelledby="coming-soon-title"><h2 id="coming-soon-title">開發中，敬請期待</h2></div></div>
+    </div>
+    <script src="../js/english-vocab-data.js"></script><script src="../js/english-vocab-game.js"></script><script src="../js/main.js"></script>
+  </body>
+</html>
