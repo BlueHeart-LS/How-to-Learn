@@ -1,0 +1,234 @@
+﻿.article-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 28px;
+  padding: 62px 0 46px;
+}
+
+.article-main,
+.article-sidebar {
+  border: 1px solid rgba(234, 223, 208, 0.72);
+  background: var(--card);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+}
+
+.article-main {
+  padding: 30px;
+  border-radius: 22px;
+}
+
+.article-cover {
+  min-height: 360px;
+  margin-bottom: 30px;
+  border: 1px solid #f2e5d3;
+  border-radius: 18px;
+  background-color: #fff0dc;
+}
+
+.article-cover.people {
+  background-image:
+    radial-gradient(circle at 30% 35%, rgba(255, 142, 179, 0.28) 0 28px, transparent 29px),
+    radial-gradient(circle at 64% 48%, rgba(124, 203, 138, 0.24) 0 45px, transparent 46px),
+    linear-gradient(135deg, rgba(255, 177, 102, 0.28), rgba(125, 183, 255, 0.15));
+}
+
+.article-cover.calendar {
+  background-image:
+    linear-gradient(#8d7466 0 0),
+    repeating-linear-gradient(90deg, transparent 0 42px, rgba(141, 116, 102, 0.28) 42px 44px),
+    repeating-linear-gradient(0deg, transparent 0 34px, rgba(141, 116, 102, 0.24) 34px 36px),
+    linear-gradient(135deg, #fff2dc, #e9f7e6);
+  background-size: 140px 2px, 230px 146px, 230px 146px, auto;
+  background-position: 90px 80px, center, center, center;
+  background-repeat: no-repeat;
+}
+
+.article-cover.tomato {
+  background-image:
+    radial-gradient(circle at 48% 48%, #ffb08a 0 74px, transparent 75px),
+    radial-gradient(circle at 45% 25%, #6fb56e 0 20px, transparent 21px),
+    linear-gradient(135deg, #fff1da, #fff);
+}
+
+.article-main h1 {
+  margin: 0 0 22px;
+  color: #5d4b45;
+  font-size: clamp(34px, 5vw, 52px);
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+.article-body {
+  color: #6f5e58;
+  font-size: 18px;
+  line-height: 2;
+}
+
+.article-body p {
+  margin: 0 0 22px;
+}
+
+.article-sidebar {
+  position: sticky;
+  top: 24px;
+  align-self: start;
+  padding: 28px;
+  border-radius: 18px;
+}
+
+.article-sidebar h2 {
+  margin: 0 0 22px;
+  color: #5d4b45;
+  font-size: 22px;
+  font-weight: 400;
+}
+
+.article-sidebar dl,
+.article-sidebar dd {
+  margin: 0;
+}
+
+.article-sidebar dl {
+  display: grid;
+  gap: 18px;
+  margin-bottom: 26px;
+}
+
+.article-sidebar dt {
+  margin-bottom: 6px;
+  color: #a18a7f;
+  font-size: 13px;
+}
+
+.article-sidebar dd {
+  color: #5f504a;
+  line-height: 1.7;
+}
+
+.article-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.article-tags span {
+  padding: 5px 11px;
+  color: #806d64;
+  border: 1px solid #eadfd0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.66);
+  font-size: 13px;
+}
+
+.admin-hero {
+  padding: 68px 0 28px;
+  text-align: center;
+}
+
+.admin-hero h1 {
+  margin: 0 0 18px;
+  color: #5d4b45;
+  font-size: clamp(42px, 6vw, 68px);
+  font-weight: 400;
+}
+
+.admin-hero p:not(.section-kicker) {
+  max-width: 680px;
+  margin: 0 auto;
+  color: #7b665e;
+  font-size: 18px;
+  line-height: 1.9;
+}
+
+.admin-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 24px;
+  padding: 14px 0 48px;
+}
+
+.admin-list,
+.admin-form {
+  border: 1px solid rgba(234, 223, 208, 0.72);
+  border-radius: 18px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+}
+
+.admin-list {
+  align-self: start;
+  padding: 24px;
+}
+
+.admin-list h2 {
+  margin: 0 0 16px;
+  font-size: 22px;
+  font-weight: 400;
+}
+
+.admin-list [data-admin-list] {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.admin-list [data-admin-list] button {
+  padding: 12px;
+  color: #6f5e58;
+  border: 1px solid #eadfd0;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.64);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.admin-form {
+  display: grid;
+  gap: 18px;
+  padding: 28px;
+}
+
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.admin-form label {
+  display: grid;
+  gap: 8px;
+  color: #6f5e58;
+}
+
+.admin-form input,
+.admin-form select,
+.admin-form textarea {
+  width: 100%;
+  padding: 13px 15px;
+  color: #5d4b45;
+  border: 1px solid #eadfd0;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.72);
+  font-family: inherit;
+  font-size: 15px;
+}
+
+.admin-form textarea {
+  resize: vertical;
+}
+
+.admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.admin-note {
+  margin: 0;
+  color: #9a867c;
+  font-size: 14px;
+}
+

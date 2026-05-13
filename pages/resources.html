@@ -10,7 +10,10 @@
     </style>
     <title>資源專區｜如何學 How to Learn</title>
     <link rel="icon" type="image/png" href="../images/icon_logo.png" />
-    <link rel="stylesheet" href="../css/styles.css" />
+    
+    <link rel="preload" href="../fonts/jf-openhuninn-2.1.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="preload" href="../fonts/Iansui-Regular.ttf" as="font" type="font/ttf" crossorigin />
+<link rel="stylesheet" href="../css/styles.css" />
   </head>
   <body>
     <div class="page-shell">
@@ -37,65 +40,136 @@
       </header>
 
       <main>
-        <section class="resource-hero">
-          <p class="section-kicker">Resource Hub</p>
-          <h1>資源專區</h1>
-          <p>整理學習路上會用到的文章、工具、練習素材與外部資源，讓探索更有方向。</p>
-        </section>
-
-        <section class="resource-search" aria-label="資源篩選">
-          <input type="search" placeholder="搜尋資源、工具或主題" aria-label="搜尋資源" />
-          <div class="resource-filters">
-            <button type="button">全部</button>
-            <button type="button">內部資源</button>
-            <button type="button">外部工具</button>
-            <button type="button">下載素材</button>
+        <section class="resource-hub-hero">
+          <div class="resource-hub-copy">
+            <p class="section-kicker">Resource Hub</p>
+            <h1>資源專區</h1>
+            <p>整理學習路上會用到的文章、工具、練習素材與外部資源，讓老師、家長與自學生都能快速找到合適的支持。</p>
+          </div>
+          <div class="resource-hero-visual" aria-hidden="true">
+            <div class="resource-box">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <div class="resource-lamp"></div>
           </div>
         </section>
 
-        <section class="resource-grid" aria-label="資源分類">
+        <section class="resource-finder-panel" aria-label="資源搜尋與建議">
+          <div class="resource-search-row">
+            <input type="search" placeholder="搜尋資源、工具或主題，例如：專注力、閱讀、時間管理" aria-label="搜尋資源" />
+            <button class="icon-button" type="button" aria-label="搜尋資源">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m16.5 16.5 4 4"></path></svg>
+            </button>
+          </div>
+          <div class="resource-hot-row">
+            <span>熱門搜尋：</span>
+            <a href="#featured-resources">專注力</a>
+            <a href="#featured-resources">閱讀理解</a>
+            <a href="#featured-resources">學習計畫</a>
+            <a href="#question-bank-title">題庫</a>
+            <a href="learning-platforms.html">開放課程</a>
+          </div>
+          <aside class="resource-suggestion-box">
+            <p>找不到想要的資源？</p>
+            <button class="tool-button" type="button" data-login-modal>提出建議</button>
+          </aside>
+        </section>
 
-           <article class="resource-card">
-            <span class="resource-type">素材庫</span>
-            <h2>學習計畫模板</h2>
-            <p>可整理週計畫表、閱讀紀錄表、複習追蹤表等學習輔助素材。</p>
-            <button class="tool-button" type="button">準備中</button>
-          </article>
+        <section class="resource-category-section" aria-labelledby="resource-category-title">
+          <div class="resource-section-heading">
+            <p class="section-kicker">Resource Types</p>
+            <h2 id="resource-category-title">你可以找到什麼？</h2>
+          </div>
+          <div class="resource-category-grid">
+            <article class="resource-category-card soft-green">
+              <span class="resource-type">模板</span>
+              <h3>學習模板</h3>
+              <p>計畫表、追蹤表、評量表等實用模板。</p>
+              <button class="read-more" type="button" data-login-modal>準備中 →</button>
+            </article>
 
-          <article class="resource-card">
-            <span class="resource-type">素材庫</span>
-            <h2>主題練習包</h2>
-            <p>依照不同學科或能力，整理可下載的練習圖檔與字卡素材。</p>
-            <a class="tool-button" href="practice-assets.html" target="_blank" rel="noopener">領取素材</a>
-          </article>
+            <article class="resource-category-card soft-pink">
+              <span class="resource-type">練習素材</span>
+              <h3>主題練習包</h3>
+              <p>圖卡、字卡、學習單與練習題素材。</p>
+              <a class="read-more" href="practice-assets.html" target="_blank" rel="noopener">領取素材 →</a>
+            </article>
 
-          <article class="resource-card">
-            <span class="resource-type">外部工具</span>
-            <h2>筆記與整理工具</h2>
-            <p>可放 Notion、Google Keep、心智圖工具或其他知識整理服務。</p>
-            <button class="tool-button" type="button">待新增</button>
-          </article>
+            <article class="resource-category-card soft-blue">
+              <span class="resource-type">工具</span>
+              <h3>學習工具</h3>
+              <p>筆記、整理、計時與專注工具入口。</p>
+              <button class="read-more" type="button" data-login-modal>待新增 →</button>
+            </article>
 
-          <article class="resource-card">
-            <span class="resource-type">外部資源</span>
-            <h2>開放課程與學習平台</h2>
-            <p>可整理開放式課程、語言學習網站、程式學習平台等推薦連結。</p>
-            <a class="tool-button" href="learning-platforms.html">開始學習</a>
-          </article>
+            <article class="resource-category-card soft-purple">
+              <span class="resource-type">外部資源</span>
+              <h3>開放課程</h3>
+              <p>優質網站、線上課程與學習平台整理。</p>
+              <a class="read-more" href="learning-platforms.html">開始學習 →</a>
+            </article>
 
-          <article class="resource-card">
-            <span class="resource-type">育兒資源</span>
-            <h2>兒童友善餐廳地圖</h2>
-            <p>推薦可以供兒童與家長共同探索的友善餐廳地圖。</p>
-            <button class="tool-button" type="button">準備中</button>
-          </article>
+            <article class="resource-category-card soft-yellow">
+              <span class="resource-type">題庫</span>
+              <h3>題庫區</h3>
+              <p>公開題庫、競賽題與延伸練習入口。</p>
+              <a class="read-more" href="#question-bank-title">前往題庫 →</a>
+            </article>
+          </div>
+        </section>
+
+        <section class="resource-quick-filter" aria-label="使用情境快速篩選">
+          <div>
+            <h2>依使用情境快速篩選</h2>
+            <p>幫助你更快找到適合的資源。</p>
+          </div>
+          <div class="resource-filter-chips">
+            <a href="practice-assets.html">幼兒與國小</a>
+            <a href="#question-bank-title">老師備課</a>
+            <a href="#question-bank-title">家長陪練</a>
+            <a href="learning-platforms.html">自學生</a>
+            <a href="learning-platforms.html">外部課程</a>
+          </div>
+        </section>
+
+        <section class="resource-featured-section" id="featured-resources" aria-labelledby="featured-resources-title">
+          <div class="resource-section-heading row-heading">
+            <div>
+              <p class="section-kicker">Featured</p>
+              <h2 id="featured-resources-title">精選推薦</h2>
+              <p>先從最常用、最容易上手的資源開始。</p>
+            </div>
+            <a class="read-more" href="practice-assets.html">查看全部 →</a>
+          </div>
+          <div class="resource-featured-grid">
+            <article class="resource-feature-card">
+              <span class="resource-type">下載素材</span>
+              <h3>主題練習包</h3>
+              <p>依年齡和學科篩選可下載圖卡、字卡與主題表。</p>
+              <a class="tool-button" href="practice-assets.html" target="_blank" rel="noopener">領取素材</a>
+            </article>
+            <article class="resource-feature-card">
+              <span class="resource-type">外部資源</span>
+              <h3>開放課程與學習平台</h3>
+              <p>整理台灣平台、國際課程和科技職涯學習入口。</p>
+              <a class="tool-button" href="learning-platforms.html">開始學習</a>
+            </article>
+            <article class="resource-feature-card">
+              <span class="resource-type">題庫</span>
+              <h3>公開題庫入口</h3>
+              <p>適合老師備課、家長陪練或學生自主補充練習。</p>
+              <a class="tool-button" href="#question-bank-title">前往題庫</a>
+            </article>
+          </div>
         </section>
 
         <section class="question-bank-section" aria-labelledby="question-bank-title">
           <div class="question-bank-heading">
             <p class="section-kicker">Question Bank</p>
             <h2 id="question-bank-title">題庫區</h2>
-            <p>提供老師、家長與自學生可直接下載、改寫與延伸使用的題目素材，也整理公開外部題庫入口，方便快速找到合適資源。</p>
+            <p>整理公開外部題庫入口，方便老師、家長與自學生快速找到可延伸使用的練習材料。</p>
           </div>
 
           <div class="question-bank-grid">
@@ -121,6 +195,23 @@
             </article>
           </div>
         </section>
+
+        <section class="resource-external-section" aria-labelledby="external-resources-title">
+          <div class="resource-section-heading row-heading">
+            <div>
+              <p class="section-kicker">External</p>
+              <h2 id="external-resources-title">外部資源推薦</h2>
+              <p>適合作為延伸學習、補充課程與自主探索使用。</p>
+            </div>
+            <a class="read-more" href="learning-platforms.html">瀏覽更多外部資源 →</a>
+          </div>
+          <div class="external-resource-row">
+            <a href="learning-platforms.html">均一教育平台<span>中小學學習</span></a>
+            <a href="learning-platforms.html">PaGamO<span>遊戲化學習</span></a>
+            <a href="learning-platforms.html">臺大開放式課程<span>大學開放課程</span></a>
+            <a href="learning-platforms.html">Google 數位人才探索<span>科技與職涯</span></a>
+          </div>
+        </section>
       </main>
 
       <footer class="site-footer">
@@ -136,10 +227,10 @@
           <a href="about.html">關於我們</a>
         </nav>
         <div class="socials" aria-label="社群連結">
-          <a href="#" aria-label="Instagram"><img src="../images/icon_instagram.png" alt="" /></a>
-          <a href="#" aria-label="Facebook"><img src="../images/icon_facebook.png" alt="" /></a>
-          <a href="#" aria-label="YouTube"><img src="../images/icon_youtube.png" alt="" /></a>
-          <a href="#" aria-label="Email"><img src="../images/icon_email.png" alt="" /></a>
+          <a href="#" aria-label="Instagram"><img src="../images/icon_instagram.png" alt="" loading="lazy" decoding="async" /></a>
+          <a href="#" aria-label="Facebook"><img src="../images/icon_facebook.png" alt="" loading="lazy" decoding="async" /></a>
+          <a href="#" aria-label="YouTube"><img src="../images/icon_youtube.png" alt="" loading="lazy" decoding="async" /></a>
+          <a href="#" aria-label="Email"><img src="../images/icon_email.png" alt="" loading="lazy" decoding="async" /></a>
         </div>
       </footer>
 
@@ -149,6 +240,7 @@
         </div>
       </div>
     </div>
+    <script src="../js/resource-hub.js"></script>
     <script src="../js/main.js"></script>
   </body>
 </html>

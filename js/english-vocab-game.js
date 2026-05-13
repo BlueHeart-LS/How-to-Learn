@@ -173,7 +173,9 @@ function finishGame() {
   const elapsed = Date.now() - startedAt;
   const accuracy = activeQuestions.length ? Math.round((score / activeQuestions.length) * 100) : 0;
   const averageSeconds = activeQuestions.length ? Math.round((elapsed / 1000 / activeQuestions.length) * 10) / 10 : 0;
-  resultSummary.textContent = `本回共 ${activeQuestions.length} 題，答對 ${score} 題，正確率 ${accuracy}%。總作答時間 ${formatTime(elapsed)}，平均每題 ${averageSeconds} 秒。`;
+  const reward = score * 5 + (accuracy >= 80 ? 15 : 0);
+  window.HowToLearnRewards?.award(reward);
+  resultSummary.textContent = `本回共 ${activeQuestions.length} 題，答對 ${score} 題，正確率 ${accuracy}%。總作答時間 ${formatTime(elapsed)}，平均每題 ${averageSeconds} 秒。獲得 ${reward} 枚學習金幣。`;
 }
 
 function resetGame() {

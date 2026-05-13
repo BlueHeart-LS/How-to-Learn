@@ -1,0 +1,25 @@
+﻿body,
+body * {
+  cursor: url("../../images/mouse_cursor.png") 4 4, auto !important;
+}
+
+a,
+button,
+input,
+select,
+textarea,
+[role="button"] {
+  cursor: url("../../images/mouse_cursor.png") 4 4, pointer !important;
+}
+
+html:active,
+body:active,
+body:active *,
+a:active,
+button:active,
+input:active,
+select:active,
+textarea:active,
+[role="button"]:active {
+  cursor: url("../../images/mouse_touch_cursor.png") 4 4, pointer !important;
+}

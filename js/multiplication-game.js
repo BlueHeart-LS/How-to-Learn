@@ -127,7 +127,9 @@ function endGame() {
   resultHeading.textContent = "時間到";
   const total = score + wrong;
   const accuracy = total ? Math.round((score / total) * 100) : 0;
-  resultSummary.textContent = `你在 30 秒內完成 ${total} 題，答對 ${score} 題、答錯 ${wrong} 題，正確率 ${accuracy}%。最高連續答對紀錄是 ${bestStreak}。`;
+  const reward = score * 3 + (accuracy >= 80 ? 10 : 0);
+  window.HowToLearnRewards?.award(reward);
+  resultSummary.textContent = `你在 30 秒內完成 ${total} 題，答對 ${score} 題、答錯 ${wrong} 題，正確率 ${accuracy}%。最高連續答對紀錄是 ${bestStreak}。獲得 ${reward} 枚學習金幣。`;
 }
 
 function tick() {

@@ -2,6 +2,48 @@
 const modalOverlay = document.querySelector("[data-modal-overlay]");
 let modalTimer;
 
+const rewardStorageKey = "howToLearnGameRewards";
+
+function readRewardState() {
+  try {
+    return JSON.parse(localStorage.getItem(rewardStorageKey) || '{"coins":0,"totalEarned":0}');
+  } catch (error) {
+    return { coins: 0, totalEarned: 0 };
+  }
+}
+
+function writeRewardState(state) {
+  localStorage.setItem(rewardStorageKey, JSON.stringify(state));
+  window.dispatchEvent(new CustomEvent("howtolearn:rewards-updated", { detail: state }));
+}
+
+window.HowToLearnRewards = {
+  getState() {
+    return readRewardState();
+  },
+  getCoins() {
+    return readRewardState().coins || 0;
+  },
+  award(amount) {
+    const value = Math.max(0, Math.floor(Number(amount) || 0));
+    const state = readRewardState();
+    state.coins = (state.coins || 0) + value;
+    state.totalEarned = (state.totalEarned || 0) + value;
+    state.updatedAt = Date.now();
+    writeRewardState(state);
+    return state;
+  },
+  spend(amount) {
+    const value = Math.max(0, Math.floor(Number(amount) || 0));
+    const state = readRewardState();
+    if ((state.coins || 0) < value) return { ok: false, state };
+    state.coins -= value;
+    state.updatedAt = Date.now();
+    writeRewardState(state);
+    return { ok: true, state };
+  },
+};
+
 function openModal() {
   if (!modalOverlay) return;
   clearTimeout(modalTimer);

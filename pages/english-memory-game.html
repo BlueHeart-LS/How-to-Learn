@@ -3,14 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="preload" as="image" href="../images/mouse_cursor.png" />
-    <link rel="preload" as="image" href="../images/mouse_touch_cursor.png" />
     <style>
       html, body, body * { cursor: url("../images/mouse_cursor.png") 4 4, auto !important; }
       a, button, input, select, textarea, [role="button"] { cursor: url("../images/mouse_cursor.png") 4 4, pointer !important; }
       html:active, body:active, body:active *, a:active, button:active, input:active, select:active, textarea:active, [role="button"]:active { cursor: url("../images/mouse_touch_cursor.png") 4 4, pointer !important; }
     </style>
-    <title>乘除互換練習｜如何學 How to Learn</title>
+    <title>英文單字翻卡牌｜如何學 How to Learn</title>
     <link rel="icon" type="image/png" href="../images/icon_logo.png" />
     
     <link rel="preload" href="../fonts/jf-openhuninn-2.1.ttf" as="font" type="font/ttf" crossorigin />
@@ -23,6 +21,7 @@
         <a class="brand" href="../index.html" aria-label="如何學首頁">
           <img src="../images/LOGO.png" alt="如何學 How to Learn" />
         </a>
+
         <nav class="main-nav" aria-label="主要導覽">
           <a href="start.html">如何開始</a>
           <a href="explore.html">自我探索</a>
@@ -31,6 +30,7 @@
           <a href="resources.html">資源專區</a>
           <a href="about.html">關於我們</a>
         </nav>
+
         <div class="header-actions">
           <button class="icon-button" type="button" aria-label="搜尋">
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m16.5 16.5 4 4"></path></svg>
@@ -38,41 +38,57 @@
           <button class="login-button" type="button" data-login-modal>會員登入</button>
         </div>
       </header>
+
       <main>
-        <section class="multiplication-hero">
-          <p class="section-kicker">Math Game</p>
-          <h1>乘除互換練習</h1>
-          <p>看懂乘法算式後，立刻回答相對應的除法題。例：8 × 7 = 56，所以 56 ÷ 7 = 8。</p>
+        <section class="memory-hero">
+          <p class="section-kicker">English Memory Game</p>
+          <h1>英文單字翻卡牌</h1>
+          <p>翻開兩張卡，找出英文單字與中文意思的配對。用高中單字庫練習記憶、辨識與反應速度。</p>
         </section>
-        <section class="math-game-shell fact-family-shell" data-fact-family-game>
-          <div class="math-game-topbar">
-            <div><span>剩餘時間</span><strong data-game-time>30</strong></div>
-            <div><span>答對題數</span><strong data-game-score>0</strong></div>
-            <div><span>連續答對</span><strong data-game-streak>0</strong></div>
+
+        <section class="memory-game-shell" data-memory-game>
+          <div class="memory-status-row">
+            <div>
+              <span>已配對</span>
+              <strong data-memory-pairs>0/8</strong>
+            </div>
+            <div>
+              <span>翻牌次數</span>
+              <strong data-memory-moves>0</strong>
+            </div>
+            <div>
+              <span>使用時間</span>
+              <strong data-memory-time>0:00</strong>
+            </div>
           </div>
-          <div class="math-game-screen">
-            <div class="game-state-panel" data-game-intro>
-              <h2>準備開始</h2>
-              <p>每題會先給一條乘法關係，再請你完成互換後的除法算式。30 秒內盡量多答對。</p>
-              <button class="primary-button" type="button" data-game-start>開始遊戲 <span aria-hidden="true">→</span></button>
+
+          <div class="memory-intro" data-memory-intro>
+            <h2>選擇卡牌盤面</h2>
+            <p>4x4 適合暖身，8x8 會一次放入 32 組高中單字，挑戰更完整的記憶力。</p>
+            <div class="memory-size-picker" role="group" aria-label="卡牌盤面大小">
+              <button class="vocab-chip active" type="button" data-memory-size="4">4x4</button>
+              <button class="vocab-chip" type="button" data-memory-size="8">8x8</button>
             </div>
-            <div class="game-play-area" data-game-play hidden>
-              <div class="fact-family-reference" data-reference-equation></div>
-              <div class="equation-display" aria-live="polite" data-equation-display></div>
-              <div class="number-card-grid operation-number-grid fact-family-number-grid" aria-label="數字字卡" data-number-cards></div>
-              <p class="game-feedback" data-game-feedback></p>
-            </div>
-            <div class="game-state-panel" data-game-result hidden>
-              <h2 data-result-heading>時間到</h2>
-              <p data-result-summary></p>
-              <div class="result-action-row">
-                <button class="primary-button" type="button" data-game-restart>再玩一次 <span aria-hidden="true">→</span></button>
-                <a class="secondary-button" href="games.html">返回遊戲練習</a>
-              </div>
+            <button class="primary-button" type="button" data-memory-start>開始翻牌 <span aria-hidden="true">→</span></button>
+          </div>
+
+          <div class="memory-play-area" data-memory-play hidden>
+            <div class="memory-board" data-memory-board aria-label="英文單字翻卡牌盤面"></div>
+            <p class="memory-feedback" data-memory-feedback></p>
+          </div>
+
+          <div class="memory-result" data-memory-result hidden>
+            <h2>配對完成</h2>
+            <p data-memory-summary></p>
+            <div class="result-action-row">
+              <button class="primary-button" type="button" data-memory-restart>再玩一次 <span aria-hidden="true">→</span></button>
+              <button class="secondary-button" type="button" data-memory-reset>重選盤面</button>
+              <a class="secondary-button" href="games.html">返回遊戲練習</a>
             </div>
           </div>
         </section>
       </main>
+
       <footer class="site-footer">
         <a class="brand footer-brand" href="../index.html">
           <img src="../images/LOGO.png" alt="如何學 How to Learn" />
@@ -92,13 +108,15 @@
           <a href="#" aria-label="Email"><img src="../images/icon_email.png" alt="" loading="lazy" decoding="async" /></a>
         </div>
       </footer>
+
       <div class="modal-overlay" data-modal-overlay hidden>
         <div class="coming-soon-modal" role="dialog" aria-modal="true" aria-labelledby="coming-soon-title">
           <h2 id="coming-soon-title">開發中，敬請期待</h2>
         </div>
       </div>
     </div>
-    <script src="../js/fact-family-game.js"></script>
+    <script src="../js/english-vocab-data.js"></script>
+    <script src="../js/english-memory-game.js"></script>
     <script src="../js/main.js"></script>
   </body>
 </html>

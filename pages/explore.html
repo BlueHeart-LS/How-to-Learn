@@ -10,7 +10,10 @@
     </style>
     <title>自我探索｜如何學 How to Learn</title>
     <link rel="icon" type="image/png" href="../images/icon_logo.png" />
-    <link rel="stylesheet" href="../css/styles.css" />
+    
+    <link rel="preload" href="../fonts/jf-openhuninn-2.1.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="preload" href="../fonts/Iansui-Regular.ttf" as="font" type="font/ttf" crossorigin />
+<link rel="stylesheet" href="../css/styles.css" />
   </head>
   <body>
     <div class="page-shell">
@@ -37,63 +40,152 @@
       </header>
 
       <main>
-        <section class="explore-hero">
-          <div>
-            <p class="section-kicker">Explore Topics</p>
-            <h1>從感興趣的主題開始探索</h1>
-            <p>選一個最想改善的學習面向，慢慢累積方法、工具與練習。</p>
+        <section class="explore-hub-hero">
+          <div class="explore-hub-copy">
+            <p class="section-kicker">Self Discovery</p>
+            <h1>你想更了解自己嗎？從一個小問題開始探索</h1>
+            <p>不用一次找到標準答案。先選一個最接近現在狀態的入口，透過測驗、任務與小遊戲，慢慢看見自己的學習方式、節奏與可能方向。</p>
+            <div class="explore-hero-proof" aria-label="探索特色">
+              <span>適合學生自我探索</span>
+              <span>可依狀態選入口</span>
+              <span>完成後獲得建議</span>
+            </div>
           </div>
-          <img src="../images/explore.png" alt="自我探索地圖" />
+          <div class="explore-hero-visual" aria-hidden="true">
+            <img src="../images/explore.png" alt="" loading="lazy" decoding="async" />
+            <span class="explore-float-card card-question">我適合怎麼學？</span>
+            <span class="explore-float-card card-path">下一步從哪裡開始？</span>
+          </div>
         </section>
 
-        <section class="topic-grid" aria-label="互動探索分類">
-          <article class="topic-card explore-tool-card" id="learning-style">
-            <span class="mini-icon blue"><svg viewBox="0 0 48 48"><path d="M7 10c7-3 12-2 17 2v28c-5-4-10-5-17-2V10Zm17 2c5-4 10-5 17-2v28c-7-3-12-2-17 2V12Z"/></svg></span>
-            <h2>學習風格探索</h2>
-            <p>透過簡短測驗了解自己偏好的吸收方式，找到更適合的學習起點。</p>
-            <ul>
-              <li>自我測驗</li>
-              <li>學習偏好</li>
-              <li>方法推薦</li>
-            </ul>
-            <a class="tool-button" href="learning-style.html">開始探索</a>
-          </article>
+        <section class="explore-intent-section" aria-labelledby="explore-intent-title">
+          <div class="explore-section-heading">
+            <p class="section-kicker">Choose Your Path</p>
+            <h2 id="explore-intent-title">你現在想探索什麼？</h2>
+          </div>
 
-          <article class="topic-card explore-tool-card" id="time-rhythm">
-            <span class="mini-icon green"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="16"/><path d="M24 14v11l8 5"/></svg></span>
-            <h2>時間節奏規劃</h2>
-            <p>用互動式步驟安排一週學習節奏，讓讀書、練習與休息更平衡。</p>
-            <ul>
-              <li>週計畫</li>
-              <li>任務排序</li>
-              <li>休息安排</li>
-            </ul>
-            <a class="tool-button" href="time-rhythm.html">開始規劃</a>
-          </article>
+          <div class="explore-intent-grid">
+            <article class="explore-intent-card intent-blue" id="learning-style">
+              <div class="intent-card-top">
+                <span class="intent-label">學習探索</span>
+                <span class="intent-badge">熱門</span>
+              </div>
+              <h3>我想找到適合的學法</h3>
+              <p>透過簡短心理測驗了解自己的吸收方式，找到更好上手的學習起點。</p>
+              <ul>
+                <li>學習風格分析</li>
+                <li>適合的學習方法</li>
+                <li>推薦文章與工具</li>
+              </ul>
+              <a class="tool-button" href="learning-style.html">開始探索</a>
+            </article>
 
-          <article class="topic-card explore-tool-card" id="career-explore">
-            <span class="mini-icon green"><svg viewBox="0 0 48 48"><path d="M16 16v-4c0-3 2-5 5-5h6c3 0 5 2 5 5v4"/><rect x="8" y="16" width="32" height="24" rx="4"/><path d="M8 26h32M20 26v4h8v-4"/></svg></span>
-            <h2>職涯探索</h2>
-            <p>從興趣、能力與生活想像出發，認識不同職業路線與未來可能的學習方向。</p>
-            <ul>
-              <li>職業認識</li>
-              <li>能力盤點</li>
-              <li>未來想像</li>
-            </ul>
-            <a class="tool-button" href="career-explore.html">開始探索</a>
-          </article>
+            <article class="explore-intent-card intent-green" id="time-rhythm">
+              <div class="intent-card-top">
+                <span class="intent-label">狀態探索</span>
+                <span class="intent-badge">熱門</span>
+              </div>
+              <h3>我最近很混亂</h3>
+              <p>把時間、專注與休息拆成可調整的小步驟，協助你找回比較舒服的節奏。</p>
+              <ul>
+                <li>時間與專注力分析</li>
+                <li>任務排序與休息安排</li>
+                <li>改善狀態的小技巧</li>
+              </ul>
+              <a class="tool-button" href="time-rhythm.html">開始規劃</a>
+            </article>
 
-          <article class="topic-card explore-tool-card" id="random-explore">
-            <span class="mini-icon purple"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="16"/><path d="M8 24h32M24 8v32"/><circle cx="24" cy="24" r="5"/></svg></span>
-            <h2>隨機探索</h2>
-            <p>用扭蛋機抽一個未知主題，打開好奇心。</p>
-            <ul>
-              <li>扭蛋抽題</li>
-              <li>跨域入門</li>
-              <li>影片文章</li>
-            </ul>
-            <a class="tool-button" href="random-explore.html">開始探索</a>
-          </article>
+            <article class="explore-intent-card intent-purple" id="career-explore">
+              <div class="intent-card-top">
+                <span class="intent-label">職涯探索</span>
+              </div>
+              <h3>我不知道未來方向</h3>
+              <p>從興趣、能力與生活想像出發，認識不同職業路線與可能的學習方向。</p>
+              <ul>
+                <li>職業認識</li>
+                <li>能力與興趣盤點</li>
+                <li>延伸學習建議</li>
+              </ul>
+              <a class="tool-button" href="career-explore.html">開始探索</a>
+            </article>
+
+            <article class="explore-intent-card intent-yellow" id="random-explore">
+              <div class="intent-card-top">
+                <span class="intent-label">隨機探索</span>
+              </div>
+              <h3>我想打開新的可能性</h3>
+              <p>用扭蛋機抽出一個未知主題，從中文入門影片開始接觸不同領域。</p>
+              <ul>
+                <li>隨機主題卡片</li>
+                <li>有趣知識與延伸資源</li>
+                <li>激發想像的可能性</li>
+              </ul>
+              <a class="tool-button" href="random-explore.html">隨機探索</a>
+            </article>
+          </div>
+        </section>
+
+        <section class="explore-map-section" aria-labelledby="explore-map-title">
+          <div class="explore-section-heading">
+            <p class="section-kicker">Journey Map</p>
+            <h2 id="explore-map-title">探索旅程地圖</h2>
+          </div>
+          <div class="explore-map-track" aria-label="探索流程">
+            <article class="explore-map-node">
+              <span>01</span>
+              <h3>認識自己</h3>
+              <p>先描述自己的狀態，不急著下結論。</p>
+            </article>
+            <article class="explore-map-node">
+              <span>02</span>
+              <h3>了解問題</h3>
+              <p>看見卡住的原因，是方法、時間還是方向。</p>
+            </article>
+            <article class="explore-map-node">
+              <span>03</span>
+              <h3>找到方法</h3>
+              <p>把建議轉成可以嘗試的小任務。</p>
+            </article>
+            <article class="explore-map-node">
+              <span>04</span>
+              <h3>開始嘗試</h3>
+              <p>用練習、資源或遊戲累積一點進展。</p>
+            </article>
+            <article class="explore-map-node">
+              <span>05</span>
+              <h3>重新探索</h3>
+              <p>狀態改變時，再回來選新的入口。</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="explore-community-section" aria-labelledby="explore-community-title">
+          <div class="explore-section-heading">
+            <p class="section-kicker">What To Try</p>
+            <h2 id="explore-community-title">大家都在探索</h2>
+          </div>
+          <div class="explore-community-grid">
+            <article class="explore-story-card">
+              <strong>想知道自己怎麼讀比較有效</strong>
+              <p>可以從學習風格探索開始，先找到適合自己的輸入方式。</p>
+            </article>
+            <article class="explore-story-card">
+              <strong>讀書常常排了又做不到</strong>
+              <p>可以進入時間節奏規劃，把一週任務拆小、排進休息。</p>
+            </article>
+            <article class="explore-story-card">
+              <strong>對未來科系或工作沒方向</strong>
+              <p>可以試試職涯探索，從興趣與生活想像延伸可能路線。</p>
+            </article>
+            <article class="explore-story-card">
+              <strong>只是想看看新鮮的東西</strong>
+              <p>可以抽一顆隨機探索扭蛋，打開一個非預期的新主題。</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="explore-reminder-banner" aria-label="探索提醒">
+          <p>自我探索不是一次測驗決定你是誰，而是一次次更靠近自己的練習。選一張卡片開始就好。</p>
         </section>
       </main>
 
@@ -110,10 +202,10 @@
           <a href="about.html">關於我們</a>
         </nav>
         <div class="socials" aria-label="社群連結">
-          <a href="#" aria-label="Instagram"><img src="../images/icon_instagram.png" alt="" /></a>
-          <a href="#" aria-label="Facebook"><img src="../images/icon_facebook.png" alt="" /></a>
-          <a href="#" aria-label="YouTube"><img src="../images/icon_youtube.png" alt="" /></a>
-          <a href="#" aria-label="Email"><img src="../images/icon_email.png" alt="" /></a>
+          <a href="#" aria-label="Instagram"><img src="../images/icon_instagram.png" alt="" loading="lazy" decoding="async" /></a>
+          <a href="#" aria-label="Facebook"><img src="../images/icon_facebook.png" alt="" loading="lazy" decoding="async" /></a>
+          <a href="#" aria-label="YouTube"><img src="../images/icon_youtube.png" alt="" loading="lazy" decoding="async" /></a>
+          <a href="#" aria-label="Email"><img src="../images/icon_email.png" alt="" loading="lazy" decoding="async" /></a>
         </div>
       </footer>
 

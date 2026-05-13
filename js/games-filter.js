@@ -2,6 +2,15 @@ const ageFilterButtons = document.querySelectorAll("[data-game-age-filter]");
 const levelFilterButtons = document.querySelectorAll("[data-game-level-filter]");
 const gameCards = document.querySelectorAll("[data-game-ages]");
 const gameCategories = document.querySelectorAll("[data-game-category]");
+const gameRefreshButton = document.querySelector("[data-game-refresh]");
+const lobbyPetName = document.querySelector("[data-lobby-pet-name]");
+const lobbyRewardCoins = document.querySelector("[data-lobby-reward-coins]");
+const lobbyPetCreature = document.querySelector("[data-lobby-pet-creature]");
+const lobbyPetStats = {
+  hunger: document.querySelector("[data-lobby-pet-hunger]"),
+  happy: document.querySelector("[data-lobby-pet-happy]"),
+  energy: document.querySelector("[data-lobby-pet-energy]"),
+};
 
 let selectedGameAge = "all";
 let selectedGameLevel = "all";
@@ -46,3 +55,54 @@ levelFilterButtons.forEach((button) => {
 });
 
 filterGames();
+
+gameRefreshButton?.addEventListener("click", () => {
+  document.querySelectorAll(".game-grid").forEach((grid) => {
+    const cards = Array.from(grid.children);
+    cards
+      .sort(() => Math.random() - 0.5)
+      .forEach((card) => grid.append(card));
+  });
+  filterGames();
+});
+
+function clampStat(value) {
+  return Math.max(0, Math.min(100, Math.round(value)));
+}
+
+function readJson(key, fallback) {
+  try {
+    return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback));
+  } catch (error) {
+    return fallback;
+  }
+}
+
+function renderLobbyPet() {
+  const rewards = readJson("howToLearnGameRewards", { coins: 0 });
+  const savedPet = readJson("howToLearnStudyPet", {
+    name: "小學伴",
+    hunger: 80,
+    happy: 80,
+    energy: 80,
+    updatedAt: Date.now(),
+  });
+  const elapsedHours = Math.min(24, Math.max(0, (Date.now() - (savedPet.updatedAt || Date.now())) / 3600000));
+  const pet = {
+    name: savedPet.name || "小學伴",
+    hunger: clampStat((savedPet.hunger ?? 80) - elapsedHours * 3),
+    happy: clampStat((savedPet.happy ?? 80) - elapsedHours * 2),
+    energy: clampStat((savedPet.energy ?? 80) - elapsedHours * 1.5),
+  };
+  const average = (pet.hunger + pet.happy + pet.energy) / 3;
+
+  if (lobbyPetName) lobbyPetName.textContent = pet.name;
+  if (lobbyRewardCoins) lobbyRewardCoins.textContent = (rewards.coins || 0).toLocaleString("zh-Hant");
+  if (lobbyPetStats.hunger) lobbyPetStats.hunger.textContent = pet.hunger;
+  if (lobbyPetStats.happy) lobbyPetStats.happy.textContent = pet.happy;
+  if (lobbyPetStats.energy) lobbyPetStats.energy.textContent = pet.energy;
+  lobbyPetCreature?.classList.toggle("low", average < 50);
+}
+
+renderLobbyPet();
+window.addEventListener("storage", renderLobbyPet);
