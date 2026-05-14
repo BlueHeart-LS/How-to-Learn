@@ -46,6 +46,7 @@ let state = {
   upgrades: {},
   lastSavedAt: Date.now(),
 };
+let lastUpgradeSignature = "";
 
 function formatNumber(value) {
   return Math.floor(value).toLocaleString("zh-Hant");
@@ -109,11 +110,21 @@ function loadGame() {
 function renderUpgrades() {
   if (!upgradeList) return;
 
-  upgradeList.innerHTML = "";
-  upgrades.forEach((upgrade) => {
+  const upgradeRows = upgrades.map((upgrade) => {
     const cost = getUpgradeCost(upgrade);
     const count = getUpgradeCount(upgrade.id);
     const canBuy = state.money >= cost;
+    return { upgrade, cost, count, canBuy };
+  });
+  const signature = upgradeRows
+    .map(({ upgrade, cost, count, canBuy }) => `${upgrade.id}:${cost}:${count}:${canBuy ? 1 : 0}`)
+    .join("|");
+
+  if (signature === lastUpgradeSignature) return;
+  lastUpgradeSignature = signature;
+
+  upgradeList.innerHTML = "";
+  upgradeRows.forEach(({ upgrade, cost, count, canBuy }) => {
     const card = document.createElement("article");
     card.className = "idle-upgrade-card";
     card.innerHTML = `
@@ -154,6 +165,7 @@ function buyUpgrade(id) {
 
   state.money -= cost;
   state.upgrades[id] = getUpgradeCount(id) + 1;
+  lastUpgradeSignature = "";
   render();
   saveGame();
 }
@@ -173,6 +185,7 @@ function resetGame() {
   if (saveStatus) {
     saveStatus.textContent = "進度已重置";
   }
+  lastUpgradeSignature = "";
   render();
 }
 

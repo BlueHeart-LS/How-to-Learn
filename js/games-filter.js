@@ -2,6 +2,7 @@ const ageFilterButtons = document.querySelectorAll("[data-game-age-filter]");
 const levelFilterButtons = document.querySelectorAll("[data-game-level-filter]");
 const gameCards = document.querySelectorAll("[data-game-ages]");
 const gameCategories = document.querySelectorAll("[data-game-category]");
+const gameGrids = document.querySelectorAll(".game-grid");
 const gameRefreshButton = document.querySelector("[data-game-refresh]");
 const lobbyPetName = document.querySelector("[data-lobby-pet-name]");
 const lobbyRewardCoins = document.querySelector("[data-lobby-reward-coins]");
@@ -57,7 +58,7 @@ levelFilterButtons.forEach((button) => {
 filterGames();
 
 gameRefreshButton?.addEventListener("click", () => {
-  document.querySelectorAll(".game-grid").forEach((grid) => {
+  gameGrids.forEach((grid) => {
     const cards = Array.from(grid.children);
     cards
       .sort(() => Math.random() - 0.5)

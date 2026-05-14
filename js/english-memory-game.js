@@ -82,7 +82,7 @@ function renderStatus() {
 function renderBoard() {
   memoryBoard.style.setProperty("--memory-size", selectedSize);
   memoryBoard.classList.toggle("large-board", selectedSize === 8);
-  memoryBoard.innerHTML = "";
+  memoryBoard.replaceChildren();
 
   cards.forEach((card, index) => {
     const button = document.createElement("button");
@@ -92,13 +92,22 @@ function renderBoard() {
     button.setAttribute("aria-label", card.flipped || card.matched ? card.text : "未翻開的卡牌");
     if (card.flipped) button.classList.add("flipped");
     if (card.matched) button.classList.add("matched");
-    button.innerHTML = `
-      <span class="memory-card-back">?</span>
-      <span class="memory-card-front">
-        <small>${card.label}</small>
-        <strong>${card.text}</strong>
-      </span>
-    `;
+
+    const back = document.createElement("span");
+    back.className = "memory-card-back";
+    back.textContent = "?";
+
+    const front = document.createElement("span");
+    front.className = "memory-card-front";
+
+    const label = document.createElement("small");
+    label.textContent = card.label;
+
+    const text = document.createElement("strong");
+    text.textContent = card.text;
+
+    front.append(label, text);
+    button.append(back, front);
     memoryBoard.append(button);
   });
 }
