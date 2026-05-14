@@ -163,7 +163,7 @@ function startGame() {
 function buildNumberCards() {
   if (!numberCards) return;
 
-  numberCards.innerHTML = "";
+  numberCards.replaceChildren();
   [7, 8, 9, 4, 5, 6, 1, 2, 3, 0].forEach((number) => {
     const button = document.createElement("button");
     button.className = number === 0 ? "number-card number-card-zero" : "number-card";

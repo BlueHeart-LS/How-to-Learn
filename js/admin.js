@@ -44,7 +44,11 @@ const previewLink = document.querySelector("[data-preview-link]");
 const newButton = document.querySelector("[data-new-article]");
 
 function loadSavedArticles() {
-  return JSON.parse(localStorage.getItem("howToLearnArticles") || "{}");
+  try {
+    return JSON.parse(localStorage.getItem("howToLearnArticles") || "{}");
+  } catch (error) {
+    return {};
+  }
 }
 
 function getArticles() {
@@ -73,9 +77,14 @@ function fillForm(slug, article) {
 }
 
 function renderList() {
-  list.innerHTML = Object.entries(getArticles())
-    .map(([slug, article]) => `<button type="button" data-edit-slug="${slug}">${article.title}</button>`)
-    .join("");
+  list.replaceChildren();
+  Object.entries(getArticles()).forEach(([slug, article]) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.dataset.editSlug = slug;
+    button.textContent = article.title;
+    list.append(button);
+  });
 }
 
 list.addEventListener("click", (event) => {

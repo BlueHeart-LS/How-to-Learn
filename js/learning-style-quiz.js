@@ -113,7 +113,7 @@ function renderQuestion() {
   kicker.textContent = `Question ${String(currentQuestion + 1).padStart(2, "0")}`;
   questionText.textContent = question.text;
   progress.style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
-  optionsWrap.innerHTML = "";
+  optionsWrap.replaceChildren();
 
   question.options.forEach((option, index) => {
     const button = document.createElement("button");
@@ -130,7 +130,13 @@ function renderQuestion() {
 
   prevButton.disabled = currentQuestion === 0;
   nextButton.disabled = selected === null;
-  nextButton.innerHTML = currentQuestion === questions.length - 1 ? '查看結果 <span aria-hidden="true">→</span>' : '下一題 <span aria-hidden="true">→</span>';
+  nextButton.replaceChildren();
+  nextButton.append(currentQuestion === questions.length - 1 ? "查看結果 " : "下一題 ");
+
+  const arrow = document.createElement("span");
+  arrow.setAttribute("aria-hidden", "true");
+  arrow.textContent = "→";
+  nextButton.append(arrow);
 }
 
 function getResultType() {

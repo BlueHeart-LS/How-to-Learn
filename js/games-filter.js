@@ -39,6 +39,15 @@ function setActiveButton(buttons, activeButton) {
   });
 }
 
+function shuffleElements(items) {
+  const shuffled = [...items];
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+  }
+  return shuffled;
+}
+
 ageFilterButtons.forEach((button) => {
   button.addEventListener("click", () => {
     selectedGameAge = button.dataset.gameAgeFilter;
@@ -59,10 +68,7 @@ filterGames();
 
 gameRefreshButton?.addEventListener("click", () => {
   gameGrids.forEach((grid) => {
-    const cards = Array.from(grid.children);
-    cards
-      .sort(() => Math.random() - 0.5)
-      .forEach((card) => grid.append(card));
+    shuffleElements(grid.children).forEach((card) => grid.append(card));
   });
   filterGames();
 });

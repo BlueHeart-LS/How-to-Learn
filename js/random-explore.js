@@ -214,9 +214,22 @@ button?.addEventListener("click", () => {
   label.textContent = topic.title.slice(0, 2);
   title.textContent = topic.title;
   summary.textContent = topic.summary;
-  resources.innerHTML = topic.resources
-    .map((resource) => `<a class="resource-link-card" href="${resource.url}" target="_blank" rel="noopener">${resource.label}<span aria-hidden="true">→</span></a>`)
-    .join("");
+  resources.replaceChildren();
+  topic.resources.forEach((resource) => {
+    const link = document.createElement("a");
+    link.className = "resource-link-card";
+    link.href = resource.url;
+    link.target = "_blank";
+    link.rel = "noopener";
+    link.textContent = resource.label;
+
+    const icon = document.createElement("span");
+    icon.setAttribute("aria-hidden", "true");
+    icon.textContent = "↗";
+
+    link.append(icon);
+    resources.append(link);
+  });
   result.hidden = false;
   result.scrollIntoView({ behavior: "smooth", block: "start" });
 });

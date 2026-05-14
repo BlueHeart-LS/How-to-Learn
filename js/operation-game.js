@@ -190,7 +190,7 @@ function startGame() {
 function buildNumberCards() {
   if (!numberCards) return;
 
-  numberCards.innerHTML = "";
+  numberCards.replaceChildren();
   [7, 8, 9, 4, 5, 6, 1, 2, 3].forEach((number) => {
     const button = document.createElement("button");
     button.className = "number-card";
@@ -207,7 +207,7 @@ function buildNumberCards() {
 function buildOperationCards() {
   if (!operationCards) return;
 
-  operationCards.innerHTML = "";
+  operationCards.replaceChildren();
   operations.forEach((operation) => {
     const button = document.createElement("button");
     button.className = "number-card operation-card";

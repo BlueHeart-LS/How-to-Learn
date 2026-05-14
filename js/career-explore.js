@@ -166,12 +166,21 @@ function showResult() {
   topProfiles.forEach((profile) => {
     const card = document.createElement("article");
     card.className = "career-result-card";
-    card.innerHTML = `
-      <h3>${profile.title}</h3>
-      <p><strong>可能領域：</strong>${profile.fields}</p>
-      <p>${profile.advice}</p>
-      <p>${profile.start}</p>
-    `;
+    const heading = document.createElement("h3");
+    heading.textContent = profile.title;
+
+    const fields = document.createElement("p");
+    const fieldsLabel = document.createElement("strong");
+    fieldsLabel.textContent = "可能領域：";
+    fields.append(fieldsLabel, profile.fields);
+
+    const advice = document.createElement("p");
+    advice.textContent = profile.advice;
+
+    const start = document.createElement("p");
+    start.textContent = profile.start;
+
+    card.append(heading, fields, advice, start);
     resultGrid.appendChild(card);
   });
 

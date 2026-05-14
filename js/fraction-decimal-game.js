@@ -89,7 +89,12 @@ function randomItem(items) {
 }
 
 function shuffle(items) {
-  return [...items].sort(() => Math.random() - 0.5);
+  const shuffled = [...items];
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+  }
+  return shuffled;
 }
 
 function uniqueOptions(correct, formatter) {
@@ -214,7 +219,7 @@ function renderQuestion() {
   feedback.textContent = "";
   feedback.className = "word-feedback";
   explanation.textContent = "";
-  answerOptions.innerHTML = "";
+  answerOptions.replaceChildren();
 
   current.options.forEach((option) => {
     const button = document.createElement("button");

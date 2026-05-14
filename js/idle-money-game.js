@@ -123,21 +123,33 @@ function renderUpgrades() {
   if (signature === lastUpgradeSignature) return;
   lastUpgradeSignature = signature;
 
-  upgradeList.innerHTML = "";
+  upgradeList.replaceChildren();
   upgradeRows.forEach(({ upgrade, cost, count, canBuy }) => {
     const card = document.createElement("article");
     card.className = "idle-upgrade-card";
-    card.innerHTML = `
-      <div>
-        <span>Lv.${count}</span>
-        <h3>${upgrade.name}</h3>
-        <p>${upgrade.description}</p>
-        <small>每秒 +${upgrade.income}</small>
-      </div>
-      <button type="button" ${canBuy ? "" : "disabled"} data-buy-upgrade="${upgrade.id}">
-        ${formatNumber(cost)}
-      </button>
-    `;
+
+    const content = document.createElement("div");
+
+    const level = document.createElement("span");
+    level.textContent = `Lv.${count}`;
+
+    const title = document.createElement("h3");
+    title.textContent = upgrade.name;
+
+    const description = document.createElement("p");
+    description.textContent = upgrade.description;
+
+    const income = document.createElement("small");
+    income.textContent = `每秒 +${upgrade.income}`;
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.disabled = !canBuy;
+    button.dataset.buyUpgrade = upgrade.id;
+    button.textContent = formatNumber(cost);
+
+    content.append(level, title, description, income);
+    card.append(content, button);
     upgradeList.append(card);
   });
 }
