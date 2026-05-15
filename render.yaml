@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: how-to-learn
+    runtime: node
+    plan: starter
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: DATA_DIR
+        value: /opt/render/project/src/storage/data
+      - key: ARTICLE_IMAGES_DIR
+        value: /opt/render/project/src/storage/images/articles
+    disk:
+      name: how-to-learn-storage
+      mountPath: /opt/render/project/src/storage
+      sizeGB: 1

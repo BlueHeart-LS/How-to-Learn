@@ -5,8 +5,8 @@ const path = require("node:path");
 const crypto = require("node:crypto");
 
 const rootDir = __dirname;
-const dataDir = path.join(rootDir, "data");
-const articleImagesDir = path.join(rootDir, "images", "articles");
+const dataDir = process.env.DATA_DIR || path.join(rootDir, "data");
+const articleImagesDir = process.env.ARTICLE_IMAGES_DIR || path.join(rootDir, "images", "articles");
 const articlesFile = path.join(dataDir, "articles.json");
 const articleViewsFile = path.join(dataDir, "article-views.json");
 const usersFile = path.join(dataDir, "users.json");
@@ -507,11 +507,16 @@ async function handleArticlesApi(request, response, url) {
 
 function serveStaticFile(request, response, url) {
   const requestPath = decodeURIComponent(url.pathname === "/" ? "/index.html" : url.pathname);
-  const filePath = path.normalize(path.join(rootDir, requestPath));
+  let filePath = path.normalize(path.join(rootDir, requestPath));
 
   if (!filePath.startsWith(rootDir)) {
     sendError(response, 403, "Forbidden");
     return;
+  }
+
+  if (requestPath.startsWith("/images/articles/")) {
+    const imageName = path.basename(requestPath);
+    filePath = path.join(articleImagesDir, imageName);
   }
 
   const extension = path.extname(filePath).toLowerCase();

@@ -148,6 +148,30 @@ http://localhost:3000/pages/admin.html
 
 ---
 
+## 部署到 Render
+
+專案已包含 `render.yaml`，可用 Render Blueprint 建立 Node Web Service。
+
+部署前請先把專案推到 GitHub，然後在 Render：
+
+1. 點選 New → Blueprint。
+2. 選擇這個 GitHub repo。
+3. Render 會讀取 `render.yaml`。
+4. 建立服務後等待部署完成。
+
+目前設定：
+
+- Build Command：`npm install`
+- Start Command：`npm start`
+- Node Version：20
+- Persistent Disk：`/opt/render/project/src/storage`
+- 文章資料：`/opt/render/project/src/storage/data`
+- 上傳封面：`/opt/render/project/src/storage/images/articles`
+
+注意：會員資料、文章資料、封面圖片都需要 persistent disk 才能在 Render 重啟或 redeploy 後保留。Render 官方文件說 Web Service 預設檔案系統是 ephemeral；Persistent Disk 需使用付費 Web Service。
+
+---
+
 ## 更新紀錄
 
 ```text
