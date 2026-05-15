@@ -235,6 +235,8 @@ async function initProfilePage() {
   }
   if (adminLink) {
     adminLink.hidden = !isAdmin;
+    adminLink.style.display = isAdmin ? "" : "none";
+    adminLink.setAttribute("aria-hidden", String(!isAdmin));
   }
 
   form.addEventListener("submit", async (event) => {
