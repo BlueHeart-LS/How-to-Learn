@@ -188,7 +188,47 @@ function canUseArticleApi() {
   return window.location.protocol === "http:" || window.location.protocol === "https:";
 }
 
+function getSupabaseClient() {
+  return window.HowToLearnSupabase?.isConfigured ? window.HowToLearnSupabase.client : null;
+}
+
+function mapSupabaseArticle(row) {
+  return {
+    title: row.title,
+    category: row.category,
+    author: row.author,
+    date: row.published_date || "",
+    views: String(row.views || 0),
+    coverClass: row.cover_class || "people",
+    coverImage: row.cover_image || "",
+    tags: row.tags || [],
+    excerpt: row.excerpt || "",
+    body: row.body || [],
+  };
+}
+
 async function loadServerArticles() {
+  const supabase = getSupabaseClient();
+  if (supabase) {
+    try {
+      const [{ data: articles, error: articlesError }, { data: views, error: viewsError }] = await Promise.all([
+        supabase.from("articles").select("*").order("updated_at", { ascending: false }),
+        supabase.from("article_views").select("slug,views"),
+      ]);
+      if (articlesError) throw articlesError;
+      if (viewsError) throw viewsError;
+
+      serverArticles = Object.fromEntries((articles || []).map((row) => [row.slug, mapSupabaseArticle(row)]));
+      serverArticleViews = Object.fromEntries((views || []).map((row) => [row.slug, row.views]));
+      window.dispatchEvent(new CustomEvent("howtolearn:articles-ready"));
+      return serverArticles;
+    } catch {
+      serverArticles = {};
+      serverArticleViews = {};
+      return {};
+    }
+  }
+
   if (!canUseArticleApi()) return {};
 
   try {
@@ -224,7 +264,8 @@ function getArticleList() {
 function applyArticleCover(element, article, baseClass) {
   element.className = `${baseClass} ${article.coverImage ? "has-image" : article.coverClass || "people"}`;
   if (article.coverImage) {
-    const prefix = window.location.pathname.includes("/pages/") ? "../" : "";
+    const isAbsolute = /^https?:\/\//.test(article.coverImage);
+    const prefix = !isAbsolute && window.location.pathname.includes("/pages/") ? "../" : "";
     element.style.backgroundImage = `url("${prefix}${article.coverImage}")`;
   } else {
     element.style.backgroundImage = "";
@@ -272,9 +313,17 @@ async function reportArticleView(slug) {
   reportedArticleViews.add(slug);
 
   try {
-    const response = await fetch(`/api/articles/${encodeURIComponent(slug)}/view`, { method: "POST" });
-    if (!response.ok) return;
-    const payload = await response.json();
+    const supabase = getSupabaseClient();
+    let payload;
+    if (supabase) {
+      const { data, error } = await supabase.rpc("increment_article_view", { article_slug: slug });
+      if (error) return;
+      payload = { slug, views: data };
+    } else {
+      const response = await fetch(`/api/articles/${encodeURIComponent(slug)}/view`, { method: "POST" });
+      if (!response.ok) return;
+      payload = await response.json();
+    }
     serverArticleViews[payload.slug] = payload.views;
     const views = document.querySelector("[data-article-views]");
     if (views && payload.slug === slug) {

@@ -4,6 +4,10 @@ function getAuthToken() {
   return localStorage.getItem(authTokenKey) || "";
 }
 
+function getSupabaseClient() {
+  return window.HowToLearnSupabase?.isConfigured ? window.HowToLearnSupabase.client : null;
+}
+
 function setAuthToken(token) {
   if (token) {
     localStorage.setItem(authTokenKey, token);
@@ -38,6 +42,31 @@ async function authRequest(path, options = {}) {
 }
 
 async function getCurrentUser() {
+  const supabase = getSupabaseClient();
+  if (supabase) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      setAuthToken("");
+      return null;
+    }
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("id,name,bio,role,created_at,updated_at")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    return {
+      id: user.id,
+      email: user.email,
+      name: profile?.name || user.user_metadata?.name || user.email,
+      bio: profile?.bio || "",
+      role: profile?.role || "member",
+      createdAt: profile?.created_at || user.created_at,
+      updatedAt: profile?.updated_at || user.updated_at,
+    };
+  }
+
   if (!getAuthToken()) return null;
   try {
     const payload = await authRequest("/api/auth/me");
@@ -88,14 +117,24 @@ async function initLoginPage() {
     status.textContent = "登入中";
 
     try {
-      const payload = await authRequest("/api/auth/login", {
-        method: "POST",
-        body: JSON.stringify({
+      const supabase = getSupabaseClient();
+      if (supabase) {
+        const { error } = await supabase.auth.signInWithPassword({
           email: form.email.value.trim(),
           password: form.password.value,
-        }),
-      });
-      setAuthToken(payload.token);
+        });
+        if (error) throw error;
+        setAuthToken("supabase");
+      } else {
+        const payload = await authRequest("/api/auth/login", {
+          method: "POST",
+          body: JSON.stringify({
+            email: form.email.value.trim(),
+            password: form.password.value,
+          }),
+        });
+        setAuthToken(payload.token);
+      }
       status.textContent = "登入成功";
       window.location.href = "profile.html";
     } catch (error) {
@@ -119,15 +158,38 @@ async function initRegisterPage() {
     }
 
     try {
-      const payload = await authRequest("/api/auth/register", {
-        method: "POST",
-        body: JSON.stringify({
-          name: form.name.value.trim(),
+      const supabase = getSupabaseClient();
+      if (supabase) {
+        const name = form.name.value.trim();
+        const { data, error } = await supabase.auth.signUp({
           email: form.email.value.trim(),
           password: form.password.value,
-        }),
-      });
-      setAuthToken(payload.token);
+          options: {
+            data: { name },
+          },
+        });
+        if (error) throw error;
+        if (data.user) {
+          await supabase.from("profiles").upsert({
+            id: data.user.id,
+            name,
+            bio: "",
+            role: "member",
+            updated_at: new Date().toISOString(),
+          });
+        }
+        setAuthToken("supabase");
+      } else {
+        const payload = await authRequest("/api/auth/register", {
+          method: "POST",
+          body: JSON.stringify({
+            name: form.name.value.trim(),
+            email: form.email.value.trim(),
+            password: form.password.value,
+          }),
+        });
+        setAuthToken(payload.token);
+      }
       status.textContent = "註冊成功";
       window.location.href = "profile.html";
     } catch (error) {
@@ -160,17 +222,46 @@ async function initProfilePage() {
     status.textContent = "儲存中";
 
     try {
-      const payload = await authRequest("/api/auth/profile", {
-        method: "PUT",
-        body: JSON.stringify({
-          name: form.name.value.trim(),
-          bio: form.bio.value.trim(),
-        }),
-      });
-      form.name.value = payload.user.name || "";
-      form.bio.value = payload.user.bio || "";
+      const supabase = getSupabaseClient();
+      let updatedUser;
+      if (supabase) {
+        const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
+        if (authError) throw authError;
+        const { data, error } = await supabase
+          .from("profiles")
+          .upsert({
+            id: authUser.id,
+            name: form.name.value.trim(),
+            bio: form.bio.value.trim(),
+            role: "member",
+            updated_at: new Date().toISOString(),
+          })
+          .select("id,name,bio,role,created_at,updated_at")
+          .single();
+        if (error) throw error;
+        updatedUser = {
+          id: authUser.id,
+          email: authUser.email,
+          name: data.name,
+          bio: data.bio,
+          role: data.role,
+          createdAt: data.created_at,
+          updatedAt: data.updated_at,
+        };
+      } else {
+        const payload = await authRequest("/api/auth/profile", {
+          method: "PUT",
+          body: JSON.stringify({
+            name: form.name.value.trim(),
+            bio: form.bio.value.trim(),
+          }),
+        });
+        updatedUser = payload.user;
+      }
+      form.name.value = updatedUser.name || "";
+      form.bio.value = updatedUser.bio || "";
       status.textContent = "個人資料已更新";
-      updateAuthButtons(payload.user);
+      updateAuthButtons(updatedUser);
     } catch (error) {
       status.textContent = error.message;
     }
@@ -178,7 +269,12 @@ async function initProfilePage() {
 
   logoutButton.addEventListener("click", async () => {
     try {
-      await authRequest("/api/auth/logout", { method: "POST", body: "{}" });
+      const supabase = getSupabaseClient();
+      if (supabase) {
+        await supabase.auth.signOut();
+      } else {
+        await authRequest("/api/auth/logout", { method: "POST", body: "{}" });
+      }
     } catch {
       // Logging out locally is enough if the server is unavailable.
     }

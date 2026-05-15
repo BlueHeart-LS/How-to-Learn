@@ -15,6 +15,42 @@ function canUseArticleApi() {
   return window.location.protocol === "http:" || window.location.protocol === "https:";
 }
 
+function getSupabaseClient() {
+  return window.HowToLearnSupabase?.isConfigured ? window.HowToLearnSupabase.client : null;
+}
+
+function mapSupabaseArticle(row) {
+  return {
+    title: row.title,
+    category: row.category,
+    author: row.author,
+    date: row.published_date || "",
+    views: String(row.views || 0),
+    coverClass: row.cover_class || "people",
+    coverImage: row.cover_image || "",
+    tags: row.tags || [],
+    excerpt: row.excerpt || "",
+    body: row.body || [],
+  };
+}
+
+function toSupabaseArticle(slug, article, userId = null) {
+  return {
+    slug,
+    title: article.title,
+    category: article.category || "學習方法",
+    author: article.author || "如何學編輯部",
+    published_date: article.date || "",
+    cover_class: article.coverClass || "people",
+    cover_image: article.coverImage || "",
+    tags: article.tags || [],
+    excerpt: article.excerpt || "",
+    body: article.body || [],
+    user_id: userId,
+    updated_at: new Date().toISOString(),
+  };
+}
+
 function loadSavedArticles() {
   try {
     return JSON.parse(localStorage.getItem("howToLearnArticles") || "{}");
@@ -40,6 +76,22 @@ function canDeleteArticle(slug) {
 }
 
 async function loadApiArticles() {
+  const supabase = getSupabaseClient();
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.from("articles").select("*").order("updated_at", { ascending: false });
+      if (error) throw error;
+      apiArticles = Object.fromEntries((data || []).map((row) => [row.slug, mapSupabaseArticle(row)]));
+      apiAvailable = true;
+      statusText.textContent = "已連接 Supabase 文章資料庫";
+      return apiArticles;
+    } catch {
+      apiAvailable = false;
+      statusText.textContent = "Supabase 尚未連線，暫時使用 localStorage 模式";
+      return {};
+    }
+  }
+
   if (!canUseArticleApi()) return {};
 
   try {
@@ -57,6 +109,20 @@ async function loadApiArticles() {
 }
 
 async function saveArticleToApi(slug, article) {
+  const supabase = getSupabaseClient();
+  if (supabase) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("請先登入會員再儲存文章");
+    const { data, error } = await supabase
+      .from("articles")
+      .upsert(toSupabaseArticle(slug, article, user.id))
+      .select("*")
+      .single();
+    if (error) throw error;
+    apiArticles[slug] = mapSupabaseArticle(data);
+    return slug;
+  }
+
   const response = await fetch("/api/articles", {
     method: "POST",
     headers: { "content-type": "application/json" },
@@ -88,6 +154,20 @@ async function uploadCoverImage(slug, file) {
     throw new Error("封面必須是圖片檔");
   }
 
+  const supabase = getSupabaseClient();
+  if (supabase) {
+    const extension = file.name.includes(".") ? file.name.split(".").pop().toLowerCase() : "png";
+    const filePath = `${slug}-${Date.now()}.${extension}`;
+    const { error } = await supabase.storage.from("article-covers").upload(filePath, file, {
+      cacheControl: "3600",
+      upsert: false,
+      contentType: file.type,
+    });
+    if (error) throw error;
+    const { data } = supabase.storage.from("article-covers").getPublicUrl(filePath);
+    return data.publicUrl;
+  }
+
   const data = await readFileAsDataUrl(file);
   const response = await fetch("/api/article-images", {
     method: "POST",
@@ -108,6 +188,14 @@ async function uploadCoverImage(slug, file) {
 }
 
 async function deleteArticleFromApi(slug) {
+  const supabase = getSupabaseClient();
+  if (supabase) {
+    const { error } = await supabase.from("articles").delete().eq("slug", slug);
+    if (error) throw error;
+    delete apiArticles[slug];
+    return;
+  }
+
   const response = await fetch(`/api/articles/${encodeURIComponent(slug)}`, { method: "DELETE" });
   const payload = await response.json();
   if (!response.ok) {
@@ -219,6 +307,10 @@ form.addEventListener("submit", async (event) => {
     fillForm(savedSlug, apiArticles[savedSlug]);
     statusText.textContent = "已儲存到後端文章資料庫";
   } catch (error) {
+    if (getSupabaseClient()) {
+      statusText.textContent = `Supabase 儲存失敗：${error.message}`;
+      return;
+    }
     const article = getFormArticle(activeCoverImage);
     saveArticleToLocalStorage(slug, article);
     renderList();

@@ -66,6 +66,14 @@ function getMemberPagePath(page) {
 
 async function logoutMember() {
   const token = localStorage.getItem(mainAuthTokenKey);
+  const supabase = window.HowToLearnSupabase?.isConfigured ? window.HowToLearnSupabase.client : null;
+  if (supabase) {
+    try {
+      await supabase.auth.signOut();
+    } catch {
+      // Local logout still works if the API is unavailable.
+    }
+  }
   if (token) {
     try {
       await fetch("/api/auth/logout", {

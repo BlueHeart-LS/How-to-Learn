@@ -172,6 +172,36 @@ http://localhost:3000/pages/admin.html
 
 ---
 
+## 使用 Supabase 取代 Node 後端
+
+若要改成「純前端 + Supabase」，可以不用 Render 的 Node Web Service。
+
+設定方式：
+
+1. 到 Supabase 建立新 project。
+2. 進入 SQL Editor，貼上並執行 `supabase-schema.sql`。
+3. 到 Project Settings → API，複製 Project URL 與 anon/public key。
+4. 打開 `js/supabase-config.js`，填入：
+
+```js
+window.HowToLearnSupabaseConfig = {
+  url: "你的 Supabase Project URL",
+  anonKey: "你的 Supabase anon public key",
+};
+```
+
+完成後：
+
+- 會員註冊 / 登入會使用 Supabase Auth。
+- 個人資料會存在 `profiles` table。
+- 文章會存在 `articles` table。
+- 瀏覽數會存在 `article_views` table。
+- 文章封面會上傳到 Supabase Storage 的 `article-covers` bucket。
+
+如果 `js/supabase-config.js` 還是預設值，網站會回到原本的本機 Node API fallback。
+
+---
+
 ## 更新紀錄
 
 ```text
