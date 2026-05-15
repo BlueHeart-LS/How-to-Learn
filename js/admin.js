@@ -11,9 +11,56 @@ let apiAvailable = false;
 let activeSlug = "";
 let activeCoverImage = "";
 
+function waitForAuthReady() {
+  return new Promise((resolve) => {
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      resolve();
+      return;
+    }
+
+    const timeout = setTimeout(resolve, 1200);
+    const { data } = supabase.auth.onAuthStateChange(() => {
+      clearTimeout(timeout);
+      data.subscription.unsubscribe();
+      resolve();
+    });
+  });
+}
+
+async function getAdminUser() {
+  if (!window.HowToLearnAuth) return { role: "admin" };
+
+  await waitForAuthReady();
+  let user = await window.HowToLearnAuth.getCurrentUser();
+  if (user?.role === "admin") return user;
+
+  const supabase = getSupabaseClient();
+  if (!supabase) return user;
+
+  const { data: authData } = await supabase.auth.getUser();
+  if (!authData.user) return null;
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("id,name,bio,role,created_at,updated_at")
+    .eq("id", authData.user.id)
+    .maybeSingle();
+
+  if (!profile) return user;
+  return {
+    id: authData.user.id,
+    email: authData.user.email,
+    name: profile.name,
+    bio: profile.bio,
+    role: profile.role,
+    createdAt: profile.created_at,
+    updatedAt: profile.updated_at,
+  };
+}
+
 async function requireAdminAccess() {
-  if (!window.HowToLearnAuth) return true;
-  const user = await window.HowToLearnAuth.getCurrentUser();
+  const user = await getAdminUser();
   if (user?.role === "admin") return true;
 
   document.querySelector("main")?.replaceChildren();
