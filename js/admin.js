@@ -41,7 +41,7 @@ async function getAdminUser() {
 
   const { data: authData } = await supabase.auth.getUser();
   if (!authData.user) return null;
-  if (adminEmails.includes(authData.user.email)) {
+  if (adminEmails.includes(String(authData.user.email || "").trim().toLowerCase())) {
     return {
       id: authData.user.id,
       email: authData.user.email,

@@ -1,6 +1,11 @@
 const authTokenKey = "howToLearnAuthToken";
 const adminEmails = ["lan.learning.tw@gmail.com"];
 
+function isAdminUser(user) {
+  const email = String(user?.email || "").trim().toLowerCase();
+  return user?.role === "admin" || adminEmails.includes(email);
+}
+
 function getAuthToken() {
   return localStorage.getItem(authTokenKey) || "";
 }
@@ -62,7 +67,7 @@ async function getCurrentUser() {
       email: user.email,
       name: profile?.name || user.user_metadata?.name || user.email,
       bio: profile?.bio || "",
-      role: profile?.role === "admin" || adminEmails.includes(user.email) ? "admin" : "member",
+      role: profile?.role === "admin" || adminEmails.includes(String(user.email || "").trim().toLowerCase()) ? "admin" : "member",
       createdAt: profile?.created_at || user.created_at,
       updatedAt: profile?.updated_at || user.updated_at,
     };
@@ -219,11 +224,12 @@ async function initProfilePage() {
   form.bio.value = user.bio || "";
   memberEmail.textContent = user.email || "";
   memberSince.textContent = user.createdAt ? new Date(user.createdAt).toLocaleDateString("zh-TW") : "";
+  const isAdmin = isAdminUser(user);
   if (memberRole) {
-    memberRole.textContent = user.role === "admin" ? "管理員" : "一般會員";
+    memberRole.textContent = isAdmin ? "管理員" : "一般會員";
   }
   if (adminLink) {
-    adminLink.hidden = user.role !== "admin";
+    adminLink.hidden = !isAdmin;
   }
 
   form.addEventListener("submit", async (event) => {
