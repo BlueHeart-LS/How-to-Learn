@@ -26,6 +26,10 @@ function getPagePath(page) {
   return window.location.pathname.includes("/pages/") ? page : `pages/${page}`;
 }
 
+function getAbsolutePageUrl(page) {
+  return new URL(getPagePath(page), window.location.href).href;
+}
+
 async function authRequest(path, options = {}) {
   const headers = {
     "content-type": "application/json",
@@ -172,6 +176,7 @@ async function initRegisterPage() {
           password: form.password.value,
           options: {
             data: { name },
+            emailRedirectTo: getAbsolutePageUrl("profile.html"),
           },
         });
         if (error) throw error;
