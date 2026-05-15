@@ -204,6 +204,7 @@ async function initProfilePage() {
   const logoutButton = document.querySelector("[data-logout]");
   const memberEmail = document.querySelector("[data-member-email]");
   const memberSince = document.querySelector("[data-member-since]");
+  const adminLink = document.querySelector("[data-admin-link]");
   if (!form) return;
 
   const user = await getCurrentUser();
@@ -216,6 +217,9 @@ async function initProfilePage() {
   form.bio.value = user.bio || "";
   memberEmail.textContent = user.email || "";
   memberSince.textContent = user.createdAt ? new Date(user.createdAt).toLocaleDateString("zh-TW") : "";
+  if (adminLink) {
+    adminLink.hidden = user.role !== "admin";
+  }
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -233,7 +237,7 @@ async function initProfilePage() {
             id: authUser.id,
             name: form.name.value.trim(),
             bio: form.bio.value.trim(),
-            role: "member",
+            role: user.role || "member",
             updated_at: new Date().toISOString(),
           })
           .select("id,name,bio,role,created_at,updated_at")

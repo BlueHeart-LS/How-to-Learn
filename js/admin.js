@@ -11,6 +11,25 @@ let apiAvailable = false;
 let activeSlug = "";
 let activeCoverImage = "";
 
+async function requireAdminAccess() {
+  if (!window.HowToLearnAuth) return true;
+  const user = await window.HowToLearnAuth.getCurrentUser();
+  if (user?.role === "admin") return true;
+
+  document.querySelector("main")?.replaceChildren();
+  const main = document.querySelector("main");
+  const section = document.createElement("section");
+  section.className = "admin-hero";
+  section.innerHTML = `
+    <p class="section-kicker">Admin Only</p>
+    <h1>需要管理員權限</h1>
+    <p>請使用管理員帳號登入後再進入文章後台。</p>
+    <a class="primary-button" href="login.html">前往登入</a>
+  `;
+  main?.append(section);
+  return false;
+}
+
 function canUseArticleApi() {
   return window.location.protocol === "http:" || window.location.protocol === "https:";
 }
@@ -341,6 +360,7 @@ deleteButton.addEventListener("click", async () => {
 });
 
 async function initAdmin() {
+  if (!(await requireAdminAccess())) return;
   renderList();
   await loadApiArticles();
   renderList();
