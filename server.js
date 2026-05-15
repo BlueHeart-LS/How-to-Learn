@@ -2,12 +2,15 @@ const http = require("node:http");
 const { readFile, writeFile, mkdir } = require("node:fs/promises");
 const { createReadStream } = require("node:fs");
 const path = require("node:path");
+const crypto = require("node:crypto");
 
 const rootDir = __dirname;
 const dataDir = path.join(rootDir, "data");
 const articleImagesDir = path.join(rootDir, "images", "articles");
 const articlesFile = path.join(dataDir, "articles.json");
 const articleViewsFile = path.join(dataDir, "article-views.json");
+const usersFile = path.join(dataDir, "users.json");
+const sessionsFile = path.join(dataDir, "sessions.json");
 const port = Number(process.env.PORT || 3000);
 const maxBodySize = 8 * 1024 * 1024;
 
@@ -45,6 +48,46 @@ function normalizeSlug(value) {
     .replace(/[^a-z0-9\u4e00-\u9fff-]+/g, "-")
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "");
+}
+
+function normalizeEmail(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function createId() {
+  return crypto.randomUUID();
+}
+
+function hashPassword(password, salt = crypto.randomBytes(16).toString("hex")) {
+  const hash = crypto.scryptSync(String(password), salt, 64).toString("hex");
+  return `${salt}:${hash}`;
+}
+
+function verifyPassword(password, storedHash) {
+  const [salt, hash] = String(storedHash || "").split(":");
+  if (!salt || !hash) return false;
+  const candidate = hashPassword(password, salt).split(":")[1];
+  if (candidate.length !== hash.length) return false;
+  return crypto.timingSafeEqual(Buffer.from(candidate, "hex"), Buffer.from(hash, "hex"));
+}
+
+function getAuthToken(request) {
+  const header = request.headers.authorization || "";
+  if (!header.startsWith("Bearer ")) return "";
+  return header.slice(7).trim();
+}
+
+function publicUser(user) {
+  if (!user) return null;
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    bio: user.bio || "",
+    role: user.role || "member",
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+  };
 }
 
 function normalizeArticle(input) {
@@ -110,6 +153,14 @@ async function readArticleViews() {
   return readJsonFile(articleViewsFile);
 }
 
+async function readUsers() {
+  return readJsonFile(usersFile);
+}
+
+async function readSessions() {
+  return readJsonFile(sessionsFile);
+}
+
 async function writeArticles(articles) {
   await ensureJsonFile(articlesFile);
   await writeFile(articlesFile, `${JSON.stringify(articles, null, 2)}\n`, "utf8");
@@ -118,6 +169,16 @@ async function writeArticles(articles) {
 async function writeArticleViews(views) {
   await ensureJsonFile(articleViewsFile);
   await writeFile(articleViewsFile, `${JSON.stringify(views, null, 2)}\n`, "utf8");
+}
+
+async function writeUsers(users) {
+  await ensureJsonFile(usersFile);
+  await writeFile(usersFile, `${JSON.stringify(users, null, 2)}\n`, "utf8");
+}
+
+async function writeSessions(sessions) {
+  await ensureJsonFile(sessionsFile);
+  await writeFile(sessionsFile, `${JSON.stringify(sessions, null, 2)}\n`, "utf8");
 }
 
 function readRequestBody(request) {
@@ -185,6 +246,171 @@ async function handleArticleImageApi(request, response) {
     path: `images/articles/${filename}`,
     filename,
   });
+}
+
+async function getAuthenticatedUser(request) {
+  const token = getAuthToken(request);
+  if (!token) return { token: "", user: null };
+
+  const sessions = await readSessions();
+  const session = sessions[token];
+  if (!session) return { token, user: null };
+
+  if (session.expiresAt && Date.parse(session.expiresAt) < Date.now()) {
+    delete sessions[token];
+    await writeSessions(sessions);
+    return { token, user: null };
+  }
+
+  const users = await readUsers();
+  return { token, user: users[session.userId] || null };
+}
+
+async function handleAuthApi(request, response, url) {
+  if (request.method === "POST" && url.pathname === "/api/auth/register") {
+    let payload;
+    try {
+      payload = await parseJsonBody(request);
+    } catch {
+      sendError(response, 400, "Invalid JSON body");
+      return;
+    }
+
+    const name = String(payload.name || "").trim();
+    const email = normalizeEmail(payload.email);
+    const password = String(payload.password || "");
+
+    if (!name || !email || !password) {
+      sendError(response, 400, "Name, email, and password are required");
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      sendError(response, 400, "Email format is invalid");
+      return;
+    }
+
+    if (password.length < 6) {
+      sendError(response, 400, "Password must be at least 6 characters");
+      return;
+    }
+
+    const users = await readUsers();
+    const existingUser = Object.values(users).find((user) => user.email === email);
+    if (existingUser) {
+      sendError(response, 409, "Email already registered");
+      return;
+    }
+
+    const now = new Date().toISOString();
+    const user = {
+      id: createId(),
+      name,
+      email,
+      passwordHash: hashPassword(password),
+      bio: "",
+      role: "member",
+      createdAt: now,
+      updatedAt: now,
+    };
+    users[user.id] = user;
+    await writeUsers(users);
+
+    const token = crypto.randomBytes(32).toString("hex");
+    const sessions = await readSessions();
+    sessions[token] = {
+      userId: user.id,
+      createdAt: now,
+      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString(),
+    };
+    await writeSessions(sessions);
+
+    sendJson(response, 201, { token, user: publicUser(user) });
+    return;
+  }
+
+  if (request.method === "POST" && url.pathname === "/api/auth/login") {
+    let payload;
+    try {
+      payload = await parseJsonBody(request);
+    } catch {
+      sendError(response, 400, "Invalid JSON body");
+      return;
+    }
+
+    const email = normalizeEmail(payload.email);
+    const password = String(payload.password || "");
+    const users = await readUsers();
+    const user = Object.values(users).find((item) => item.email === email);
+
+    if (!user || !verifyPassword(password, user.passwordHash)) {
+      sendError(response, 401, "Email or password is incorrect");
+      return;
+    }
+
+    const now = new Date().toISOString();
+    const token = crypto.randomBytes(32).toString("hex");
+    const sessions = await readSessions();
+    sessions[token] = {
+      userId: user.id,
+      createdAt: now,
+      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString(),
+    };
+    await writeSessions(sessions);
+
+    sendJson(response, 200, { token, user: publicUser(user) });
+    return;
+  }
+
+  if (request.method === "GET" && url.pathname === "/api/auth/me") {
+    const { user } = await getAuthenticatedUser(request);
+    if (!user) {
+      sendError(response, 401, "Not authenticated");
+      return;
+    }
+    sendJson(response, 200, { user: publicUser(user) });
+    return;
+  }
+
+  if (request.method === "PUT" && url.pathname === "/api/auth/profile") {
+    const { user } = await getAuthenticatedUser(request);
+    if (!user) {
+      sendError(response, 401, "Not authenticated");
+      return;
+    }
+
+    let payload;
+    try {
+      payload = await parseJsonBody(request);
+    } catch {
+      sendError(response, 400, "Invalid JSON body");
+      return;
+    }
+
+    const users = await readUsers();
+    users[user.id] = {
+      ...user,
+      name: String(payload.name || user.name).trim(),
+      bio: String(payload.bio || "").trim(),
+      updatedAt: new Date().toISOString(),
+    };
+    await writeUsers(users);
+    sendJson(response, 200, { user: publicUser(users[user.id]) });
+    return;
+  }
+
+  if (request.method === "POST" && url.pathname === "/api/auth/logout") {
+    const token = getAuthToken(request);
+    if (token) {
+      const sessions = await readSessions();
+      delete sessions[token];
+      await writeSessions(sessions);
+    }
+    sendJson(response, 200, { ok: true });
+    return;
+  }
+
+  sendError(response, 405, "Method not allowed");
 }
 
 async function handleArticlesApi(request, response, url) {
@@ -306,6 +532,11 @@ const server = http.createServer(async (request, response) => {
   const url = new URL(request.url, `http://${request.headers.host || "localhost"}`);
 
   try {
+    if (url.pathname.startsWith("/api/auth/")) {
+      await handleAuthApi(request, response, url);
+      return;
+    }
+
     if (url.pathname === "/api/article-images") {
       await handleArticleImageApi(request, response);
       return;

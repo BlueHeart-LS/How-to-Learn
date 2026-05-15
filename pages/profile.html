@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      html, body, body * { cursor: url("../images/mouse_cursor.png") 4 4, auto !important; }
+      a, button, input, select, textarea, [role="button"] { cursor: url("../images/mouse_cursor.png") 4 4, pointer !important; }
+      html:active, body:active, body:active *, a:active, button:active, input:active, select:active, textarea:active, [role="button"]:active { cursor: url("../images/mouse_touch_cursor.png") 4 4, pointer !important; }
+    </style>
+    <title>個人資料｜如何學 How to Learn</title>
+    <link rel="icon" type="image/png" href="../images/icon_logo.png" />
+    <link rel="preload" href="../fonts/jf-openhuninn-2.1.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="preload" href="../fonts/Iansui-Regular.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="brand" href="../index.html" aria-label="如何學首頁">
+          <img src="../images/LOGO.png" alt="如何學 How to Learn" />
+        </a>
+        <nav class="main-nav" aria-label="主要導覽">
+          <a href="start.html">如何開始</a>
+          <a href="explore.html">自我探索</a>
+          <a href="methods.html">學習方法</a>
+          <a href="games.html">遊戲練習</a>
+          <a href="resources.html">資源專區</a>
+          <a href="about.html">關於我們</a>
+        </nav>
+        <div class="header-actions">
+          <button class="login-button" type="button" data-login-modal>會員登入</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="profile-page">
+          <aside class="profile-summary">
+            <p class="section-kicker">Member Profile</p>
+            <h1>個人資料</h1>
+            <dl>
+              <div>
+                <dt>Email</dt>
+                <dd data-member-email></dd>
+              </div>
+              <div>
+                <dt>加入日期</dt>
+                <dd data-member-since></dd>
+              </div>
+            </dl>
+            <button class="secondary-button" type="button" data-logout>登出</button>
+          </aside>
+
+          <form class="auth-form profile-form" data-profile-form>
+            <label>
+              顯示名稱
+              <input name="name" required />
+            </label>
+            <label>
+              自我介紹
+              <textarea name="bio" rows="8" placeholder="寫下你目前的學習目標、興趣或想探索的方向"></textarea>
+            </label>
+            <button class="primary-button" type="submit">儲存個人資料</button>
+            <p class="admin-note" data-auth-status></p>
+          </form>
+        </section>
+      </main>
+    </div>
+    <script src="../js/auth.js"></script>
+    <script src="../js/main.js"></script>
+  </body>
+</html>

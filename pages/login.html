@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      html, body, body * { cursor: url("../images/mouse_cursor.png") 4 4, auto !important; }
+      a, button, input, select, textarea, [role="button"] { cursor: url("../images/mouse_cursor.png") 4 4, pointer !important; }
+      html:active, body:active, body:active *, a:active, button:active, input:active, select:active, textarea:active, [role="button"]:active { cursor: url("../images/mouse_touch_cursor.png") 4 4, pointer !important; }
+    </style>
+    <title>會員登入｜如何學 How to Learn</title>
+    <link rel="icon" type="image/png" href="../images/icon_logo.png" />
+    <link rel="preload" href="../fonts/jf-openhuninn-2.1.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="preload" href="../fonts/Iansui-Regular.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="brand" href="../index.html" aria-label="如何學首頁">
+          <img src="../images/LOGO.png" alt="如何學 How to Learn" />
+        </a>
+        <nav class="main-nav" aria-label="主要導覽">
+          <a href="start.html">如何開始</a>
+          <a href="explore.html">自我探索</a>
+          <a href="methods.html">學習方法</a>
+          <a href="games.html">遊戲練習</a>
+          <a href="resources.html">資源專區</a>
+          <a href="about.html">關於我們</a>
+        </nav>
+        <div class="header-actions">
+          <button class="login-button" type="button" data-login-modal>會員登入</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="auth-page">
+          <div class="auth-card">
+            <p class="section-kicker">Member Login</p>
+            <h1>會員登入</h1>
+            <form class="auth-form" data-login-form>
+              <label>
+                Email
+                <input name="email" type="email" autocomplete="email" required />
+              </label>
+              <label>
+                密碼
+                <input name="password" type="password" autocomplete="current-password" required />
+              </label>
+              <button class="primary-button" type="submit">登入</button>
+              <p class="admin-note" data-auth-status></p>
+            </form>
+            <p class="auth-switch">還沒有帳號？<a href="register.html">建立會員帳號</a></p>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="../js/auth.js"></script>
+    <script src="../js/main.js"></script>
+  </body>
+</html>

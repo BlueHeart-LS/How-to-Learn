@@ -1,6 +1,7 @@
 ﻿const loginButtons = document.querySelectorAll("[data-login-modal]");
 const modalOverlay = document.querySelector("[data-modal-overlay]");
 let modalTimer;
+const mainAuthTokenKey = "howToLearnAuthToken";
 
 const rewardStorageKey = "howToLearnGameRewards";
 
@@ -59,8 +60,45 @@ function closeModal() {
   document.body.classList.remove("modal-open");
 }
 
+function getMemberPagePath(page) {
+  return window.location.pathname.includes("/pages/") ? page : `pages/${page}`;
+}
+
+async function logoutMember() {
+  const token = localStorage.getItem(mainAuthTokenKey);
+  if (token) {
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+        body: "{}",
+      });
+    } catch {
+      // Local logout still works if the API is unavailable.
+    }
+  }
+  localStorage.removeItem(mainAuthTokenKey);
+  window.location.href = getMemberPagePath("login.html");
+}
+
 loginButtons.forEach((button) => {
-  button.addEventListener("click", openModal);
+  if (window.HowToLearnAuth) return;
+  const isLoggedIn = Boolean(localStorage.getItem(mainAuthTokenKey));
+  if (isLoggedIn) {
+    button.textContent = "個人資料";
+    const logoutButton = document.createElement("button");
+    logoutButton.className = button.className;
+    logoutButton.type = "button";
+    logoutButton.textContent = "登出";
+    logoutButton.addEventListener("click", logoutMember);
+    button.insertAdjacentElement("afterend", logoutButton);
+  }
+  button.addEventListener("click", () => {
+    window.location.href = getMemberPagePath(isLoggedIn ? "profile.html" : "login.html");
+  });
 });
 
 modalOverlay?.addEventListener("click", (event) => {
