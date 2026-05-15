@@ -204,6 +204,7 @@ async function initProfilePage() {
   const logoutButton = document.querySelector("[data-logout]");
   const memberEmail = document.querySelector("[data-member-email]");
   const memberSince = document.querySelector("[data-member-since]");
+  const memberRole = document.querySelector("[data-member-role]");
   const adminLink = document.querySelector("[data-admin-link]");
   if (!form) return;
 
@@ -217,6 +218,9 @@ async function initProfilePage() {
   form.bio.value = user.bio || "";
   memberEmail.textContent = user.email || "";
   memberSince.textContent = user.createdAt ? new Date(user.createdAt).toLocaleDateString("zh-TW") : "";
+  if (memberRole) {
+    memberRole.textContent = user.role === "admin" ? "管理員" : "一般會員";
+  }
   if (adminLink) {
     adminLink.hidden = user.role !== "admin";
   }

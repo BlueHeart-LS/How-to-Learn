@@ -1,12 +1,18 @@
 -- Replace the email below if your admin account uses a different address.
-update public.profiles
-set role = 'admin',
-    updated_at = now()
-where id = (
-  select id
-  from auth.users
-  where email = 'lan.learning.tw@gmail.com'
-);
+insert into public.profiles (id, name, bio, role, created_at, updated_at)
+select
+  id,
+  coalesce(raw_user_meta_data ->> 'name', email),
+  '',
+  'admin',
+  now(),
+  now()
+from auth.users
+where email = 'lan.learning.tw@gmail.com'
+on conflict (id)
+do update set
+  role = 'admin',
+  updated_at = now();
 
 drop policy if exists "Authenticated users manage articles" on public.articles;
 drop policy if exists "Admins manage articles" on public.articles;
