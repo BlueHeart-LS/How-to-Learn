@@ -10,6 +10,7 @@ let apiArticles = {};
 let apiAvailable = false;
 let activeSlug = "";
 let activeCoverImage = "";
+const adminEmails = ["lan.learning.tw@gmail.com"];
 
 function waitForAuthReady() {
   return new Promise((resolve) => {
@@ -40,6 +41,17 @@ async function getAdminUser() {
 
   const { data: authData } = await supabase.auth.getUser();
   if (!authData.user) return null;
+  if (adminEmails.includes(authData.user.email)) {
+    return {
+      id: authData.user.id,
+      email: authData.user.email,
+      name: authData.user.email,
+      bio: "",
+      role: "admin",
+      createdAt: authData.user.created_at,
+      updatedAt: authData.user.updated_at,
+    };
+  }
 
   const { data: profile } = await supabase
     .from("profiles")

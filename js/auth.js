@@ -1,4 +1,5 @@
 const authTokenKey = "howToLearnAuthToken";
+const adminEmails = ["lan.learning.tw@gmail.com"];
 
 function getAuthToken() {
   return localStorage.getItem(authTokenKey) || "";
@@ -61,7 +62,7 @@ async function getCurrentUser() {
       email: user.email,
       name: profile?.name || user.user_metadata?.name || user.email,
       bio: profile?.bio || "",
-      role: profile?.role || "member",
+      role: profile?.role === "admin" || adminEmails.includes(user.email) ? "admin" : "member",
       createdAt: profile?.created_at || user.created_at,
       updatedAt: profile?.updated_at || user.updated_at,
     };
