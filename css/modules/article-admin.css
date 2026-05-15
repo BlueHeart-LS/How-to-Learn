@@ -26,6 +26,11 @@
   background-color: #fff0dc;
 }
 
+.article-cover.has-image {
+  background-position: center;
+  background-size: cover;
+}
+
 .article-cover.people {
   background-image:
     radial-gradient(circle at 30% 35%, rgba(255, 142, 179, 0.28) 0 28px, transparent 29px),

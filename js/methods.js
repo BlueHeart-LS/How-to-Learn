@@ -34,7 +34,11 @@ function renderBlogList() {
     post.href = `article.html?slug=${encodeURIComponent(article.slug)}`;
 
     const thumb = document.createElement("div");
-    thumb.className = `blog-post-thumb ${article.coverClass || "people"}`;
+    if (window.HowToLearnArticleCovers) {
+      window.HowToLearnArticleCovers.applyArticleCover(thumb, article, "blog-post-thumb");
+    } else {
+      thumb.className = `blog-post-thumb ${article.coverClass || "people"}`;
+    }
 
     const content = document.createElement("div");
     content.className = "blog-post-content";
@@ -64,3 +68,4 @@ function renderBlogList() {
 }
 
 renderBlogList();
+window.addEventListener("howtolearn:articles-ready", renderBlogList);

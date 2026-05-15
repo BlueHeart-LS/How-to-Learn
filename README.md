@@ -132,6 +132,20 @@ index.html
 
 即可在瀏覽器查看網站。
 
+若要使用文章後端管理系統，請改用 Node 啟動本機伺服器：
+
+```text
+npm start
+```
+
+啟動後開啟：
+
+```text
+http://localhost:3000/pages/admin.html
+```
+
+文章會透過 `/api/articles` 儲存到 `data/articles.json`。沒有啟動後端時，管理頁仍會暫時使用瀏覽器 localStorage。
+
 ---
 
 ## 更新紀錄

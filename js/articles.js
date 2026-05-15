@@ -180,12 +180,55 @@ function getSavedArticles() {
   }
 }
 
+let serverArticles = {};
+let serverArticleViews = {};
+const reportedArticleViews = new Set();
+
+function canUseArticleApi() {
+  return window.location.protocol === "http:" || window.location.protocol === "https:";
+}
+
+async function loadServerArticles() {
+  if (!canUseArticleApi()) return {};
+
+  try {
+    const [articlesResponse, viewsResponse] = await Promise.all([
+      fetch("/api/articles", { cache: "no-store" }),
+      fetch("/api/article-views", { cache: "no-store" }),
+    ]);
+    if (!articlesResponse.ok) throw new Error("Article API unavailable");
+    serverArticles = await articlesResponse.json();
+    serverArticleViews = viewsResponse.ok ? await viewsResponse.json() : {};
+    window.dispatchEvent(new CustomEvent("howtolearn:articles-ready"));
+    return serverArticles;
+  } catch {
+    serverArticles = {};
+    return {};
+  }
+}
+
 function getArticleLibrary() {
-  return { ...defaultArticles, ...getSavedArticles() };
+  const articles = { ...defaultArticles, ...getSavedArticles(), ...serverArticles };
+  Object.entries(serverArticleViews).forEach(([slug, views]) => {
+    if (articles[slug]) {
+      articles[slug] = { ...articles[slug], views: String(views) };
+    }
+  });
+  return articles;
 }
 
 function getArticleList() {
   return Object.entries(getArticleLibrary()).map(([slug, article]) => ({ slug, ...article }));
+}
+
+function applyArticleCover(element, article, baseClass) {
+  element.className = `${baseClass} ${article.coverImage ? "has-image" : article.coverClass || "people"}`;
+  if (article.coverImage) {
+    const prefix = window.location.pathname.includes("/pages/") ? "../" : "";
+    element.style.backgroundImage = `url("${prefix}${article.coverImage}")`;
+  } else {
+    element.style.backgroundImage = "";
+  }
 }
 
 function renderArticlePage() {
@@ -202,9 +245,10 @@ function renderArticlePage() {
   document.querySelector("[data-article-category]").textContent = article.category || "學習方法";
   document.querySelector("[data-article-author]").textContent = article.author || "如何學編輯部";
   document.querySelector("[data-article-date]").textContent = article.date || "";
+  document.querySelector("[data-article-views]").textContent = article.views || "0";
 
   const cover = document.querySelector("[data-article-cover]");
-  cover.className = `article-cover ${article.coverClass || "people"}`;
+  applyArticleCover(cover, article, "article-cover");
 
   const body = document.querySelector("[data-article-body]");
   body.replaceChildren();
@@ -223,10 +267,41 @@ function renderArticlePage() {
   });
 }
 
+async function reportArticleView(slug) {
+  if (!canUseArticleApi() || reportedArticleViews.has(slug)) return;
+  reportedArticleViews.add(slug);
+
+  try {
+    const response = await fetch(`/api/articles/${encodeURIComponent(slug)}/view`, { method: "POST" });
+    if (!response.ok) return;
+    const payload = await response.json();
+    serverArticleViews[payload.slug] = payload.views;
+    const views = document.querySelector("[data-article-views]");
+    if (views && payload.slug === slug) {
+      views.textContent = String(payload.views);
+    }
+    window.dispatchEvent(new CustomEvent("howtolearn:articles-ready"));
+  } catch {
+    // View tracking is non-critical; keep the article readable if the API is unavailable.
+  }
+}
+
 window.HowToLearnArticles = {
   defaultArticles,
   getArticleLibrary,
-  getArticleList
+  getArticleList,
+  loadServerArticles
+};
+
+window.HowToLearnArticleCovers = {
+  applyArticleCover
 };
 
 renderArticlePage();
+loadServerArticles().then(() => {
+  renderArticlePage();
+  const title = document.querySelector("[data-article-title]");
+  if (!title) return;
+  const params = new URLSearchParams(window.location.search);
+  reportArticleView(params.get("slug") || "feynman");
+});

@@ -272,6 +272,11 @@
   background-color: #fff0dc;
 }
 
+.blog-post-thumb.has-image {
+  background-position: center;
+  background-size: cover;
+}
+
 .blog-post-thumb.people {
   background-image:
     radial-gradient(circle at 30% 35%, rgba(255, 142, 179, 0.28) 0 18px, transparent 19px),

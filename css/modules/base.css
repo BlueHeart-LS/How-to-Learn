@@ -800,6 +800,11 @@ textarea:active,
   border: 1px solid #f2e5d3;
 }
 
+.thumb.has-image {
+  background-position: center;
+  background-size: cover;
+}
+
 .thumb.calendar {
   background-image:
     linear-gradient(#8d7466 0 0),

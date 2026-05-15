@@ -29,7 +29,11 @@ function renderLatestArticles() {
     link.href = `pages/article.html?slug=${encodeURIComponent(article.slug)}`;
 
     const thumb = document.createElement("div");
-    thumb.className = `thumb ${article.coverClass || "people"}`;
+    if (window.HowToLearnArticleCovers) {
+      window.HowToLearnArticleCovers.applyArticleCover(thumb, article, "thumb");
+    } else {
+      thumb.className = `thumb ${article.coverClass || "people"}`;
+    }
 
     const content = document.createElement("div");
 
@@ -50,3 +54,4 @@ function renderLatestArticles() {
 }
 
 renderLatestArticles();
+window.addEventListener("howtolearn:articles-ready", renderLatestArticles);

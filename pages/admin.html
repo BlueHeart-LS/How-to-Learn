@@ -74,21 +74,14 @@
                 上傳日期
                 <input name="date" placeholder="2024.06.01" />
               </label>
-              <label>
-                瀏覽數
-                <input name="views" placeholder="例如：1.2K" />
-              </label>
             </div>
             <div class="admin-form-grid">
               <label>
-                封面樣式
-                <select name="coverClass">
-                  <option value="people">人物</option>
-                  <option value="calendar">行事曆</option>
-                  <option value="tomato">番茄</option>
-                </select>
+                封面圖片
+                <input name="coverImageFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif" />
               </label>
             </div>
+            <p class="admin-note" data-cover-image-status>尚未選擇封面圖片</p>
             <label>
               標籤
               <input name="tags" placeholder="用逗號分隔，例如：記憶,複習,練習" />
@@ -103,6 +96,7 @@
             </label>
             <div class="admin-actions">
               <button class="primary-button" type="submit">儲存文章</button>
+              <button class="secondary-button" type="button" data-delete-article>刪除文章</button>
               <a class="secondary-button" data-preview-link href="article.html" target="_blank">預覽文章</a>
             </div>
             <p class="admin-note" data-save-status>尚未儲存變更</p>
@@ -116,6 +110,7 @@
         </div>
       </div>
     </div>
+    <script src="../js/articles.js"></script>
     <script src="../js/admin.js"></script>
     <script src="../js/main.js"></script>
   </body>
