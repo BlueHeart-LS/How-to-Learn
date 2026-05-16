@@ -103,9 +103,10 @@
               <input name="excerpt" placeholder="文章卡上的簡短摘要" />
             </label>
             <label>
-              內文
-              <textarea name="body" rows="10" placeholder="每一段用空行分隔"></textarea>
+              內文（可使用 HTML）
+              <textarea name="body" rows="12" placeholder="可輸入一般文字，也可使用 &lt;h2&gt;、&lt;p&gt;、&lt;strong&gt;、&lt;ul&gt;&lt;li&gt;、&lt;a href=&quot;https://...&quot;&gt; 等基本 HTML。每個段落或區塊可用空行分隔。"></textarea>
             </label>
+            <p class="admin-note">文章頁會保留基本排版標籤，並自動移除 script、iframe、事件屬性與不安全連結。</p>
             <div class="admin-actions">
               <button class="primary-button" type="submit">儲存文章</button>
               <button class="secondary-button" type="button" data-delete-article>刪除文章</button>

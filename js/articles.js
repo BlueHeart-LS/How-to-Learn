@@ -364,6 +364,136 @@ function getPreviewArticle(slug) {
   }
 }
 
+const articleHtmlTagPattern = /<\/?[a-z][\s\S]*>/i;
+const allowedArticleHtmlTags = new Set([
+  "a",
+  "blockquote",
+  "br",
+  "code",
+  "div",
+  "em",
+  "figcaption",
+  "figure",
+  "h2",
+  "h3",
+  "h4",
+  "hr",
+  "i",
+  "img",
+  "li",
+  "ol",
+  "p",
+  "pre",
+  "span",
+  "strong",
+  "sub",
+  "sup",
+  "table",
+  "tbody",
+  "td",
+  "th",
+  "thead",
+  "tr",
+  "u",
+  "ul",
+]);
+const blockedArticleHtmlTags = new Set(["script", "style", "iframe", "object", "embed", "form", "input", "button"]);
+
+function isSafeArticleUrl(value, options = {}) {
+  const rawValue = String(value || "").trim();
+  if (!rawValue) return false;
+  if (rawValue.startsWith("#")) return true;
+  if (!/^[a-z][a-z\d+.-]*:/i.test(rawValue) && !rawValue.startsWith("//")) return true;
+
+  try {
+    const url = new URL(rawValue, window.location.href);
+    const safeProtocols = options.allowMailto ? ["http:", "https:", "mailto:"] : ["http:", "https:"];
+    return safeProtocols.includes(url.protocol);
+  } catch {
+    return false;
+  }
+}
+
+function sanitizeArticleNode(node) {
+  if (node.nodeType === Node.TEXT_NODE) {
+    return document.createTextNode(node.textContent || "");
+  }
+
+  if (node.nodeType !== Node.ELEMENT_NODE) {
+    return document.createDocumentFragment();
+  }
+
+  const tagName = node.tagName.toLowerCase();
+  if (blockedArticleHtmlTags.has(tagName)) {
+    return document.createDocumentFragment();
+  }
+
+  if (!allowedArticleHtmlTags.has(tagName)) {
+    const fragment = document.createDocumentFragment();
+    node.childNodes.forEach((child) => fragment.appendChild(sanitizeArticleNode(child)));
+    return fragment;
+  }
+
+  const element = document.createElement(tagName);
+  if (tagName === "a") {
+    const href = node.getAttribute("href");
+    if (href && isSafeArticleUrl(href, { allowMailto: true })) {
+      element.setAttribute("href", href);
+      if (/^https?:/i.test(href)) {
+        element.setAttribute("target", "_blank");
+        element.setAttribute("rel", "noopener noreferrer");
+      }
+    }
+    const title = node.getAttribute("title");
+    if (title) element.setAttribute("title", title);
+  }
+
+  if (tagName === "img") {
+    const src = node.getAttribute("src");
+    if (src && isSafeArticleUrl(src)) {
+      element.setAttribute("src", src);
+      element.setAttribute("loading", "lazy");
+    } else {
+      return document.createDocumentFragment();
+    }
+    const alt = node.getAttribute("alt");
+    if (alt) element.setAttribute("alt", alt);
+    const title = node.getAttribute("title");
+    if (title) element.setAttribute("title", title);
+  }
+
+  node.childNodes.forEach((child) => element.appendChild(sanitizeArticleNode(child)));
+  return element;
+}
+
+function sanitizeArticleHtml(html) {
+  const template = document.createElement("template");
+  template.innerHTML = String(html || "");
+  const fragment = document.createDocumentFragment();
+  template.content.childNodes.forEach((node) => fragment.appendChild(sanitizeArticleNode(node)));
+
+  const container = document.createElement("div");
+  container.appendChild(fragment);
+  return container.innerHTML;
+}
+
+function appendArticleBodyBlock(body, block) {
+  const content = String(block || "").trim();
+  if (!content) return;
+
+  if (articleHtmlTagPattern.test(content)) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "article-html-block";
+    wrapper.innerHTML = sanitizeArticleHtml(content);
+    body.appendChild(wrapper);
+    return;
+  }
+
+  const p = document.createElement("p");
+  p.textContent = content;
+  body.appendChild(p);
+}
+
 function renderArticlePage() {
   const title = document.querySelector("[data-article-title]");
   if (!title) return;
@@ -386,9 +516,7 @@ function renderArticlePage() {
   const body = document.querySelector("[data-article-body]");
   body.replaceChildren();
   (article.body || []).forEach((paragraph) => {
-    const p = document.createElement("p");
-    p.textContent = paragraph;
-    body.appendChild(p);
+    appendArticleBodyBlock(body, paragraph);
   });
 
   const tags = document.querySelector("[data-article-tags]");

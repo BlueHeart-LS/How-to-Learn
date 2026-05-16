@@ -65,13 +65,10 @@ How-to-Learn/
 ├─ index.html
 ├─ package.json
 ├─ server.js
+├─ start-server.bat
 ├─ css/
 │  └─ styles.css
-├─ data/
-│  ├─ articles.json
-│  ├─ article-views.json
-│  ├─ sessions.json
-│  └─ users.json
+├─ data/              # 本機 runtime 資料，已由 .gitignore 忽略
 ├─ fonts/
 │  ├─ Iansui-Regular.ttf
 │  └─ jf-openhuninn-2.1.ttf
@@ -155,6 +152,12 @@ index.html
 npm start
 ```
 
+如果 Windows 找不到 `npm`，也可以直接執行：
+
+```text
+start-server.bat
+```
+
 啟動後開啟：
 
 ```text
@@ -197,6 +200,7 @@ lan.learning.tw@gmail.com
 - `.gitignore` 已忽略 `data/*.json` 與 `images/articles/*`，避免把 runtime 資料放進 Git。
 - Node 後端已阻擋 `/data`、`/storage`、`.git`、`.sql` 等敏感檔案的靜態讀取。
 - 文章新增、刪除、封面上傳都需要管理員權限。
+- 文章內文支援基本 HTML；前台渲染前會移除不安全標籤、事件屬性與危險連結。
 - 更新後端程式後，需要重新啟動本機 server，變更才會生效。
 
 ---
@@ -240,6 +244,7 @@ window.HowToLearnSupabaseConfig = {
 260517
 - 完成資安修補：後端管理 API 權限檢查、敏感檔案防讀取、登入失敗限制、Supabase RLS 收緊、社群頁 XSS 修復
 - 修正文章預覽：可預覽未儲存草稿，預覽不增加瀏覽數
+- 調整文章後台：內文可輸入基本 HTML，前台顯示時會先做安全清理
 - 整理專案結構：後端移至 server/，Supabase SQL 移至 supabase/
 - 分批整理 JS：遊戲與互動練習腳本移至 js/games/
 

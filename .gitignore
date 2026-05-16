@@ -1,3 +1,4 @@
 data/*.json
 images/articles/*
 !images/articles/.gitkeep
+*.log
