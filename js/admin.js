@@ -1,5 +1,6 @@
 const form = document.querySelector("[data-article-form]");
 const list = document.querySelector("[data-admin-list]");
+const listPage = document.querySelector("[data-admin-list-page]");
 const statusText = document.querySelector("[data-save-status]");
 const previewLink = document.querySelector("[data-preview-link]");
 const newButton = document.querySelector("[data-new-article]");
@@ -56,8 +57,7 @@ async function getAdminUser() {
   const authUser = authData.user;
   if (!authUser) return null;
 
-  const adminByEmail = adminEmails.includes(String(authUser.email || "").trim().toLowerCase());
-  if (adminByEmail) {
+  if (adminEmails.includes(String(authUser.email || "").trim().toLowerCase())) {
     return {
       id: authUser.id,
       email: authUser.email,
@@ -83,7 +83,7 @@ async function requireAdminAccess() {
   section.innerHTML = `
     <p class="section-kicker">Admin Only</p>
     <h1>需要管理員權限</h1>
-    <p>請先使用管理員帳號登入，才能新增、編輯或刪除文章。</p>
+    <p>請先使用管理員帳號登入，才能管理文章。</p>
     <a class="primary-button" href="login.html">前往登入</a>
   `;
   main?.append(section);
@@ -140,6 +140,16 @@ function getDefaultArticles() {
 
 function getArticles() {
   return { ...getDefaultArticles(), ...loadSavedArticles(), ...apiArticles };
+}
+
+function getArticleEntries() {
+  return Object.entries(getArticles()).sort(([, a], [, b]) => parseArticleDate(b.date) - parseArticleDate(a.date));
+}
+
+function parseArticleDate(date) {
+  if (!date) return 0;
+  const timestamp = Date.parse(String(date).replaceAll(".", "-").replaceAll("/", "-"));
+  return Number.isNaN(timestamp) ? 0 : timestamp;
 }
 
 function canDeleteArticle(slug) {
@@ -368,12 +378,13 @@ function getAvailableSlug(value) {
 }
 
 function updateGeneratedSlug() {
-  if (!isCreatingArticle) return;
+  if (!form || !isCreatingArticle) return;
   form.slug.value = getAvailableSlug(form.title.value);
   previewLink.href = `article.html?slug=${encodeURIComponent(form.slug.value)}`;
 }
 
 function fillForm(slug, article, options = {}) {
+  if (!form) return;
   activeSlug = slug;
   activeCoverImage = article.coverImage || "";
   isCreatingArticle = Boolean(options.isNew);
@@ -412,28 +423,65 @@ function getFormArticle(coverImage = activeCoverImage) {
   };
 }
 
-function renderList() {
+function createArticleListItem(slug, article) {
+  const item = document.createElement("article");
+  item.className = "admin-article-item";
+
+  const content = document.createElement("div");
+  const meta = document.createElement("p");
+  meta.className = "admin-article-meta";
+  meta.textContent = `${article.category || "學習方法"}｜${article.date || "未設定日期"}｜${article.views || "0"} 次觀看`;
+
+  const title = document.createElement("h2");
+  title.textContent = article.title || slug;
+
+  const excerpt = document.createElement("p");
+  excerpt.textContent = article.excerpt || article.body?.[0] || "尚未設定摘要。";
+
+  const actions = document.createElement("div");
+  actions.className = "admin-article-actions";
+
+  const editLink = document.createElement("a");
+  editLink.className = "primary-button small";
+  editLink.href = `admin.html?slug=${encodeURIComponent(slug)}`;
+  editLink.textContent = "編輯";
+
+  const preview = document.createElement("a");
+  preview.className = "secondary-button small";
+  preview.href = `article.html?slug=${encodeURIComponent(slug)}`;
+  preview.target = "_blank";
+  preview.rel = "noreferrer";
+  preview.textContent = "預覽";
+
+  content.append(meta, title, excerpt);
+  actions.append(editLink, preview);
+  item.append(content, actions);
+  return item;
+}
+
+function renderEditorShortcutList() {
+  if (!list) return;
   list.replaceChildren();
 
-  Object.entries(getArticles()).forEach(([slug, article]) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.dataset.editSlug = slug;
-    button.textContent = article.title || slug;
-    list.append(button);
+  getArticleEntries().forEach(([slug, article]) => {
+    const link = document.createElement("a");
+    link.href = `admin.html?slug=${encodeURIComponent(slug)}`;
+    link.textContent = article.title || slug;
+    if (slug === activeSlug) link.setAttribute("aria-current", "page");
+    list.append(link);
   });
 }
 
-list.addEventListener("click", (event) => {
-  const button = event.target.closest("[data-edit-slug]");
-  if (!button) return;
+function renderListPage() {
+  if (!listPage) return;
+  listPage.replaceChildren();
 
-  const slug = button.dataset.editSlug;
-  fillForm(slug, getArticles()[slug]);
-  setStatus("已載入文章，可以開始編輯");
-});
+  getArticleEntries().forEach(([slug, article]) => {
+    listPage.append(createArticleListItem(slug, article));
+  });
+}
 
-newButton.addEventListener("click", () => {
+function fillNewArticle() {
   fillForm(
     "",
     {
@@ -450,87 +498,116 @@ newButton.addEventListener("click", () => {
     { isNew: true },
   );
   setStatus("正在新增文章");
-});
+}
 
-form.title.addEventListener("input", updateGeneratedSlug);
+function bindEditorEvents() {
+  if (!form) return;
 
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
+  newButton?.addEventListener("click", () => {
+    window.location.href = "admin.html?new=1";
+  });
 
-  const slug = form.slug.value.trim() || getAvailableSlug(form.title.value);
-  form.slug.value = slug;
+  form.title.addEventListener("input", updateGeneratedSlug);
 
-  if (!slug || !form.title.value.trim()) {
-    setStatus("請先輸入文章標題");
-    return;
-  }
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-  try {
-    setStatus("正在儲存文章...");
-    let coverImage = activeCoverImage;
-    if (form.coverImageFile.files[0]) {
-      setStatus("正在上傳封面圖片...");
-      coverImage = await uploadCoverImage(slug, form.coverImageFile.files[0]);
-    }
+    const slug = form.slug.value.trim() || getAvailableSlug(form.title.value);
+    form.slug.value = slug;
 
-    const article = getFormArticle(coverImage);
-    const savedSlug = await saveArticleToApi(slug, article);
-    deleteArticleFromLocalStorage(savedSlug);
-    renderList();
-    fillForm(savedSlug, apiArticles[savedSlug]);
-    setStatus("文章已儲存，前台重新整理後會看到更新");
-    window.HowToLearnArticles?.loadServerArticles?.();
-  } catch (error) {
-    if (getSupabaseClient()) {
-      setStatus(`Supabase 儲存失敗：${error.message}。請確認目前帳號是 admin，且已執行 supabase-admin-setup.sql。`);
+    if (!slug || !form.title.value.trim()) {
+      setStatus("請先輸入文章標題");
       return;
     }
 
-    const article = getFormArticle(activeCoverImage);
-    saveArticleToLocalStorage(slug, article);
-    renderList();
-    fillForm(slug, article);
-    setStatus(apiAvailable ? `本機 API 儲存失敗：${error.message}` : "文章暫存到這台瀏覽器；啟動 server 後才能讓其他頁面/裝置看到");
-  }
-});
+    try {
+      setStatus("正在儲存文章...");
+      let coverImage = activeCoverImage;
+      if (form.coverImageFile.files[0]) {
+        setStatus("正在上傳封面圖片...");
+        coverImage = await uploadCoverImage(slug, form.coverImageFile.files[0]);
+      }
 
-deleteButton.addEventListener("click", async () => {
-  const slug = activeSlug || form.slug.value.trim();
-  if (!slug || !canDeleteArticle(slug)) return;
-  if (!window.confirm(`確定要刪除「${getArticles()[slug].title || slug}」嗎？`)) return;
+      const article = getFormArticle(coverImage);
+      const savedSlug = await saveArticleToApi(slug, article);
+      deleteArticleFromLocalStorage(savedSlug);
+      renderEditorShortcutList();
+      fillForm(savedSlug, apiArticles[savedSlug]);
+      window.history.replaceState(null, "", `admin.html?slug=${encodeURIComponent(savedSlug)}`);
+      setStatus("文章已儲存，前台重新整理後會看到更新");
+      window.HowToLearnArticles?.loadServerArticles?.();
+    } catch (error) {
+      if (getSupabaseClient()) {
+        setStatus(`Supabase 儲存失敗：${error.message}。請確認目前帳號是 admin，且已執行 supabase-admin-setup.sql。`);
+        return;
+      }
 
-  try {
-    if (apiArticles[slug]) {
-      await deleteArticleFromApi(slug);
+      const article = getFormArticle(activeCoverImage);
+      saveArticleToLocalStorage(slug, article);
+      renderEditorShortcutList();
+      fillForm(slug, article);
+      setStatus(apiAvailable ? `本機 API 儲存失敗：${error.message}` : "文章暫存到這台瀏覽器；啟動 server 後才能讓其他頁面/裝置看到");
     }
-    deleteArticleFromLocalStorage(slug);
-    renderList();
-    const fallbackEntry = Object.entries(getArticles())[0];
-    if (fallbackEntry) {
-      fillForm(fallbackEntry[0], fallbackEntry[1]);
+  });
+
+  deleteButton?.addEventListener("click", async () => {
+    const slug = activeSlug || form.slug.value.trim();
+    if (!slug || !canDeleteArticle(slug)) return;
+    if (!window.confirm(`確定要刪除「${getArticles()[slug].title || slug}」嗎？`)) return;
+
+    try {
+      if (apiArticles[slug]) {
+        await deleteArticleFromApi(slug);
+      }
+      deleteArticleFromLocalStorage(slug);
+      window.location.href = "admin-articles.html";
+    } catch (error) {
+      setStatus(`刪除失敗：${error.message}`);
     }
-    setStatus("文章已刪除");
-  } catch (error) {
-    setStatus(`刪除失敗：${error.message}`);
+  });
+}
+
+function loadRequestedArticle() {
+  if (!form) return;
+
+  const params = new URLSearchParams(window.location.search);
+  if (params.has("new")) {
+    fillNewArticle();
+    return;
   }
-});
+
+  const requestedSlug = params.get("slug");
+  const articles = getArticles();
+  if (requestedSlug && articles[requestedSlug]) {
+    fillForm(requestedSlug, articles[requestedSlug]);
+    setStatus("已載入文章，可以開始編輯");
+    return;
+  }
+
+  const firstEntry = getArticleEntries()[0];
+  if (firstEntry) {
+    window.history.replaceState(null, "", `admin.html?slug=${encodeURIComponent(firstEntry[0])}`);
+    fillForm(firstEntry[0], firstEntry[1]);
+    return;
+  }
+
+  fillNewArticle();
+}
 
 async function initAdmin() {
   if (!(await requireAdminAccess())) return;
-  renderList();
+
   await loadApiArticles();
-  renderList();
   try {
     await importDefaultArticlesToApi();
   } catch (error) {
     setStatus(`同步預設文章失敗：${error.message}`);
   }
-  renderList();
 
-  const firstEntry = Object.entries(getArticles())[0];
-  if (firstEntry) {
-    fillForm(firstEntry[0], firstEntry[1]);
-  }
+  renderListPage();
+  renderEditorShortcutList();
+  loadRequestedArticle();
 }
 
+bindEditorEvents();
 initAdmin();

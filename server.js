@@ -9,6 +9,7 @@ const dataDir = process.env.DATA_DIR || path.join(rootDir, "data");
 const articleImagesDir = process.env.ARTICLE_IMAGES_DIR || path.join(rootDir, "images", "articles");
 const articlesFile = path.join(dataDir, "articles.json");
 const articleViewsFile = path.join(dataDir, "article-views.json");
+const articleViewEventsFile = path.join(dataDir, "article-view-events.json");
 const usersFile = path.join(dataDir, "users.json");
 const sessionsFile = path.join(dataDir, "sessions.json");
 const port = Number(process.env.PORT || 3000);
@@ -52,6 +53,17 @@ function normalizeSlug(value) {
 
 function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
+}
+
+function normalizeVisitorId(value) {
+  return String(value || "")
+    .trim()
+    .slice(0, 120)
+    .replace(/[^\w.-]/g, "");
+}
+
+function getTodayKey() {
+  return new Date().toISOString().slice(0, 10);
 }
 
 function createId() {
@@ -154,6 +166,10 @@ async function readArticleViews() {
   return readJsonFile(articleViewsFile);
 }
 
+async function readArticleViewEvents() {
+  return readJsonFile(articleViewEventsFile);
+}
+
 async function readUsers() {
   return readJsonFile(usersFile);
 }
@@ -170,6 +186,11 @@ async function writeArticles(articles) {
 async function writeArticleViews(views) {
   await ensureJsonFile(articleViewsFile);
   await writeFile(articleViewsFile, `${JSON.stringify(views, null, 2)}\n`, "utf8");
+}
+
+async function writeArticleViewEvents(events) {
+  await ensureJsonFile(articleViewEventsFile);
+  await writeFile(articleViewEventsFile, `${JSON.stringify(events, null, 2)}\n`, "utf8");
 }
 
 async function writeUsers(users) {
@@ -444,10 +465,38 @@ async function handleArticlesApi(request, response, url) {
       return;
     }
 
+    let payload = {};
+    try {
+      payload = await parseJsonBody(request);
+    } catch (error) {
+      sendError(response, error.message === "REQUEST_TOO_LARGE" ? 413 : 400, "Invalid JSON body");
+      return;
+    }
+
+    const visitorId = normalizeVisitorId(payload.visitorId);
+    if (!visitorId) {
+      sendError(response, 400, "Visitor id is required");
+      return;
+    }
+
+    const viewedOn = getTodayKey();
+    const eventKey = `${slug}:${visitorId}:${viewedOn}`;
+    const events = await readArticleViewEvents();
     const views = await readArticleViews();
-    views[slug] = Math.max(0, Number(views[slug]) || 0) + 1;
-    await writeArticleViews(views);
-    sendJson(response, 200, { slug, views: views[slug] });
+    let counted = false;
+    if (!events[eventKey]) {
+      events[eventKey] = {
+        slug,
+        visitorId,
+        viewedOn,
+        createdAt: new Date().toISOString(),
+      };
+      views[slug] = Math.max(0, Number(views[slug]) || 0) + 1;
+      counted = true;
+      await writeArticleViewEvents(events);
+      await writeArticleViews(views);
+    }
+    sendJson(response, 200, { slug, views: Math.max(0, Number(views[slug]) || 0), counted });
     return;
   }
 

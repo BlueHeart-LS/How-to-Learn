@@ -1167,6 +1167,25 @@
     padding-bottom: 32px;
   }
 
+  .admin-hero-row {
+    display: grid;
+    align-items: start;
+    text-align: center;
+  }
+
+  .admin-hero-row p:not(.section-kicker) {
+    margin: 0 auto;
+  }
+
+  .admin-article-item {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-article-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .blog-sidebar {
     padding: 18px;
   }

@@ -8,7 +8,7 @@
       a, button, input, select, textarea, [role="button"] { cursor: url("../images/mouse_cursor.png") 4 4, pointer !important; }
       html:active, body:active, body:active *, a:active, button:active, input:active, select:active, textarea:active, [role="button"]:active { cursor: url("../images/mouse_touch_cursor.png") 4 4, pointer !important; }
     </style>
-    <title>會員登入｜如何學 How to Learn</title>
+    <title>文章列表｜如何學 How to Learn</title>
     <link rel="icon" type="image/png" href="../images/icon_logo.png" />
     <link rel="preload" href="../fonts/jf-openhuninn-2.1.ttf" as="font" type="font/ttf" crossorigin />
     <link rel="preload" href="../fonts/Iansui-Regular.ttf" as="font" type="font/ttf" crossorigin />
@@ -20,6 +20,7 @@
         <a class="brand" href="../index.html" aria-label="如何學首頁">
           <img src="../images/LOGO.png" alt="如何學 How to Learn" />
         </a>
+
         <nav class="main-nav" aria-label="主要導覽">
           <a href="start.html">如何開始</a>
           <a href="explore.html">自我探索</a>
@@ -28,37 +29,38 @@
           <a href="resources.html">資源專區</a>
           <a href="about.html">關於我們</a>
         </nav>
+
         <div class="header-actions">
           <button class="login-button" type="button" data-login-modal>會員登入</button>
         </div>
       </header>
 
       <main>
-        <section class="auth-page">
-          <div class="auth-card">
-            <p class="section-kicker">Member Login</p>
-            <h1>會員登入</h1>
-            <form class="auth-form" data-login-form>
-              <label>
-                Email
-                <input name="email" type="email" autocomplete="email" required />
-              </label>
-              <label>
-                密碼
-                <input name="password" type="password" autocomplete="current-password" required />
-              </label>
-              <button class="primary-button" type="submit">登入</button>
-              <p class="admin-note" data-auth-status></p>
-            </form>
-            <p class="auth-switch">還沒有帳號？<a href="register.html">建立會員帳號</a></p>
+        <section class="admin-hero admin-hero-row">
+          <div>
+            <p class="section-kicker">Article Admin</p>
+            <h1>文章列表</h1>
+            <p>管理已發布與草稿文章，選擇一篇文章進入編輯，或建立新的內容。</p>
           </div>
+          <a class="primary-button" href="admin.html?new=1">新增文章</a>
         </section>
+
+        <section class="admin-list-page" data-admin-list-page aria-label="文章列表"></section>
+        <p class="admin-note" data-save-status>正在載入文章...</p>
       </main>
+
+      <div class="modal-overlay" data-modal-overlay hidden>
+        <div class="coming-soon-modal" role="dialog" aria-modal="true" aria-labelledby="coming-soon-title">
+          <h2 id="coming-soon-title">開發中，敬請期待</h2>
+        </div>
+      </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js/supabase-config.js"></script>
     <script src="../js/supabase-client.js"></script>
-    <script src="../js/auth.js?v=views-3"></script>
-    <script src="../js/main.js"></script>
+    <script src="../js/auth.js?v=admin-list-1"></script>
+    <script src="../js/articles.js?v=admin-list-1"></script>
+    <script src="../js/admin.js?v=admin-list-1"></script>
+    <script src="../js/main.js?v=admin-list-1"></script>
   </body>
 </html>

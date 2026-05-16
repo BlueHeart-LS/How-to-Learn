@@ -8,7 +8,7 @@
       a, button, input, select, textarea, [role="button"] { cursor: url("../images/mouse_cursor.png") 4 4, pointer !important; }
       html:active, body:active, body:active *, a:active, button:active, input:active, select:active, textarea:active, [role="button"]:active { cursor: url("../images/mouse_touch_cursor.png") 4 4, pointer !important; }
     </style>
-    <title>文章管理測試｜如何學 How to Learn</title>
+    <title>編輯文章｜如何學 How to Learn</title>
     <link rel="icon" type="image/png" href="../images/icon_logo.png" />
     
     <link rel="preload" href="../fonts/jf-openhuninn-2.1.ttf" as="font" type="font/ttf" crossorigin />
@@ -38,14 +38,16 @@
 
       <main>
         <section class="admin-hero">
-          <p class="section-kicker">Front-end Demo</p>
-          <h1>如何學文章後台</h1>
+          <p class="section-kicker">Article Admin</p>
+          <h1>編輯文章</h1>
+          <p>修改文章內容、封面、摘要與分類，儲存後會同步到前台文章列表。</p>
         </section>
 
         <section class="admin-layout">
           <aside class="admin-list">
             <h2>文章列表</h2>
             <div data-admin-list></div>
+            <a class="secondary-button small" href="admin-articles.html">返回列表</a>
             <button class="primary-button small" type="button" data-new-article>新增文章</button>
           </aside>
 
@@ -123,9 +125,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js/supabase-config.js"></script>
     <script src="../js/supabase-client.js"></script>
-    <script src="../js/auth.js?v=views-2"></script>
-    <script src="../js/articles.js?v=views-2"></script>
-    <script src="../js/admin.js?v=views-2"></script>
-    <script src="../js/main.js?v=admin-import-1"></script>
+    <script src="../js/auth.js?v=admin-list-1"></script>
+    <script src="../js/articles.js?v=admin-list-1"></script>
+    <script src="../js/admin.js?v=admin-list-1"></script>
+    <script src="../js/main.js?v=admin-list-1"></script>
   </body>
 </html>

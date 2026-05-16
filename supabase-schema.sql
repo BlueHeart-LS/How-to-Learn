@@ -29,9 +29,18 @@ create table if not exists public.article_views (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists public.article_view_events (
+  slug text not null,
+  visitor_id text not null,
+  viewed_on date not null default current_date,
+  created_at timestamptz not null default now(),
+  primary key (slug, visitor_id, viewed_on)
+);
+
 alter table public.profiles enable row level security;
 alter table public.articles enable row level security;
 alter table public.article_views enable row level security;
+alter table public.article_view_events enable row level security;
 
 drop policy if exists "Profiles are readable by owner" on public.profiles;
 create policy "Profiles are readable by owner"
@@ -64,28 +73,58 @@ create policy "Article views are public"
 on public.article_views for select
 using (true);
 
-create or replace function public.increment_article_view(article_slug text)
+create or replace function public.increment_article_view(article_slug text, visitor_id text)
 returns integer
 language plpgsql
 security definer
 set search_path = public
 as $$
 declare
+  normalized_visitor_id text;
+  inserted_count integer;
   new_views integer;
 begin
-  insert into public.article_views (slug, views, updated_at)
-  values (article_slug, 1, now())
-  on conflict (slug)
-  do update set views = public.article_views.views + 1, updated_at = now()
-  returning views into new_views;
+  normalized_visitor_id := regexp_replace(coalesce(visitor_id, ''), '[^a-zA-Z0-9_.-]', '', 'g');
 
-  return new_views;
+  if normalized_visitor_id = '' then
+    normalized_visitor_id := 'anonymous';
+  end if;
+
+  insert into public.article_view_events (slug, visitor_id, viewed_on, created_at)
+  values (article_slug, left(normalized_visitor_id, 120), current_date, now())
+  on conflict (slug, visitor_id, viewed_on) do nothing;
+
+  get diagnostics inserted_count = row_count;
+
+  if inserted_count > 0 then
+    insert into public.article_views (slug, views, updated_at)
+    values (article_slug, 1, now())
+    on conflict (slug)
+    do update set views = public.article_views.views + 1, updated_at = now()
+    returning views into new_views;
+  else
+    select views into new_views
+    from public.article_views
+    where slug = article_slug;
+  end if;
+
+  return coalesce(new_views, 0);
 end;
+$$;
+
+create or replace function public.increment_article_view(article_slug text)
+returns integer
+language sql
+security definer
+set search_path = public
+as $$
+  select public.increment_article_view(article_slug, 'anonymous');
 $$;
 
 grant select on public.articles to anon, authenticated;
 grant select on public.article_views to anon, authenticated;
 grant execute on function public.increment_article_view(text) to anon, authenticated;
+grant execute on function public.increment_article_view(text, text) to anon, authenticated;
 
 insert into storage.buckets (id, name, public)
 values ('article-covers', 'article-covers', true)

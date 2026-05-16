@@ -184,6 +184,8 @@ let serverArticles = {};
 let serverArticleViews = {};
 const reportedArticleViews = new Set();
 const savedArticleViewsKey = "howToLearnArticleViews";
+const articleViewDatesKey = "howToLearnArticleViewDates";
+const visitorIdKey = "howToLearnVisitorId";
 
 function canUseArticleApi() {
   return window.location.protocol === "http:" || window.location.protocol === "https:";
@@ -203,6 +205,44 @@ function getSavedArticleViews() {
 
 function writeSavedArticleViews(views) {
   localStorage.setItem(savedArticleViewsKey, JSON.stringify(views));
+}
+
+function getVisitorId() {
+  let visitorId = localStorage.getItem(visitorIdKey);
+  if (!visitorId) {
+    const randomId = globalThis.crypto?.randomUUID
+      ? globalThis.crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    visitorId = `visitor-${randomId}`;
+    localStorage.setItem(visitorIdKey, visitorId);
+  }
+  return visitorId;
+}
+
+function getTodayKey() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function getSavedArticleViewDates() {
+  try {
+    return JSON.parse(localStorage.getItem(articleViewDatesKey) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function writeSavedArticleViewDates(viewDates) {
+  localStorage.setItem(articleViewDatesKey, JSON.stringify(viewDates));
+}
+
+function hasViewedArticleToday(slug) {
+  return getSavedArticleViewDates()[slug] === getTodayKey();
+}
+
+function markArticleViewedToday(slug) {
+  const viewDates = getSavedArticleViewDates();
+  viewDates[slug] = getTodayKey();
+  writeSavedArticleViewDates(viewDates);
 }
 
 function getArticleView(slug, article = {}) {
@@ -348,9 +388,12 @@ async function reportArticleView(slug) {
   if (!canUseArticleApi() || reportedArticleViews.has(slug)) return;
   reportedArticleViews.add(slug);
 
+  if (hasViewedArticleToday(slug)) return;
+
   const currentArticle = getArticleLibrary()[slug];
   const optimisticViews = getArticleView(slug, currentArticle) + 1;
   setArticleView(slug, optimisticViews);
+  markArticleViewedToday(slug);
   const views = document.querySelector("[data-article-views]");
   if (views) {
     views.textContent = String(optimisticViews);
@@ -361,11 +404,18 @@ async function reportArticleView(slug) {
     const supabase = getSupabaseClient();
     let payload;
     if (supabase) {
-      const { data, error } = await supabase.rpc("increment_article_view", { article_slug: slug });
+      const { data, error } = await supabase.rpc("increment_article_view", {
+        article_slug: slug,
+        visitor_id: getVisitorId(),
+      });
       if (error) throw error;
       payload = { slug, views: data };
     } else {
-      const response = await fetch(`/api/articles/${encodeURIComponent(slug)}/view`, { method: "POST" });
+      const response = await fetch(`/api/articles/${encodeURIComponent(slug)}/view`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ visitorId: getVisitorId() }),
+      });
       if (!response.ok) throw new Error("Article view API unavailable");
       payload = await response.json();
     }
