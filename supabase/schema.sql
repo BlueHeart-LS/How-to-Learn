@@ -141,6 +141,7 @@ as $$
 $$;
 
 grant select on public.articles to anon, authenticated;
+grant insert, update, delete on public.articles to authenticated;
 grant select on public.article_views to anon, authenticated;
 grant execute on function public.increment_article_view(text) to anon, authenticated;
 grant execute on function public.increment_article_view(text, text) to anon, authenticated;

@@ -637,15 +637,16 @@ function bindEditorEvents() {
       setStatus("文章已儲存，前台重新整理後會看到更新");
       window.HowToLearnArticles?.loadServerArticles?.();
     } catch (error) {
-      if (getSupabaseClient()) {
-        setStatus(`Supabase 儲存失敗：${error.message}。請確認目前帳號是 admin，且已執行 supabase/admin-setup.sql。`);
-        return;
-      }
-
       const article = getFormArticle(activeCoverImage);
       saveArticleToLocalStorage(slug, article);
       renderEditorShortcutList();
       fillForm(slug, article);
+
+      if (getSupabaseClient()) {
+        setStatus(`Supabase 儲存失敗：${error.message}。已先暫存到這台瀏覽器；請到 Supabase SQL Editor 執行 supabase/admin-setup.sql 後再儲存一次。`);
+        return;
+      }
+
       setStatus(apiAvailable ? `本機 API 儲存失敗：${error.message}` : "文章暫存到這台瀏覽器；啟動 server 後才能讓其他頁面/裝置看到");
     }
   });
