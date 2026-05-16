@@ -225,6 +225,14 @@
   justify-self: center;
 }
 
+.lobby-pet-creature img {
+  display: block;
+  width: 145px;
+  height: 145px;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 12px rgba(106, 81, 72, 0.18));
+}
+
 .lobby-pet-creature span {
   display: block;
   width: 122px;
@@ -260,6 +268,11 @@
 
 .lobby-pet-creature.low span {
   background: #ddebff;
+}
+
+.lobby-pet-creature.low img {
+  filter: saturate(0.78) drop-shadow(0 10px 12px rgba(106, 81, 72, 0.18));
+  transform: translateY(5px) scale(0.96);
 }
 
 .lobby-pet-creature.low b {
