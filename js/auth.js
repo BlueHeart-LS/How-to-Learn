@@ -1,5 +1,15 @@
 const authTokenKey = "howToLearnAuthToken";
 const adminEmails = ["lan.learning.tw@gmail.com"];
+const profileAvatars = {
+  den: "../images/Character/den.png",
+  flash: "../images/Character/flash.png",
+  chen: "../images/Character/chen.png",
+  book: "../images/Character/book.png",
+};
+
+function normalizeAvatar(value) {
+  return profileAvatars[value] ? value : "den";
+}
 
 function isAdminUser(user) {
   const email = String(user?.email || "").trim().toLowerCase();
@@ -71,6 +81,7 @@ async function getCurrentUser() {
       email: user.email,
       name: profile?.name || user.user_metadata?.name || user.email,
       bio: profile?.bio || "",
+      avatar: normalizeAvatar(user.user_metadata?.avatar),
       role: profile?.role === "admin" || adminEmails.includes(String(user.email || "").trim().toLowerCase()) ? "admin" : "member",
       createdAt: profile?.created_at || user.created_at,
       updatedAt: profile?.updated_at || user.updated_at,
@@ -175,7 +186,7 @@ async function initRegisterPage() {
           email: form.email.value.trim(),
           password: form.password.value,
           options: {
-            data: { name },
+            data: { name, avatar: "den" },
             emailRedirectTo: getAbsolutePageUrl("profile.html"),
           },
         });
@@ -217,6 +228,7 @@ async function initProfilePage() {
   const memberSince = document.querySelector("[data-member-since]");
   const memberRole = document.querySelector("[data-member-role]");
   const adminLink = document.querySelector("[data-admin-link]");
+  const avatarPreview = document.querySelector("[data-profile-avatar-preview]");
   if (!form) return;
 
   const user = await getCurrentUser();
@@ -227,6 +239,9 @@ async function initProfilePage() {
 
   form.name.value = user.name || "";
   form.bio.value = user.bio || "";
+  const selectedAvatar = normalizeAvatar(user.avatar);
+  if (form.avatar) form.avatar.value = selectedAvatar;
+  if (avatarPreview) avatarPreview.src = profileAvatars[selectedAvatar];
   memberEmail.textContent = user.email || "";
   memberSince.textContent = user.createdAt ? new Date(user.createdAt).toLocaleDateString("zh-TW") : "";
   const isAdmin = isAdminUser(user);
@@ -239,6 +254,13 @@ async function initProfilePage() {
     adminLink.setAttribute("aria-hidden", String(!isAdmin));
   }
 
+  form.querySelectorAll("[name='avatar']").forEach((input) => {
+    input.addEventListener("change", () => {
+      const avatar = normalizeAvatar(form.avatar.value);
+      if (avatarPreview) avatarPreview.src = profileAvatars[avatar];
+    });
+  });
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     status.textContent = "儲存中";
@@ -246,9 +268,17 @@ async function initProfilePage() {
     try {
       const supabase = getSupabaseClient();
       let updatedUser;
+      const avatar = normalizeAvatar(form.avatar?.value);
       if (supabase) {
         const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
         if (authError) throw authError;
+        const { error: metadataError } = await supabase.auth.updateUser({
+          data: {
+            name: form.name.value.trim(),
+            avatar,
+          },
+        });
+        if (metadataError) throw metadataError;
         const { data, error } = await supabase
           .from("profiles")
           .upsert({
@@ -266,6 +296,7 @@ async function initProfilePage() {
           email: authUser.email,
           name: data.name,
           bio: data.bio,
+          avatar,
           role: data.role,
           createdAt: data.created_at,
           updatedAt: data.updated_at,
@@ -276,12 +307,16 @@ async function initProfilePage() {
           body: JSON.stringify({
             name: form.name.value.trim(),
             bio: form.bio.value.trim(),
+            avatar,
           }),
         });
         updatedUser = payload.user;
       }
       form.name.value = updatedUser.name || "";
       form.bio.value = updatedUser.bio || "";
+      const updatedAvatar = normalizeAvatar(updatedUser.avatar);
+      if (form.avatar) form.avatar.value = updatedAvatar;
+      if (avatarPreview) avatarPreview.src = profileAvatars[updatedAvatar];
       status.textContent = "個人資料已更新";
       updateAuthButtons(updatedUser);
     } catch (error) {

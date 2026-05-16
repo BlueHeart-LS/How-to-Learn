@@ -12,6 +12,10 @@
     grid-template-columns: 1fr;
   }
 
+  .avatar-picker {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .start-route-map {
     min-height: 320px;
   }

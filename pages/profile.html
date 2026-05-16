@@ -12,7 +12,7 @@
     <link rel="icon" type="image/png" href="../images/icon_logo.png" />
     <link rel="preload" href="../fonts/jf-openhuninn-2.1.ttf" as="font" type="font/ttf" crossorigin />
     <link rel="preload" href="../fonts/Iansui-Regular.ttf" as="font" type="font/ttf" crossorigin />
-    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" href="../css/styles.css?v=profile-avatar-1" />
   </head>
   <body>
     <div class="page-shell">
@@ -37,6 +37,7 @@
         <section class="profile-page">
           <aside class="profile-summary">
             <p class="section-kicker">Member Profile</p>
+            <img class="profile-avatar-preview" data-profile-avatar-preview src="../images/Character/den.png" alt="會員頭貼" />
             <h1>個人資料</h1>
             <dl>
               <div>
@@ -61,6 +62,29 @@
               顯示名稱
               <input name="name" required />
             </label>
+            <fieldset class="avatar-picker">
+              <legend>頭貼</legend>
+              <label>
+                <input type="radio" name="avatar" value="den" />
+                <img src="../images/Character/den.png" alt="" />
+                <span>Den</span>
+              </label>
+              <label>
+                <input type="radio" name="avatar" value="flash" />
+                <img src="../images/Character/flash.png" alt="" />
+                <span>Flash</span>
+              </label>
+              <label>
+                <input type="radio" name="avatar" value="chen" />
+                <img src="../images/Character/chen.png" alt="" />
+                <span>Chen</span>
+              </label>
+              <label>
+                <input type="radio" name="avatar" value="book" />
+                <img src="../images/Character/book.png" alt="" />
+                <span>Book</span>
+              </label>
+            </fieldset>
             <label>
               自我介紹
               <textarea name="bio" rows="8" placeholder="寫下你目前的學習目標、興趣或想探索的方向"></textarea>
@@ -74,7 +98,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js/supabase-config.js"></script>
     <script src="../js/supabase-client.js"></script>
-    <script src="../js/auth.js?v=admin-role-3"></script>
-    <script src="../js/main.js?v=admin-role-3"></script>
+    <script src="../js/auth.js?v=profile-avatar-1"></script>
+    <script src="../js/main.js?v=profile-avatar-1"></script>
   </body>
 </html>

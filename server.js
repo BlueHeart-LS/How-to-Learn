@@ -84,6 +84,7 @@ function publicUser(user) {
     name: user.name,
     email: user.email,
     bio: user.bio || "",
+    avatar: user.avatar || "den",
     role: user.role || "member",
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
@@ -309,6 +310,7 @@ async function handleAuthApi(request, response, url) {
       email,
       passwordHash: hashPassword(password),
       bio: "",
+      avatar: "den",
       role: "member",
       createdAt: now,
       updatedAt: now,
@@ -392,6 +394,7 @@ async function handleAuthApi(request, response, url) {
       ...user,
       name: String(payload.name || user.name).trim(),
       bio: String(payload.bio || "").trim(),
+      avatar: String(payload.avatar || user.avatar || "den").trim(),
       updatedAt: new Date().toISOString(),
     };
     await writeUsers(users);

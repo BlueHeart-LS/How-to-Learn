@@ -90,8 +90,10 @@ function getLevel() {
   return Math.max(1, Math.floor(pet.careCount / 5) + 1);
 }
 
-function getBlockedFullStat(action) {
-  return Object.keys(statElements).find((key) => action[key] > 0 && pet[key] >= 100);
+function getBlockedFullStats(action) {
+  const increasingStats = Object.keys(statElements).filter((key) => action[key] > 0);
+  if (!increasingStats.length) return [];
+  return increasingStats.every((key) => pet[key] >= 100) ? increasingStats : [];
 }
 
 function render() {
@@ -118,9 +120,9 @@ function render() {
 
   actionButtons.forEach((button) => {
     const action = actions[button.dataset.petAction];
-    const fullStat = getBlockedFullStat(action);
-    button.disabled = action.cost > wallet || Boolean(fullStat);
-    button.title = fullStat ? `${statLabels[fullStat]}已滿，暫時不需要這個照顧動作。` : "";
+    const fullStats = getBlockedFullStats(action);
+    button.disabled = action.cost > wallet || fullStats.length > 0;
+    button.title = fullStats.length ? `${fullStats.map((key) => statLabels[key]).join("、")}都已滿，暫時不需要這個照顧動作。` : "";
   });
 
   typeButtons.forEach((button) => {
@@ -134,9 +136,9 @@ function applyAction(type) {
   const action = actions[type];
   if (!action) return;
 
-  const fullStat = getBlockedFullStat(action);
-  if (fullStat) {
-    petMessage.textContent = `${statLabels[fullStat]}已經滿了，先選其他照顧方式吧。`;
+  const fullStats = getBlockedFullStats(action);
+  if (fullStats.length) {
+    petMessage.textContent = `${fullStats.map((key) => statLabels[key]).join("、")}都已經滿了，先選其他照顧方式吧。`;
     render();
     return;
   }
