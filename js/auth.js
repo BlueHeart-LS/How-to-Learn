@@ -46,7 +46,7 @@ async function authRequest(path, options = {}) {
     ...(options.headers || {}),
   };
   const token = getAuthToken();
-  if (token) {
+  if (token && token !== "supabase") {
     headers.authorization = `Bearer ${token}`;
   }
 
@@ -56,7 +56,7 @@ async function authRequest(path, options = {}) {
   });
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) {
-    throw new Error(payload.error || "操作失敗");
+    throw new Error(payload.error || "請求失敗");
   }
   return payload;
 }
@@ -64,7 +64,9 @@ async function authRequest(path, options = {}) {
 async function getCurrentUser() {
   const supabase = getSupabaseClient();
   if (supabase) {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) {
       setAuthToken("");
       return null;
@@ -100,7 +102,7 @@ async function getCurrentUser() {
 
 function updateAuthButtons(user) {
   document.querySelectorAll("[data-login-modal]").forEach((button) => {
-    button.textContent = user ? "個人資料" : "會員登入";
+    button.textContent = user ? "會員資料" : "會員登入";
     if (user && !button.nextElementSibling?.matches("[data-auth-logout]")) {
       const logoutButton = document.createElement("button");
       logoutButton.className = button.className;
@@ -109,7 +111,12 @@ function updateAuthButtons(user) {
       logoutButton.textContent = "登出";
       logoutButton.addEventListener("click", async () => {
         try {
-          await authRequest("/api/auth/logout", { method: "POST", body: "{}" });
+          const supabase = getSupabaseClient();
+          if (supabase) {
+            await supabase.auth.signOut();
+          } else {
+            await authRequest("/api/auth/logout", { method: "POST", body: "{}" });
+          }
         } catch {
           // Local logout still works if the API is unavailable.
         }
@@ -118,9 +125,13 @@ function updateAuthButtons(user) {
       });
       button.insertAdjacentElement("afterend", logoutButton);
     }
-    button.addEventListener("click", () => {
-      window.location.href = getPagePath(user ? "profile.html" : "login.html");
-    }, { once: true });
+    button.addEventListener(
+      "click",
+      () => {
+        window.location.href = getPagePath(user ? "profile.html" : "login.html");
+      },
+      { once: true },
+    );
   });
 }
 
@@ -135,7 +146,7 @@ async function initLoginPage() {
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    status.textContent = "登入中";
+    status.textContent = "登入中...";
 
     try {
       const supabase = getSupabaseClient();
@@ -171,10 +182,10 @@ async function initRegisterPage() {
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    status.textContent = "建立帳號中";
+    status.textContent = "建立帳號中...";
 
     if (form.password.value !== form.confirmPassword.value) {
-      status.textContent = "兩次輸入的密碼不同";
+      status.textContent = "兩次輸入的密碼不一致";
       return;
     }
 
@@ -263,14 +274,17 @@ async function initProfilePage() {
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    status.textContent = "儲存中";
+    status.textContent = "儲存中...";
 
     try {
       const supabase = getSupabaseClient();
       let updatedUser;
       const avatar = normalizeAvatar(form.avatar?.value);
       if (supabase) {
-        const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
+        const {
+          data: { user: authUser },
+          error: authError,
+        } = await supabase.auth.getUser();
         if (authError) throw authError;
         const { error: metadataError } = await supabase.auth.updateUser({
           data: {
@@ -317,7 +331,7 @@ async function initProfilePage() {
       const updatedAvatar = normalizeAvatar(updatedUser.avatar);
       if (form.avatar) form.avatar.value = updatedAvatar;
       if (avatarPreview) avatarPreview.src = profileAvatars[updatedAvatar];
-      status.textContent = "個人資料已更新";
+      status.textContent = "會員資料已更新";
       updateAuthButtons(updatedUser);
     } catch (error) {
       status.textContent = error.message;

@@ -1,9 +1,9 @@
 const latestArticles = document.querySelector("[data-latest-articles]");
 
 const tagClassByCategory = {
-  "學習方法": "blue-tag",
-  "時間管理": "green-tag",
-  "專注力提升": "purple-tag"
+  學習方法: "blue-tag",
+  時間管理: "green-tag",
+  專注力提升: "purple-tag",
 };
 
 function parseArticleDate(date) {

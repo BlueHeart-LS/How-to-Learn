@@ -13,6 +13,18 @@ let activeCoverImage = "";
 let isCreatingArticle = false;
 const adminEmails = ["lan.learning.tw@gmail.com"];
 
+function setStatus(message) {
+  if (statusText) statusText.textContent = message;
+}
+
+function getSupabaseClient() {
+  return window.HowToLearnSupabase?.isConfigured ? window.HowToLearnSupabase.client : null;
+}
+
+function canUseArticleApi() {
+  return window.location.protocol === "http:" || window.location.protocol === "https:";
+}
+
 function waitForAuthReady() {
   return new Promise((resolve) => {
     const supabase = getSupabaseClient();
@@ -34,68 +46,48 @@ async function getAdminUser() {
   if (!window.HowToLearnAuth) return { role: "admin" };
 
   await waitForAuthReady();
-  let user = await window.HowToLearnAuth.getCurrentUser();
+  const user = await window.HowToLearnAuth.getCurrentUser();
   if (user?.role === "admin") return user;
 
   const supabase = getSupabaseClient();
   if (!supabase) return user;
 
   const { data: authData } = await supabase.auth.getUser();
-  if (!authData.user) return null;
-  if (adminEmails.includes(String(authData.user.email || "").trim().toLowerCase())) {
+  const authUser = authData.user;
+  if (!authUser) return null;
+
+  const adminByEmail = adminEmails.includes(String(authUser.email || "").trim().toLowerCase());
+  if (adminByEmail) {
     return {
-      id: authData.user.id,
-      email: authData.user.email,
-      name: authData.user.email,
+      id: authUser.id,
+      email: authUser.email,
+      name: authUser.user_metadata?.name || authUser.email,
       bio: "",
       role: "admin",
-      createdAt: authData.user.created_at,
-      updatedAt: authData.user.updated_at,
+      createdAt: authUser.created_at,
+      updatedAt: authUser.updated_at,
     };
   }
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("id,name,bio,role,created_at,updated_at")
-    .eq("id", authData.user.id)
-    .maybeSingle();
-
-  if (!profile) return user;
-  return {
-    id: authData.user.id,
-    email: authData.user.email,
-    name: profile.name,
-    bio: profile.bio,
-    role: profile.role,
-    createdAt: profile.created_at,
-    updatedAt: profile.updated_at,
-  };
+  return user;
 }
 
 async function requireAdminAccess() {
   const user = await getAdminUser();
   if (user?.role === "admin") return true;
 
-  document.querySelector("main")?.replaceChildren();
   const main = document.querySelector("main");
+  main?.replaceChildren();
   const section = document.createElement("section");
   section.className = "admin-hero";
   section.innerHTML = `
     <p class="section-kicker">Admin Only</p>
     <h1>需要管理員權限</h1>
-    <p>請使用管理員帳號登入後再進入文章後台。</p>
+    <p>請先使用管理員帳號登入，才能新增、編輯或刪除文章。</p>
     <a class="primary-button" href="login.html">前往登入</a>
   `;
   main?.append(section);
   return false;
-}
-
-function canUseArticleApi() {
-  return window.location.protocol === "http:" || window.location.protocol === "https:";
-}
-
-function getSupabaseClient() {
-  return window.HowToLearnSupabase?.isConfigured ? window.HowToLearnSupabase.client : null;
 }
 
 function mapSupabaseArticle(row) {
@@ -165,29 +157,6 @@ function prepareManagedArticle(article) {
   };
 }
 
-async function importDefaultArticlesToApi() {
-  const defaultEntries = Object.entries(getDefaultArticles()).filter(([slug]) => !apiArticles[slug]);
-  if (!defaultEntries.length) return 0;
-  if (!apiAvailable && !getSupabaseClient()) return 0;
-
-  let importedCount = 0;
-  statusText.textContent = "正在把前端預設文章匯入文章管理系統...";
-
-  for (const [slug, article] of defaultEntries) {
-    try {
-      const savedSlug = await saveArticleToApi(slug, prepareManagedArticle(article));
-      if (savedSlug) importedCount += 1;
-    } catch (error) {
-      console.warn(`Default article import skipped: ${slug}`, error);
-    }
-  }
-
-  if (importedCount > 0) {
-    statusText.textContent = `已匯入 ${importedCount} 篇前端文章到文章管理系統`;
-  }
-  return importedCount;
-}
-
 async function loadApiArticles() {
   const supabase = getSupabaseClient();
   if (supabase) {
@@ -196,11 +165,11 @@ async function loadApiArticles() {
       if (error) throw error;
       apiArticles = Object.fromEntries((data || []).map((row) => [row.slug, mapSupabaseArticle(row)]));
       apiAvailable = true;
-      statusText.textContent = "已連接 Supabase 文章資料庫";
+      setStatus("已連線 Supabase 文章資料庫");
       return apiArticles;
-    } catch {
+    } catch (error) {
       apiAvailable = false;
-      statusText.textContent = "Supabase 尚未連線，暫時使用 localStorage 模式";
+      setStatus(`Supabase 文章讀取失敗：${error.message}`);
       return {};
     }
   }
@@ -212,20 +181,46 @@ async function loadApiArticles() {
     if (!response.ok) throw new Error("Article API unavailable");
     apiArticles = await response.json();
     apiAvailable = true;
-    statusText.textContent = "已連接後端文章系統";
+    setStatus("已連線本機文章 API");
     return apiArticles;
   } catch {
     apiAvailable = false;
-    statusText.textContent = "未連接後端，暫時使用 localStorage 模式";
+    setStatus("無法連線文章 API，暫時只能存到這台瀏覽器");
     return {};
   }
+}
+
+async function importDefaultArticlesToApi() {
+  const defaultEntries = Object.entries(getDefaultArticles()).filter(([slug]) => !apiArticles[slug]);
+  if (!defaultEntries.length) return 0;
+  if (!apiAvailable && !getSupabaseClient()) return 0;
+
+  let importedCount = 0;
+  setStatus("正在把預設文章同步到文章資料庫...");
+
+  for (const [slug, article] of defaultEntries) {
+    try {
+      const savedSlug = await saveArticleToApi(slug, prepareManagedArticle(article));
+      if (savedSlug) importedCount += 1;
+    } catch (error) {
+      console.warn(`Default article import skipped: ${slug}`, error);
+    }
+  }
+
+  if (importedCount > 0) {
+    setStatus(`已同步 ${importedCount} 篇預設文章到文章資料庫`);
+  }
+  return importedCount;
 }
 
 async function saveArticleToApi(slug, article) {
   const supabase = getSupabaseClient();
   if (supabase) {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error("請先登入會員再儲存文章");
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) throw new Error("請先登入管理員帳號再儲存文章");
+
     const { data, error } = await supabase
       .from("articles")
       .upsert(toSupabaseArticle(slug, article, user.id))
@@ -233,6 +228,7 @@ async function saveArticleToApi(slug, article) {
       .single();
     if (error) throw error;
     apiArticles[slug] = mapSupabaseArticle(data);
+    apiAvailable = true;
     return slug;
   }
 
@@ -244,7 +240,7 @@ async function saveArticleToApi(slug, article) {
 
   const payload = await response.json();
   if (!response.ok) {
-    throw new Error(payload.error || "儲存失敗");
+    throw new Error(payload.error || "文章儲存失敗");
   }
 
   apiAvailable = true;
@@ -264,7 +260,7 @@ function readFileAsDataUrl(file) {
 async function uploadCoverImage(slug, file) {
   if (!file) return "";
   if (!file.type.startsWith("image/")) {
-    throw new Error("封面必須是圖片檔");
+    throw new Error("請上傳圖片檔");
   }
 
   const supabase = getSupabaseClient();
@@ -312,7 +308,7 @@ async function deleteArticleFromApi(slug) {
   const response = await fetch(`/api/articles/${encodeURIComponent(slug)}`, { method: "DELETE" });
   const payload = await response.json();
   if (!response.ok) {
-    throw new Error(payload.error || "刪除失敗");
+    throw new Error(payload.error || "刪除文章失敗");
   }
   delete apiArticles[slug];
 }
@@ -400,13 +396,19 @@ function getFormArticle(coverImage = activeCoverImage) {
   return {
     title: form.title.value.trim(),
     category: form.category.value.trim(),
-    author: form.author.value.trim(),
+    author: form.author.value.trim() || "如何學編輯部",
     date: form.date.value.trim(),
     coverImage,
     coverClass: "people",
-    tags: form.tags.value.split(",").map((tag) => tag.trim()).filter(Boolean),
+    tags: form.tags.value
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean),
     excerpt: form.excerpt.value.trim(),
-    body: form.body.value.split(/\n\s*\n/).map((paragraph) => paragraph.trim()).filter(Boolean),
+    body: form.body.value
+      .split(/\n\s*\n/)
+      .map((paragraph) => paragraph.trim())
+      .filter(Boolean),
   };
 }
 
@@ -428,22 +430,26 @@ list.addEventListener("click", (event) => {
 
   const slug = button.dataset.editSlug;
   fillForm(slug, getArticles()[slug]);
-  statusText.textContent = "已載入文章，可編輯後儲存";
+  setStatus("已載入文章，可以開始編輯");
 });
 
 newButton.addEventListener("click", () => {
-  fillForm("", {
-    title: "",
-    category: "學習方法",
-    author: "如何學編輯部",
-    date: "",
-    coverImage: "",
-    tags: [],
-    coverClass: "people",
-    excerpt: "",
-    body: [],
-  }, { isNew: true });
-  statusText.textContent = "正在建立新文章";
+  fillForm(
+    "",
+    {
+      title: "",
+      category: "學習方法",
+      author: "如何學編輯部",
+      date: "",
+      coverImage: "",
+      tags: [],
+      coverClass: "people",
+      excerpt: "",
+      body: [],
+    },
+    { isNew: true },
+  );
+  setStatus("正在新增文章");
 });
 
 form.title.addEventListener("input", updateGeneratedSlug);
@@ -452,35 +458,39 @@ form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   const slug = form.slug.value.trim() || getAvailableSlug(form.title.value);
+  form.slug.value = slug;
 
   if (!slug || !form.title.value.trim()) {
-    statusText.textContent = "文章代號與標題必填";
+    setStatus("請先輸入文章標題");
     return;
   }
 
   try {
-    statusText.textContent = "正在儲存文章";
+    setStatus("正在儲存文章...");
     let coverImage = activeCoverImage;
     if (form.coverImageFile.files[0]) {
-      statusText.textContent = "正在上傳封面圖片";
+      setStatus("正在上傳封面圖片...");
       coverImage = await uploadCoverImage(slug, form.coverImageFile.files[0]);
     }
 
     const article = getFormArticle(coverImage);
     const savedSlug = await saveArticleToApi(slug, article);
+    deleteArticleFromLocalStorage(savedSlug);
     renderList();
     fillForm(savedSlug, apiArticles[savedSlug]);
-    statusText.textContent = "已儲存到後端文章資料庫";
+    setStatus("文章已儲存，前台重新整理後會看到更新");
+    window.HowToLearnArticles?.loadServerArticles?.();
   } catch (error) {
     if (getSupabaseClient()) {
-      statusText.textContent = `Supabase 儲存失敗：${error.message}`;
+      setStatus(`Supabase 儲存失敗：${error.message}。請確認目前帳號是 admin，且已執行 supabase-admin-setup.sql。`);
       return;
     }
+
     const article = getFormArticle(activeCoverImage);
     saveArticleToLocalStorage(slug, article);
     renderList();
     fillForm(slug, article);
-    statusText.textContent = apiAvailable ? `後端儲存失敗：${error.message}` : "後端未啟動，已暫存到這台瀏覽器";
+    setStatus(apiAvailable ? `本機 API 儲存失敗：${error.message}` : "文章暫存到這台瀏覽器；啟動 server 後才能讓其他頁面/裝置看到");
   }
 });
 
@@ -499,9 +509,9 @@ deleteButton.addEventListener("click", async () => {
     if (fallbackEntry) {
       fillForm(fallbackEntry[0], fallbackEntry[1]);
     }
-    statusText.textContent = "文章已刪除";
+    setStatus("文章已刪除");
   } catch (error) {
-    statusText.textContent = `刪除失敗：${error.message}`;
+    setStatus(`刪除失敗：${error.message}`);
   }
 });
 
@@ -513,7 +523,7 @@ async function initAdmin() {
   try {
     await importDefaultArticlesToApi();
   } catch (error) {
-    statusText.textContent = `預設文章匯入失敗：${error.message}`;
+    setStatus(`同步預設文章失敗：${error.message}`);
   }
   renderList();
 

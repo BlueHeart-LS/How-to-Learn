@@ -183,6 +183,7 @@ function getSavedArticles() {
 let serverArticles = {};
 let serverArticleViews = {};
 const reportedArticleViews = new Set();
+const savedArticleViewsKey = "howToLearnArticleViews";
 
 function canUseArticleApi() {
   return window.location.protocol === "http:" || window.location.protocol === "https:";
@@ -190,6 +191,42 @@ function canUseArticleApi() {
 
 function getSupabaseClient() {
   return window.HowToLearnSupabase?.isConfigured ? window.HowToLearnSupabase.client : null;
+}
+
+function getSavedArticleViews() {
+  try {
+    return JSON.parse(localStorage.getItem(savedArticleViewsKey) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function writeSavedArticleViews(views) {
+  localStorage.setItem(savedArticleViewsKey, JSON.stringify(views));
+}
+
+function getArticleView(slug, article = {}) {
+  const savedViews = getSavedArticleViews();
+  return Math.max(
+    0,
+    Number(serverArticleViews[slug]) || 0,
+    Number(savedViews[slug]) || 0,
+    Number(article.views) || 0,
+  );
+}
+
+function setArticleView(slug, views, options = {}) {
+  const nextViews = Math.max(0, Number(views) || 0);
+  serverArticleViews[slug] = nextViews;
+  if (serverArticles[slug]) {
+    serverArticles[slug] = { ...serverArticles[slug], views: String(nextViews) };
+  }
+
+  if (options.persistLocal !== false) {
+    const savedViews = getSavedArticleViews();
+    savedViews[slug] = Math.max(Number(savedViews[slug]) || 0, nextViews);
+    writeSavedArticleViews(savedViews);
+  }
 }
 
 function mapSupabaseArticle(row) {
@@ -222,7 +259,8 @@ async function loadServerArticles() {
       serverArticleViews = Object.fromEntries((views || []).map((row) => [row.slug, row.views]));
       window.dispatchEvent(new CustomEvent("howtolearn:articles-ready"));
       return serverArticles;
-    } catch {
+    } catch (error) {
+      console.warn("Unable to load Supabase articles or views.", error);
       serverArticles = {};
       serverArticleViews = {};
       return {};
@@ -249,10 +287,8 @@ async function loadServerArticles() {
 
 function getArticleLibrary() {
   const articles = { ...defaultArticles, ...getSavedArticles(), ...serverArticles };
-  Object.entries(serverArticleViews).forEach(([slug, views]) => {
-    if (articles[slug]) {
-      articles[slug] = { ...articles[slug], views: String(views) };
-    }
+  Object.entries(articles).forEach(([slug, article]) => {
+    articles[slug] = { ...article, views: String(getArticleView(slug, article)) };
   });
   return articles;
 }
@@ -312,25 +348,35 @@ async function reportArticleView(slug) {
   if (!canUseArticleApi() || reportedArticleViews.has(slug)) return;
   reportedArticleViews.add(slug);
 
+  const currentArticle = getArticleLibrary()[slug];
+  const optimisticViews = getArticleView(slug, currentArticle) + 1;
+  setArticleView(slug, optimisticViews);
+  const views = document.querySelector("[data-article-views]");
+  if (views) {
+    views.textContent = String(optimisticViews);
+  }
+  window.dispatchEvent(new CustomEvent("howtolearn:articles-ready"));
+
   try {
     const supabase = getSupabaseClient();
     let payload;
     if (supabase) {
       const { data, error } = await supabase.rpc("increment_article_view", { article_slug: slug });
-      if (error) return;
+      if (error) throw error;
       payload = { slug, views: data };
     } else {
       const response = await fetch(`/api/articles/${encodeURIComponent(slug)}/view`, { method: "POST" });
-      if (!response.ok) return;
+      if (!response.ok) throw new Error("Article view API unavailable");
       payload = await response.json();
     }
-    serverArticleViews[payload.slug] = payload.views;
-    const views = document.querySelector("[data-article-views]");
+    const syncedViews = Math.max(getArticleView(payload.slug), Number(payload.views) || 0);
+    setArticleView(payload.slug, syncedViews);
     if (views && payload.slug === slug) {
-      views.textContent = String(payload.views);
+      views.textContent = String(syncedViews);
     }
     window.dispatchEvent(new CustomEvent("howtolearn:articles-ready"));
-  } catch {
+  } catch (error) {
+    console.warn("Unable to sync article view count.", error);
     // View tracking is non-critical; keep the article readable if the API is unavailable.
   }
 }

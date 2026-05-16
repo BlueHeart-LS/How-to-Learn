@@ -83,6 +83,10 @@ begin
 end;
 $$;
 
+grant select on public.articles to anon, authenticated;
+grant select on public.article_views to anon, authenticated;
+grant execute on function public.increment_article_view(text) to anon, authenticated;
+
 insert into storage.buckets (id, name, public)
 values ('article-covers', 'article-covers', true)
 on conflict (id) do update set public = true;
