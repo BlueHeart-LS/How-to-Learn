@@ -18,10 +18,10 @@ let selectedGameAge = "all";
 let selectedGameLevel = "all";
 
 const lobbyPetTypes = {
-  bubu: "../images/Character/bubu.gif",
-  bobo: "../images/Character/bobo.gif",
-  "chu-chu": "../images/Character/chu-chu.gif",
-  light: "../images/Character/light.gif",
+  bubu: "../images/Character/pet-bubu.gif",
+  bobo: "../images/Character/pet-bobo.gif",
+  "chu-chu": "../images/Character/pet-chu-chu.gif",
+  light: "../images/Character/pet-light.gif",
 };
 
 function filterGames() {

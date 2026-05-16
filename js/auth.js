@@ -1,10 +1,10 @@
 const authTokenKey = "howToLearnAuthToken";
 const adminEmails = ["lan.learning.tw@gmail.com"];
 const profileAvatars = {
-  den: "../images/Character/den.png",
-  flash: "../images/Character/flash.png",
-  chen: "../images/Character/chen.png",
-  book: "../images/Character/book.png",
+  den: "../images/Character/Profile-den.png",
+  flash: "../images/Character/Profile-flash.png",
+  chen: "../images/Character/Profile-chen.png",
+  book: "../images/Character/Profile-book.png",
 };
 
 function normalizeAvatar(value) {

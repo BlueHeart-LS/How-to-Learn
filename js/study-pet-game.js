@@ -39,10 +39,10 @@ const statLabels = {
 };
 
 const petTypes = {
-  bubu: { name: "Bubu", image: "../images/Character/bubu.gif" },
-  bobo: { name: "Bobo", image: "../images/Character/bobo.gif" },
-  "chu-chu": { name: "Chu-chu", image: "../images/Character/chu-chu.gif" },
-  light: { name: "Light", image: "../images/Character/light.gif" },
+  bubu: { name: "Bubu", image: "../images/Character/pet-bubu.gif" },
+  bobo: { name: "Bobo", image: "../images/Character/pet-bobo.gif" },
+  "chu-chu": { name: "Chu-chu", image: "../images/Character/pet-chu-chu.gif" },
+  light: { name: "Light", image: "../images/Character/pet-light.gif" },
 };
 
 function normalizePetType(type) {
