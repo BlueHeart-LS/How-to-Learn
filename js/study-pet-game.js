@@ -32,6 +32,12 @@ const actions = {
   rest: { cost: 0, hunger: -3, happy: 3, energy: 20, message: "睡了一下，精神恢復了。" },
 };
 
+const statLabels = {
+  hunger: "飽足",
+  happy: "心情",
+  energy: "精神",
+};
+
 const petTypes = {
   bubu: { name: "Bubu", image: "../images/Character/bubu.gif" },
   bobo: { name: "Bobo", image: "../images/Character/bobo.gif" },
@@ -84,6 +90,10 @@ function getLevel() {
   return Math.max(1, Math.floor(pet.careCount / 5) + 1);
 }
 
+function getBlockedFullStat(action) {
+  return Object.keys(statElements).find((key) => action[key] > 0 && pet[key] >= 100);
+}
+
 function render() {
   const wallet = window.HowToLearnRewards?.getCoins() || 0;
   const mood = getMood();
@@ -108,7 +118,9 @@ function render() {
 
   actionButtons.forEach((button) => {
     const action = actions[button.dataset.petAction];
-    button.disabled = action.cost > wallet;
+    const fullStat = getBlockedFullStat(action);
+    button.disabled = action.cost > wallet || Boolean(fullStat);
+    button.title = fullStat ? `${statLabels[fullStat]}已滿，暫時不需要這個照顧動作。` : "";
   });
 
   typeButtons.forEach((button) => {
@@ -121,6 +133,13 @@ function render() {
 function applyAction(type) {
   const action = actions[type];
   if (!action) return;
+
+  const fullStat = getBlockedFullStat(action);
+  if (fullStat) {
+    petMessage.textContent = `${statLabels[fullStat]}已經滿了，先選其他照顧方式吧。`;
+    render();
+    return;
+  }
 
   if (action.cost > 0) {
     const result = window.HowToLearnRewards?.spend(action.cost);
