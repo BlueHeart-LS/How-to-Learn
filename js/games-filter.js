@@ -13,6 +13,15 @@ const lobbyPetStats = {
   happy: document.querySelector("[data-lobby-pet-happy]"),
   energy: document.querySelector("[data-lobby-pet-energy]"),
 };
+const dailyGoalProgress = document.querySelector("[data-daily-goal-progress]");
+const dailyCoinProgress = document.querySelector("[data-daily-coin-progress]");
+const dailyGoalMessage = document.querySelector("[data-daily-goal-message]");
+const gameProgressPercent = document.querySelector("[data-game-progress-percent]");
+const gameProgressCopy = document.querySelector("[data-game-progress-copy]");
+const gameBadges = document.querySelector("[data-game-badges]");
+const gameBadgeCopy = document.querySelector("[data-game-badge-copy]");
+const gameStreakDays = document.querySelector("[data-game-streak-days]");
+const gameStreakCopy = document.querySelector("[data-game-streak-copy]");
 
 let selectedGameAge = "all";
 let selectedGameLevel = "all";
@@ -93,8 +102,22 @@ function readJson(key, fallback) {
   }
 }
 
+function getTodayKey() {
+  const now = new Date();
+  const offsetDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+  return offsetDate.toISOString().slice(0, 10);
+}
+
+function getRewards() {
+  const rewards = readJson("howToLearnGameRewards", { coins: 0, totalEarned: 0, completedSessions: 0 });
+  if (rewards.todayKey !== getTodayKey()) {
+    return { ...rewards, todaySessions: 0, todayEarned: 0 };
+  }
+  return rewards;
+}
+
 function renderLobbyPet() {
-  const rewards = readJson("howToLearnGameRewards", { coins: 0 });
+  const rewards = getRewards();
   const savedPet = readJson("howToLearnStudyPet", {
     name: "小學伴",
     hunger: 80,
@@ -121,5 +144,58 @@ function renderLobbyPet() {
   lobbyPetCreature?.classList.toggle("low", average < 50);
 }
 
-renderLobbyPet();
-window.addEventListener("storage", renderLobbyPet);
+function renderProgressSummary() {
+  const rewards = getRewards();
+  const completedSessions = rewards.completedSessions || 0;
+  const totalEarned = rewards.totalEarned || 0;
+  const todaySessions = rewards.todaySessions || 0;
+  const todayEarned = rewards.todayEarned || 0;
+  const streakDays = rewards.streakDays || 0;
+  const progressPercent = Math.min(100, Math.round((completedSessions / 10) * 100));
+  const badgeList = [
+    { unlocked: completedSessions >= 1, label: "練習啟程" },
+    { unlocked: completedSessions >= 5, label: "穩定練習" },
+    { unlocked: totalEarned >= 100, label: "金幣收藏家" },
+  ];
+  const unlockedBadges = badgeList.filter((badge) => badge.unlocked);
+
+  if (dailyGoalProgress) dailyGoalProgress.textContent = `今日完成 ${Math.min(todaySessions, 2)} / 2 次練習`;
+  if (dailyCoinProgress) dailyCoinProgress.textContent = `今日獲得 ${todayEarned.toLocaleString("zh-Hant")} 枚學習金幣`;
+  if (dailyGoalMessage) {
+    dailyGoalMessage.textContent = todaySessions >= 2
+      ? "今日小目標完成，可以把金幣帶回去照顧寵物。"
+      : `再完成 ${2 - Math.min(todaySessions, 2)} 次練習，就能完成今日小目標。`;
+  }
+
+  if (gameProgressPercent) gameProgressPercent.textContent = `${progressPercent}%`;
+  if (gameProgressCopy) gameProgressCopy.textContent = `已完成 ${completedSessions.toLocaleString("zh-Hant")} 次練習，累積 ${totalEarned.toLocaleString("zh-Hant")} 枚金幣`;
+  if (gameBadges) {
+    gameBadges.replaceChildren();
+    badgeList.forEach((badge) => {
+      const span = document.createElement("span");
+      span.textContent = badge.unlocked ? "★" : "☆";
+      span.title = badge.label;
+      gameBadges.append(span);
+    });
+  }
+  if (gameBadgeCopy) {
+    gameBadgeCopy.textContent = unlockedBadges.length
+      ? unlockedBadges.map((badge) => badge.label).join("、")
+      : "完成練習後會開始累積成就。";
+  }
+  if (gameStreakDays) gameStreakDays.textContent = `${streakDays.toLocaleString("zh-Hant")} 天`;
+  if (gameStreakCopy) {
+    gameStreakCopy.textContent = streakDays > 0
+      ? `最佳連續紀錄 ${Math.max(rewards.bestStreakDays || 0, streakDays).toLocaleString("zh-Hant")} 天。`
+      : "完成一場遊戲後開始累積連續天數。";
+  }
+}
+
+function renderLobbyInfo() {
+  renderLobbyPet();
+  renderProgressSummary();
+}
+
+renderLobbyInfo();
+window.addEventListener("storage", renderLobbyInfo);
+window.addEventListener("howtolearn:rewards-updated", renderLobbyInfo);

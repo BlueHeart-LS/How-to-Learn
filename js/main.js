@@ -5,11 +5,23 @@ const mainAuthTokenKey = "howToLearnAuthToken";
 
 const rewardStorageKey = "howToLearnGameRewards";
 
+function getLocalDateKey(time = Date.now()) {
+  const date = new Date(time);
+  const offsetDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  return offsetDate.toISOString().slice(0, 10);
+}
+
+function getPreviousDateKey(dateKey) {
+  const date = new Date(`${dateKey}T00:00:00`);
+  date.setDate(date.getDate() - 1);
+  return getLocalDateKey(date.getTime());
+}
+
 function readRewardState() {
   try {
-    return JSON.parse(localStorage.getItem(rewardStorageKey) || '{"coins":0,"totalEarned":0}');
+    return JSON.parse(localStorage.getItem(rewardStorageKey) || '{"coins":0,"totalEarned":0,"completedSessions":0}');
   } catch (error) {
-    return { coins: 0, totalEarned: 0 };
+    return { coins: 0, totalEarned: 0, completedSessions: 0 };
   }
 }
 
@@ -27,9 +39,28 @@ window.HowToLearnRewards = {
   },
   award(amount) {
     const value = Math.max(0, Math.floor(Number(amount) || 0));
+    const todayKey = getLocalDateKey();
     const state = readRewardState();
+    if (state.todayKey !== todayKey) {
+      state.todaySessions = 0;
+      state.todayEarned = 0;
+      state.todayKey = todayKey;
+    }
+    const previousDate = getPreviousDateKey(todayKey);
+    if (state.lastPracticeDate === todayKey) {
+      state.streakDays = Math.max(1, state.streakDays || 1);
+    } else if (state.lastPracticeDate === previousDate) {
+      state.streakDays = (state.streakDays || 0) + 1;
+    } else {
+      state.streakDays = 1;
+    }
     state.coins = (state.coins || 0) + value;
     state.totalEarned = (state.totalEarned || 0) + value;
+    state.completedSessions = (state.completedSessions || 0) + 1;
+    state.todaySessions = (state.todaySessions || 0) + 1;
+    state.todayEarned = (state.todayEarned || 0) + value;
+    state.bestStreakDays = Math.max(state.bestStreakDays || 0, state.streakDays || 0);
+    state.lastPracticeDate = todayKey;
     state.updatedAt = Date.now();
     writeRewardState(state);
     return state;

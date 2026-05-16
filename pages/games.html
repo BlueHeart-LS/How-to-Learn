@@ -13,7 +13,7 @@
     
     <link rel="preload" href="../fonts/jf-openhuninn-2.1.ttf" as="font" type="font/ttf" crossorigin />
     <link rel="preload" href="../fonts/Iansui-Regular.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="../css/styles.css?v=pet-type-1" />
+<link rel="stylesheet" href="../css/styles.css?v=game-stats-1" />
   </head>
   <body>
     <div class="page-shell">
@@ -80,9 +80,9 @@
 
           <aside class="game-daily-goal" aria-label="今日小目標">
             <h2>今日小目標</h2>
-            <p>完成 2 個關卡</p>
-            <p>答對率達 80%</p>
-            <strong>完成後帶金幣回去餵寵物。</strong>
+            <p data-daily-goal-progress>今日完成 0 / 2 次練習</p>
+            <p data-daily-coin-progress>今日獲得 0 枚學習金幣</p>
+            <strong data-daily-goal-message>完成後帶金幣回去餵寵物。</strong>
           </aside>
         </section>
 
@@ -331,24 +331,24 @@
               <p class="section-kicker">Progress</p>
               <h2>我的學習進度</h2>
             </div>
-            <strong>78%</strong>
-            <p>已完成 14 / 18 關卡</p>
+            <strong data-game-progress-percent>0%</strong>
+            <p data-game-progress-copy>已完成 0 次練習</p>
           </article>
           <article class="game-progress-card">
             <div>
               <p class="section-kicker">Badges</p>
               <h2>我的成就</h2>
             </div>
-            <div class="game-badge-row" aria-hidden="true"><span>★</span><span>★</span><span>★</span></div>
-            <p>乘法新手、計算達人、速度小子</p>
+            <div class="game-badge-row" aria-hidden="true" data-game-badges><span>☆</span><span>☆</span><span>☆</span></div>
+            <p data-game-badge-copy>完成練習後會開始累積成就。</p>
           </article>
           <article class="game-progress-card streak-card">
             <div>
               <p class="section-kicker">Streak</p>
               <h2>連續練習</h2>
             </div>
-            <strong>3 天</strong>
-            <p>再連續 2 天可獲得神秘禮物。</p>
+            <strong data-game-streak-days>0 天</strong>
+            <p data-game-streak-copy>完成一場遊戲後開始累積連續天數。</p>
           </article>
         </section>
       </main>
@@ -379,7 +379,7 @@
         </div>
       </div>
     </div>
-    <script src="../js/games-filter.js?v=pet-type-1"></script>
-    <script src="../js/main.js"></script>
+    <script src="../js/games-filter.js?v=game-stats-1"></script>
+    <script src="../js/main.js?v=game-stats-1"></script>
   </body>
 </html>
