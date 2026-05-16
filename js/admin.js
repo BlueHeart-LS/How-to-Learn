@@ -10,6 +10,7 @@ let apiArticles = {};
 let apiAvailable = false;
 let activeSlug = "";
 let activeCoverImage = "";
+let isCreatingArticle = false;
 const adminEmails = ["lan.learning.tw@gmail.com"];
 
 function waitForAuthReady() {
@@ -294,19 +295,69 @@ function deleteArticleFromLocalStorage(slug) {
   writeSavedArticles(saved);
 }
 
-function fillForm(slug, article) {
+function formatDateForInput(value) {
+  if (!value) return "";
+  const normalized = String(value).trim().replace(/[./]/g, "-");
+  const match = normalized.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if (!match) return "";
+  const [, year, month, day] = match;
+  return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+}
+
+function getTodayInputDate() {
+  const now = new Date();
+  const offsetDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+  return offsetDate.toISOString().slice(0, 10);
+}
+
+function generateSlug(value) {
+  const base = String(value || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\p{L}\p{N}]+/gu, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+
+  return base || `article-${Date.now()}`;
+}
+
+function getAvailableSlug(value) {
+  const base = generateSlug(value);
+  const articles = getArticles();
+  if (!articles[base] || base === activeSlug) return base;
+
+  let index = 2;
+  let slug = `${base}-${index}`;
+  while (articles[slug]) {
+    index += 1;
+    slug = `${base}-${index}`;
+  }
+  return slug;
+}
+
+function updateGeneratedSlug() {
+  if (!isCreatingArticle) return;
+  form.slug.value = getAvailableSlug(form.title.value);
+  previewLink.href = `article.html?slug=${encodeURIComponent(form.slug.value)}`;
+}
+
+function fillForm(slug, article, options = {}) {
   activeSlug = slug;
   activeCoverImage = article.coverImage || "";
+  isCreatingArticle = Boolean(options.isNew);
   form.slug.value = slug;
   form.title.value = article.title || "";
   form.category.value = article.category || "";
   form.author.value = article.author || "";
-  form.date.value = article.date || "";
+  form.date.value = formatDateForInput(article.date) || (isCreatingArticle ? getTodayInputDate() : "");
   form.coverImageFile.value = "";
   form.tags.value = (article.tags || []).join(", ");
   form.excerpt.value = article.excerpt || "";
   form.body.value = (article.body || []).join("\n\n");
-  previewLink.href = `article.html?slug=${encodeURIComponent(slug)}`;
+  if (isCreatingArticle) updateGeneratedSlug();
+  previewLink.href = `article.html?slug=${encodeURIComponent(form.slug.value)}`;
   deleteButton.disabled = !slug || !canDeleteArticle(slug);
   coverImageStatus.textContent = activeCoverImage ? `目前封面：${activeCoverImage}` : "尚未選擇封面圖片";
 }
@@ -347,7 +398,7 @@ list.addEventListener("click", (event) => {
 });
 
 newButton.addEventListener("click", () => {
-  fillForm("new-article", {
+  fillForm("", {
     title: "",
     category: "學習方法",
     author: "如何學編輯部",
@@ -357,14 +408,16 @@ newButton.addEventListener("click", () => {
     coverClass: "people",
     excerpt: "",
     body: [],
-  });
+  }, { isNew: true });
   statusText.textContent = "正在建立新文章";
 });
+
+form.title.addEventListener("input", updateGeneratedSlug);
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
-  const slug = form.slug.value.trim();
+  const slug = form.slug.value.trim() || getAvailableSlug(form.title.value);
 
   if (!slug || !form.title.value.trim()) {
     statusText.textContent = "文章代號與標題必填";
