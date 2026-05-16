@@ -42,30 +42,59 @@ function today() {
 
 function renderPosts() {
   const posts = loadPosts();
-  feed.innerHTML = posts.map((post) => `
-    <article class="community-post" data-post-id="${post.id}">
-      <div class="post-header">
-        <div>
-          <h2>${post.title}</h2>
-          <p>${post.author} · ${post.date}</p>
-        </div>
-      </div>
-      <p class="post-content">${post.content}</p>
-      <div class="comment-list">
-        ${(post.comments || []).map((comment) => `
-          <div class="comment-item">
-            <strong>${comment.author}</strong>
-            <p>${comment.content}</p>
-          </div>
-        `).join("")}
-      </div>
-      <form class="comment-form" data-comment-form>
-        <input name="author" placeholder="你的名字" required />
-        <input name="content" placeholder="留下回覆" required />
-        <button type="submit">留言</button>
-      </form>
-    </article>
-  `).join("");
+  feed.replaceChildren();
+
+  posts.forEach((post) => {
+    const article = document.createElement("article");
+    article.className = "community-post";
+    article.dataset.postId = post.id;
+
+    const header = document.createElement("div");
+    header.className = "post-header";
+    const headerContent = document.createElement("div");
+    const title = document.createElement("h2");
+    title.textContent = post.title;
+    const meta = document.createElement("p");
+    meta.textContent = `${post.author} · ${post.date}`;
+    headerContent.append(title, meta);
+    header.append(headerContent);
+
+    const content = document.createElement("p");
+    content.className = "post-content";
+    content.textContent = post.content;
+
+    const commentList = document.createElement("div");
+    commentList.className = "comment-list";
+    (post.comments || []).forEach((comment) => {
+      const commentItem = document.createElement("div");
+      commentItem.className = "comment-item";
+      const author = document.createElement("strong");
+      author.textContent = comment.author;
+      const commentContent = document.createElement("p");
+      commentContent.textContent = comment.content;
+      commentItem.append(author, commentContent);
+      commentList.append(commentItem);
+    });
+
+    const form = document.createElement("form");
+    form.className = "comment-form";
+    form.dataset.commentForm = "";
+    const authorInput = document.createElement("input");
+    authorInput.name = "author";
+    authorInput.placeholder = "你的名字";
+    authorInput.required = true;
+    const contentInput = document.createElement("input");
+    contentInput.name = "content";
+    contentInput.placeholder = "留下回覆";
+    contentInput.required = true;
+    const submitButton = document.createElement("button");
+    submitButton.type = "submit";
+    submitButton.textContent = "留言";
+    form.append(authorInput, contentInput, submitButton);
+
+    article.append(header, content, commentList, form);
+    feed.append(article);
+  });
 }
 
 postForm.addEventListener("submit", (event) => {

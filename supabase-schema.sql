@@ -63,10 +63,25 @@ on public.articles for select
 using (true);
 
 drop policy if exists "Authenticated users manage articles" on public.articles;
-create policy "Authenticated users manage articles"
+drop policy if exists "Admins manage articles" on public.articles;
+create policy "Admins manage articles"
 on public.articles for all
-using (auth.role() = 'authenticated')
-with check (auth.role() = 'authenticated');
+using (
+  exists (
+    select 1
+    from public.profiles
+    where profiles.id = auth.uid()
+      and profiles.role = 'admin'
+  )
+)
+with check (
+  exists (
+    select 1
+    from public.profiles
+    where profiles.id = auth.uid()
+      and profiles.role = 'admin'
+  )
+);
 
 drop policy if exists "Article views are public" on public.article_views;
 create policy "Article views are public"
@@ -136,6 +151,15 @@ on storage.objects for select
 using (bucket_id = 'article-covers');
 
 drop policy if exists "Authenticated users upload article covers" on storage.objects;
-create policy "Authenticated users upload article covers"
+drop policy if exists "Admins upload article covers" on storage.objects;
+create policy "Admins upload article covers"
 on storage.objects for insert
-with check (bucket_id = 'article-covers' and auth.role() = 'authenticated');
+with check (
+  bucket_id = 'article-covers'
+  and exists (
+    select 1
+    from public.profiles
+    where profiles.id = auth.uid()
+      and profiles.role = 'admin'
+  )
+);

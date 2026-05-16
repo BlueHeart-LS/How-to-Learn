@@ -31,6 +31,14 @@ function getSupabaseClient() {
   return window.HowToLearnSupabase?.isConfigured ? window.HowToLearnSupabase.client : null;
 }
 
+function getLocalApiHeaders(extraHeaders = {}) {
+  const token = window.HowToLearnAuth?.getAuthToken?.();
+  return {
+    ...extraHeaders,
+    ...(token && token !== "supabase" ? { authorization: `Bearer ${token}` } : {}),
+  };
+}
+
 function canUseArticleApi() {
   return window.location.protocol === "http:" || window.location.protocol === "https:";
 }
@@ -270,7 +278,7 @@ async function saveArticleToApi(slug, article) {
 
   const response = await fetch("/api/articles", {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: getLocalApiHeaders({ "content-type": "application/json" }),
     body: JSON.stringify({ slug, article }),
   });
 
@@ -316,7 +324,7 @@ async function uploadCoverImage(slug, file) {
   const data = await readFileAsDataUrl(file);
   const response = await fetch("/api/article-images", {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: getLocalApiHeaders({ "content-type": "application/json" }),
     body: JSON.stringify({
       slug,
       filename: file.name,
@@ -341,7 +349,10 @@ async function deleteArticleFromApi(slug) {
     return;
   }
 
-  const response = await fetch(`/api/articles/${encodeURIComponent(slug)}`, { method: "DELETE" });
+  const response = await fetch(`/api/articles/${encodeURIComponent(slug)}`, {
+    method: "DELETE",
+    headers: getLocalApiHeaders(),
+  });
   const payload = await response.json();
   if (!response.ok) {
     throw new Error(payload.error || "刪除文章失敗");

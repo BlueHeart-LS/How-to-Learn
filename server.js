@@ -14,6 +14,13 @@ const usersFile = path.join(dataDir, "users.json");
 const sessionsFile = path.join(dataDir, "sessions.json");
 const port = Number(process.env.PORT || 3000);
 const maxBodySize = 8 * 1024 * 1024;
+const adminEmails = (process.env.ADMIN_EMAILS || "lan.learning.tw@gmail.com")
+  .split(",")
+  .map((email) => normalizeEmail(email))
+  .filter(Boolean);
+const loginAttempts = new Map();
+const loginRateLimitWindow = 15 * 60 * 1000;
+const maxLoginAttempts = 8;
 
 const mimeTypes = {
   ".html": "text/html; charset=utf-8",
@@ -40,6 +47,12 @@ function sendJson(response, statusCode, payload) {
 
 function sendError(response, statusCode, message) {
   sendJson(response, statusCode, { error: message });
+}
+
+function getClientIp(request) {
+  return String(request.headers["x-forwarded-for"] || request.socket.remoteAddress || "")
+    .split(",")[0]
+    .trim();
 }
 
 function normalizeSlug(value) {
@@ -87,6 +100,65 @@ function getAuthToken(request) {
   const header = request.headers.authorization || "";
   if (!header.startsWith("Bearer ")) return "";
   return header.slice(7).trim();
+}
+
+function isAdminUser(user) {
+  return Boolean(user && (user.role === "admin" || adminEmails.includes(normalizeEmail(user.email))));
+}
+
+async function requireAdminUser(request, response) {
+  const { user } = await getAuthenticatedUser(request);
+  if (!user) {
+    sendError(response, 401, "Not authenticated");
+    return null;
+  }
+  if (!isAdminUser(user)) {
+    sendError(response, 403, "Admin access required");
+    return null;
+  }
+  return user;
+}
+
+function getLoginAttemptKey(request, email) {
+  return `${getClientIp(request)}:${normalizeEmail(email)}`;
+}
+
+function isLoginRateLimited(request, email) {
+  const key = getLoginAttemptKey(request, email);
+  const now = Date.now();
+  const attempt = loginAttempts.get(key);
+  if (!attempt || now - attempt.firstAt > loginRateLimitWindow) {
+    loginAttempts.set(key, { count: 0, firstAt: now });
+    return false;
+  }
+  return attempt.count >= maxLoginAttempts;
+}
+
+function recordFailedLogin(request, email) {
+  const key = getLoginAttemptKey(request, email);
+  const now = Date.now();
+  const attempt = loginAttempts.get(key);
+  if (!attempt || now - attempt.firstAt > loginRateLimitWindow) {
+    loginAttempts.set(key, { count: 1, firstAt: now });
+    return;
+  }
+  attempt.count += 1;
+}
+
+function clearFailedLogins(request, email) {
+  loginAttempts.delete(getLoginAttemptKey(request, email));
+}
+
+function isForbiddenStaticPath(requestPath, filePath) {
+  const normalizedRequestPath = requestPath.replace(/\\/g, "/").toLowerCase();
+  const relativePath = path.relative(rootDir, filePath).replace(/\\/g, "/").toLowerCase();
+  if (relativePath.startsWith("..") || path.isAbsolute(relativePath)) return true;
+  if (relativePath.startsWith(".git/") || relativePath === ".git") return true;
+  if (relativePath.startsWith("data/") || relativePath === "data") return true;
+  if (relativePath.startsWith("storage/") || relativePath === "storage") return true;
+  if (normalizedRequestPath.includes("/../")) return true;
+  if ([".sql", ".yaml", ".yml", ".env"].includes(path.extname(filePath).toLowerCase())) return true;
+  return false;
 }
 
 function publicUser(user) {
@@ -231,6 +303,8 @@ async function handleArticleImageApi(request, response) {
     return;
   }
 
+  if (!(await requireAdminUser(request, response))) return;
+
   let payload;
   try {
     payload = await parseJsonBody(request);
@@ -366,11 +440,18 @@ async function handleAuthApi(request, response, url) {
     const users = await readUsers();
     const user = Object.values(users).find((item) => item.email === email);
 
+    if (isLoginRateLimited(request, email)) {
+      sendError(response, 429, "Too many login attempts. Please try again later.");
+      return;
+    }
+
     if (!user || !verifyPassword(password, user.passwordHash)) {
+      recordFailedLogin(request, email);
       sendError(response, 401, "Email or password is incorrect");
       return;
     }
 
+    clearFailedLogins(request, email);
     const now = new Date().toISOString();
     const token = crypto.randomBytes(32).toString("hex");
     const sessions = await readSessions();
@@ -513,6 +594,8 @@ async function handleArticlesApi(request, response, url) {
   }
 
   if ((request.method === "POST" && url.pathname === "/api/articles") || (request.method === "PUT" && slugFromPath)) {
+    if (!(await requireAdminUser(request, response))) return;
+
     let payload;
     try {
       payload = await parseJsonBody(request);
@@ -543,6 +626,8 @@ async function handleArticlesApi(request, response, url) {
   }
 
   if (request.method === "DELETE" && slugFromPath) {
+    if (!(await requireAdminUser(request, response))) return;
+
     const articles = await readArticles();
     if (!articles[slugFromPath]) {
       sendError(response, 404, "Article not found");
@@ -561,7 +646,7 @@ function serveStaticFile(request, response, url) {
   const requestPath = decodeURIComponent(url.pathname === "/" ? "/index.html" : url.pathname);
   let filePath = path.normalize(path.join(rootDir, requestPath));
 
-  if (!filePath.startsWith(rootDir)) {
+  if (isForbiddenStaticPath(requestPath, filePath)) {
     sendError(response, 403, "Forbidden");
     return;
   }
