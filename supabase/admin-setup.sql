@@ -33,6 +33,12 @@ $$;
 grant execute on function public.is_admin() to authenticated;
 grant select on public.articles to anon, authenticated;
 grant insert, update, delete on public.articles to authenticated;
+grant select on public.article_views to anon, authenticated;
+
+drop policy if exists "Articles are public" on public.articles;
+create policy "Articles are public"
+on public.articles for select
+using (true);
 
 drop policy if exists "Authenticated users manage articles" on public.articles;
 drop policy if exists "Admins manage articles" on public.articles;
@@ -40,6 +46,11 @@ create policy "Admins manage articles"
 on public.articles for all
 using (public.is_admin())
 with check (public.is_admin());
+
+drop policy if exists "Article views are public" on public.article_views;
+create policy "Article views are public"
+on public.article_views for select
+using (true);
 
 drop policy if exists "Authenticated users upload article covers" on storage.objects;
 drop policy if exists "Admins upload article covers" on storage.objects;

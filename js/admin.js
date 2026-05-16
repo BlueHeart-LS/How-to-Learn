@@ -643,7 +643,7 @@ function bindEditorEvents() {
       fillForm(slug, article);
 
       if (getSupabaseClient()) {
-        setStatus(`Supabase 儲存失敗：${error.message}。已先暫存到這台瀏覽器；請到 Supabase SQL Editor 執行 supabase/admin-setup.sql 後再儲存一次。`);
+        setStatus(`Supabase 儲存失敗：${error.message}。已先暫存到這台瀏覽器；請到 Supabase SQL Editor 執行 supabase/fix-article-save-permissions.sql 後再儲存一次。`);
         return;
       }
 

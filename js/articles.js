@@ -288,19 +288,25 @@ async function loadServerArticles() {
   const supabase = getSupabaseClient();
   if (supabase) {
     try {
-      const [{ data: articles, error: articlesError }, { data: views, error: viewsError }] = await Promise.all([
-        supabase.from("articles").select("*").order("updated_at", { ascending: false }),
-        supabase.from("article_views").select("slug,views"),
-      ]);
+      const { data: articles, error: articlesError } = await supabase
+        .from("articles")
+        .select("*")
+        .order("updated_at", { ascending: false });
       if (articlesError) throw articlesError;
-      if (viewsError) throw viewsError;
 
       serverArticles = Object.fromEntries((articles || []).map((row) => [row.slug, mapSupabaseArticle(row)]));
-      serverArticleViews = Object.fromEntries((views || []).map((row) => [row.slug, row.views]));
+
+      const { data: views, error: viewsError } = await supabase.from("article_views").select("slug,views");
+      if (viewsError) {
+        console.warn("Unable to load Supabase article views.", viewsError);
+        serverArticleViews = {};
+      } else {
+        serverArticleViews = Object.fromEntries((views || []).map((row) => [row.slug, row.views]));
+      }
       window.dispatchEvent(new CustomEvent("howtolearn:articles-ready"));
       return serverArticles;
     } catch (error) {
-      console.warn("Unable to load Supabase articles or views.", error);
+      console.warn("Unable to load Supabase articles.", error);
       serverArticles = {};
       serverArticleViews = {};
       return {};
