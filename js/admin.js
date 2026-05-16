@@ -154,6 +154,36 @@ function canDeleteArticle(slug) {
   return Boolean(loadSavedArticles()[slug] || apiArticles[slug]);
 }
 
+function prepareManagedArticle(article) {
+  return {
+    ...article,
+    category: article.category || "學習方法",
+    author: article.author || "如何學編輯部",
+    date: formatDateForInput(article.date) || article.date || "",
+    tags: Array.isArray(article.tags) ? article.tags : [],
+    body: Array.isArray(article.body) ? article.body : [],
+  };
+}
+
+async function importDefaultArticlesToApi() {
+  const defaultEntries = Object.entries(getDefaultArticles()).filter(([slug]) => !apiArticles[slug]);
+  if (!defaultEntries.length) return 0;
+  if (!apiAvailable && !getSupabaseClient()) return 0;
+
+  let importedCount = 0;
+  statusText.textContent = "正在把前端預設文章匯入文章管理系統...";
+
+  for (const [slug, article] of defaultEntries) {
+    const savedSlug = await saveArticleToApi(slug, prepareManagedArticle(article));
+    if (savedSlug) importedCount += 1;
+  }
+
+  if (importedCount > 0) {
+    statusText.textContent = `已匯入 ${importedCount} 篇前端文章到文章管理系統`;
+  }
+  return importedCount;
+}
+
 async function loadApiArticles() {
   const supabase = getSupabaseClient();
   if (supabase) {
@@ -475,6 +505,11 @@ async function initAdmin() {
   if (!(await requireAdminAccess())) return;
   renderList();
   await loadApiArticles();
+  try {
+    await importDefaultArticlesToApi();
+  } catch (error) {
+    statusText.textContent = `預設文章匯入失敗：${error.message}`;
+  }
   renderList();
 
   const firstEntry = Object.entries(getArticles())[0];
