@@ -1836,6 +1836,16 @@
   place-items: center;
 }
 
+.pet-character {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 86%;
+  height: 86%;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 18px rgba(106, 81, 72, 0.16));
+}
+
 .pet-face {
   position: relative;
   z-index: 2;
@@ -1915,6 +1925,16 @@
 .pet-creature.great .pet-face {
   background: #ffe08c;
   box-shadow: 0 0 0 12px rgba(255, 209, 102, 0.22), inset 0 -16px 0 rgba(255, 177, 102, 0.35);
+}
+
+.pet-creature.low .pet-character {
+  filter: saturate(0.78) drop-shadow(0 14px 18px rgba(106, 81, 72, 0.16));
+  transform: translateY(8px) scale(0.96);
+}
+
+.pet-creature.great .pet-character {
+  filter: saturate(1.12) drop-shadow(0 0 18px rgba(255, 209, 102, 0.42));
+  transform: translateY(-4px) scale(1.04);
 }
 
 .pet-message {
