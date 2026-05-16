@@ -4,7 +4,7 @@ const { createReadStream } = require("node:fs");
 const path = require("node:path");
 const crypto = require("node:crypto");
 
-const rootDir = __dirname;
+const rootDir = path.resolve(__dirname, "..");
 const dataDir = process.env.DATA_DIR || path.join(rootDir, "data");
 const articleImagesDir = process.env.ARTICLE_IMAGES_DIR || path.join(rootDir, "images", "articles");
 const articlesFile = path.join(dataDir, "articles.json");

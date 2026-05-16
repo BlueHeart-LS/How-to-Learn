@@ -638,7 +638,7 @@ function bindEditorEvents() {
       window.HowToLearnArticles?.loadServerArticles?.();
     } catch (error) {
       if (getSupabaseClient()) {
-        setStatus(`Supabase 儲存失敗：${error.message}。請確認目前帳號是 admin，且已執行 supabase-admin-setup.sql。`);
+        setStatus(`Supabase 儲存失敗：${error.message}。請確認目前帳號是 admin，且已執行 supabase/admin-setup.sql。`);
         return;
       }
 
