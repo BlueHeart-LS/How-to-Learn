@@ -13,6 +13,7 @@ let activeSlug = "";
 let activeCoverImage = "";
 let isCreatingArticle = false;
 const articleAdminEmails = ["lan.learning.tw@gmail.com"];
+const maxSlugTitleLength = 32;
 
 function setStatus(message) {
   if (statusText) statusText.textContent = message;
@@ -397,7 +398,8 @@ function normalizeSlugPart(value) {
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^\p{L}\p{N}]+/gu, "-")
     .replace(/^-+|-+$/g, "")
-    .slice(0, 80);
+    .slice(0, maxSlugTitleLength)
+    .replace(/-+$/g, "");
 }
 
 function generateSlug(title, date) {
