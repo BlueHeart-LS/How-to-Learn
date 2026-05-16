@@ -12,7 +12,7 @@ let apiAvailable = false;
 let activeSlug = "";
 let activeCoverImage = "";
 let isCreatingArticle = false;
-const adminEmails = ["lan.learning.tw@gmail.com"];
+const articleAdminEmails = ["lan.learning.tw@gmail.com"];
 
 function setStatus(message) {
   if (statusText) statusText.textContent = message;
@@ -58,6 +58,9 @@ async function getAdminUser() {
   await waitForAuthReady();
   const user = await withTimeout(window.HowToLearnAuth.getCurrentUser(), 3000, null);
   if (user?.role === "admin") return user;
+  if (articleAdminEmails.includes(String(user?.email || "").trim().toLowerCase())) {
+    return { ...user, role: "admin" };
+  }
 
   const supabase = getSupabaseClient();
   if (!supabase) return user;
@@ -71,7 +74,7 @@ async function getAdminUser() {
   }
   if (!authUser) return null;
 
-  if (adminEmails.includes(String(authUser.email || "").trim().toLowerCase())) {
+  if (articleAdminEmails.includes(String(authUser.email || "").trim().toLowerCase())) {
     return {
       id: authUser.id,
       email: authUser.email,
@@ -403,7 +406,7 @@ function getAvailableSlug(value) {
 function updateGeneratedSlug() {
   if (!form || !isCreatingArticle) return;
   form.slug.value = getAvailableSlug(form.title.value);
-  previewLink.href = `article.html?slug=${encodeURIComponent(form.slug.value)}`;
+  updatePreviewLink();
 }
 
 function fillForm(slug, article, options = {}) {
@@ -421,7 +424,7 @@ function fillForm(slug, article, options = {}) {
   form.excerpt.value = article.excerpt || "";
   form.body.value = (article.body || []).join("\n\n");
   if (isCreatingArticle) updateGeneratedSlug();
-  previewLink.href = `article.html?slug=${encodeURIComponent(form.slug.value)}`;
+  updatePreviewLink();
   deleteButton.disabled = !slug || !canDeleteArticle(slug);
   coverImageStatus.textContent = activeCoverImage ? `目前封面：${activeCoverImage}` : "尚未選擇封面圖片";
 }
@@ -444,6 +447,51 @@ function getFormArticle(coverImage = activeCoverImage) {
       .map((paragraph) => paragraph.trim())
       .filter(Boolean),
   };
+}
+
+function getPreviewSlug() {
+  if (!form) return "";
+  const slug = form.slug.value.trim() || getAvailableSlug(form.title.value);
+  form.slug.value = slug;
+  return slug;
+}
+
+function getPreviewUrl(slug = getPreviewSlug()) {
+  const params = new URLSearchParams({
+    slug: slug || "preview",
+    preview: "1",
+    previewKey: slug || "preview",
+  });
+  return `article.html?${params.toString()}`;
+}
+
+function updatePreviewLink() {
+  if (!previewLink || !form) return;
+  const slug = form.slug.value.trim() || (form.title.value.trim() ? getAvailableSlug(form.title.value) : "preview");
+  previewLink.href = getPreviewUrl(slug);
+}
+
+async function getPreviewCoverImage() {
+  const file = form.coverImageFile.files[0];
+  if (!file) return activeCoverImage;
+  if (!file.type.startsWith("image/")) return activeCoverImage;
+  return readFileAsDataUrl(file);
+}
+
+async function savePreviewDraft(slug) {
+  const coverImage = await getPreviewCoverImage();
+  const article = getFormArticle(coverImage);
+  if (!article.title) {
+    article.title = "未命名文章";
+  }
+  localStorage.setItem(
+    `howToLearnArticlePreview:${slug}`,
+    JSON.stringify({
+      slug,
+      article,
+      updatedAt: new Date().toISOString(),
+    }),
+  );
 }
 
 function createArticleListItem(slug, article) {
@@ -531,6 +579,24 @@ function bindEditorEvents() {
   });
 
   form.title.addEventListener("input", updateGeneratedSlug);
+  form.addEventListener("input", updatePreviewLink);
+  form.category.addEventListener("change", updatePreviewLink);
+
+  previewLink?.addEventListener("click", async (event) => {
+    event.preventDefault();
+    const slug = getPreviewSlug();
+    if (!slug && !form.title.value.trim()) {
+      setStatus("請先輸入文章標題再預覽");
+      return;
+    }
+
+    try {
+      await savePreviewDraft(slug || "preview");
+      window.open(getPreviewUrl(slug || "preview"), "_blank", "noopener");
+    } catch (error) {
+      setStatus(`預覽建立失敗：${error.message}`);
+    }
+  });
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();

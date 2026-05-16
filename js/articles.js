@@ -341,10 +341,26 @@ function applyArticleCover(element, article, baseClass) {
   element.className = `${baseClass} ${article.coverImage ? "has-image" : article.coverClass || "people"}`;
   if (article.coverImage) {
     const isAbsolute = /^https?:\/\//.test(article.coverImage);
-    const prefix = !isAbsolute && window.location.pathname.includes("/pages/") ? "../" : "";
+    const isDataUrl = /^data:/i.test(article.coverImage);
+    const prefix = !isAbsolute && !isDataUrl && window.location.pathname.includes("/pages/") ? "../" : "";
     element.style.backgroundImage = `url("${prefix}${article.coverImage}")`;
   } else {
     element.style.backgroundImage = "";
+  }
+}
+
+function getPreviewArticle(slug) {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("preview") !== "1") return null;
+
+  try {
+    const previewKey = params.get("previewKey") || slug || "preview";
+    const preview = JSON.parse(localStorage.getItem(`howToLearnArticlePreview:${previewKey}`) || "{}");
+    if (!preview.article) return null;
+    if (preview.slug && slug && preview.slug !== slug) return null;
+    return preview.article;
+  } catch {
+    return null;
   }
 }
 
@@ -355,7 +371,7 @@ function renderArticlePage() {
   const articles = getArticleLibrary();
   const params = new URLSearchParams(window.location.search);
   const slug = params.get("slug") || "feynman";
-  const article = articles[slug] || articles.feynman;
+  const article = getPreviewArticle(slug) || articles[slug] || articles.feynman;
 
   document.title = `${article.title}｜如何學 How to Learn`;
   title.textContent = article.title;
@@ -448,5 +464,6 @@ loadServerArticles().then(() => {
   const title = document.querySelector("[data-article-title]");
   if (!title) return;
   const params = new URLSearchParams(window.location.search);
+  if (params.get("preview") === "1") return;
   reportArticleView(params.get("slug") || "feynman");
 });
