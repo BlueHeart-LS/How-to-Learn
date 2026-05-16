@@ -18,6 +18,15 @@ function setStatus(message) {
   if (statusText) statusText.textContent = message;
 }
 
+function withTimeout(promise, milliseconds, fallbackValue) {
+  let timeoutId;
+  const timeout = new Promise((resolve) => {
+    timeoutId = setTimeout(() => resolve(fallbackValue), milliseconds);
+  });
+
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timeoutId));
+}
+
 function getSupabaseClient() {
   return window.HowToLearnSupabase?.isConfigured ? window.HowToLearnSupabase.client : null;
 }
@@ -47,14 +56,19 @@ async function getAdminUser() {
   if (!window.HowToLearnAuth) return { role: "admin" };
 
   await waitForAuthReady();
-  const user = await window.HowToLearnAuth.getCurrentUser();
+  const user = await withTimeout(window.HowToLearnAuth.getCurrentUser(), 3000, null);
   if (user?.role === "admin") return user;
 
   const supabase = getSupabaseClient();
   if (!supabase) return user;
 
-  const { data: authData } = await supabase.auth.getUser();
-  const authUser = authData.user;
+  let authUser = null;
+  try {
+    const { data: authData } = await withTimeout(supabase.auth.getUser(), 3000, { data: { user: null } });
+    authUser = authData.user;
+  } catch {
+    return user;
+  }
   if (!authUser) return null;
 
   if (adminEmails.includes(String(authUser.email || "").trim().toLowerCase())) {
@@ -73,7 +87,12 @@ async function getAdminUser() {
 }
 
 async function requireAdminAccess() {
-  const user = await getAdminUser();
+  let user = null;
+  try {
+    user = await getAdminUser();
+  } catch {
+    user = null;
+  }
   if (user?.role === "admin") return true;
 
   const main = document.querySelector("main");
@@ -171,7 +190,11 @@ async function loadApiArticles() {
   const supabase = getSupabaseClient();
   if (supabase) {
     try {
-      const { data, error } = await supabase.from("articles").select("*").order("updated_at", { ascending: false });
+      const { data, error } = await withTimeout(
+        supabase.from("articles").select("*").order("updated_at", { ascending: false }),
+        5000,
+        { data: null, error: new Error("Supabase 連線逾時") },
+      );
       if (error) throw error;
       apiArticles = Object.fromEntries((data || []).map((row) => [row.slug, mapSupabaseArticle(row)]));
       apiAvailable = true;
@@ -596,6 +619,10 @@ function loadRequestedArticle() {
 
 async function initAdmin() {
   if (!(await requireAdminAccess())) return;
+
+  renderListPage();
+  renderEditorShortcutList();
+  loadRequestedArticle();
 
   await loadApiArticles();
   try {
