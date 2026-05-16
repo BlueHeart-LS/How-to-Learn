@@ -1981,6 +1981,49 @@
   font-weight: 400;
 }
 
+.pet-type-picker {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.pet-type-picker button {
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  min-width: 0;
+  padding: 10px 8px;
+  border: 2px solid #eadfd0;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.68);
+  color: #6a5148;
+  font: inherit;
+  font-weight: 800;
+  transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+}
+
+.pet-type-picker button:hover,
+.pet-type-picker button[aria-pressed="true"] {
+  border-color: #6a5148;
+  background: #fff6df;
+  box-shadow: 0 8px 0 rgba(106, 81, 72, 0.12);
+  transform: translateY(-2px);
+}
+
+.pet-type-picker img {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+}
+
+.pet-type-picker span {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .pet-stat-list {
   display: grid;
   gap: 12px;

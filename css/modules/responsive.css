@@ -826,6 +826,10 @@
     flex-direction: column;
   }
 
+  .pet-type-picker {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .pet-stat-list div {
     grid-template-columns: 54px 42px 1fr;
     padding: 10px;

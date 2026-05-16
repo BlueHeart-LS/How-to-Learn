@@ -3,10 +3,12 @@ const petName = document.querySelector("[data-pet-name]");
 const petWallet = document.querySelector("[data-pet-wallet]");
 const petMessage = document.querySelector("[data-pet-message]");
 const petCreature = document.querySelector("[data-pet-creature]");
+const petCharacter = document.querySelector("[data-pet-character]");
 const petLevel = document.querySelector("[data-pet-level]");
 const petGrowth = document.querySelector("[data-pet-growth]");
 const renameButton = document.querySelector("[data-pet-rename]");
 const actionButtons = document.querySelectorAll("[data-pet-action]");
+const typeButtons = document.querySelectorAll("[data-pet-type]");
 
 const statElements = {
   hunger: {
@@ -30,6 +32,17 @@ const actions = {
   rest: { cost: 0, hunger: -3, happy: 3, energy: 20, message: "睡了一下，精神恢復了。" },
 };
 
+const petTypes = {
+  bubu: { name: "Bubu", image: "../images/Character/bubu.gif" },
+  bobo: { name: "Bobo", image: "../images/Character/bobo.gif" },
+  "chu-chu": { name: "Chu-chu", image: "../images/Character/chu-chu.gif" },
+  light: { name: "Light", image: "../images/Character/light.gif" },
+};
+
+function normalizePetType(type) {
+  return petTypes[type] ? type : "bubu";
+}
+
 let pet = loadPet();
 
 function clamp(value) {
@@ -43,6 +56,7 @@ function loadPet() {
     const elapsedHours = Math.min(24, Math.max(0, (now - (saved.updatedAt || now)) / 3600000));
     return {
       name: saved.name || "小學伴",
+      type: normalizePetType(saved.type),
       hunger: clamp((saved.hunger ?? 80) - elapsedHours * 3),
       happy: clamp((saved.happy ?? 80) - elapsedHours * 2),
       energy: clamp((saved.energy ?? 80) - elapsedHours * 1.5),
@@ -50,7 +64,7 @@ function loadPet() {
       updatedAt: now,
     };
   } catch (error) {
-    return { name: "小學伴", hunger: 80, happy: 80, energy: 80, careCount: 0, updatedAt: Date.now() };
+    return { name: "小學伴", type: "bubu", hunger: 80, happy: 80, energy: 80, careCount: 0, updatedAt: Date.now() };
   }
 }
 
@@ -75,6 +89,12 @@ function render() {
   const mood = getMood();
 
   petName.textContent = pet.name;
+  const selectedType = normalizePetType(pet.type);
+  const selectedPet = petTypes[selectedType];
+  if (petCharacter) {
+    petCharacter.src = selectedPet.image;
+    petCharacter.alt = `${selectedPet.name} 學習寵物`;
+  }
   petWallet.textContent = wallet.toLocaleString("zh-Hant");
   petLevel.textContent = `Lv.${getLevel()}`;
   petGrowth.textContent = `累積照顧 ${pet.careCount} 次。完成練習遊戲賺金幣，再用金幣陪牠長大。`;
@@ -89,6 +109,12 @@ function render() {
   actionButtons.forEach((button) => {
     const action = actions[button.dataset.petAction];
     button.disabled = action.cost > wallet;
+  });
+
+  typeButtons.forEach((button) => {
+    const isActive = button.dataset.petType === selectedType;
+    button.classList.toggle("active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
   });
 }
 
@@ -116,6 +142,16 @@ function applyAction(type) {
 
 actionButtons.forEach((button) => {
   button.addEventListener("click", () => applyAction(button.dataset.petAction));
+});
+
+typeButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const type = normalizePetType(button.dataset.petType);
+    pet.type = type;
+    petMessage.textContent = `已選擇 ${petTypes[type].name}。`;
+    savePet();
+    render();
+  });
 });
 
 renameButton?.addEventListener("click", () => {

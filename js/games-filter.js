@@ -7,6 +7,7 @@ const gameRefreshButton = document.querySelector("[data-game-refresh]");
 const lobbyPetName = document.querySelector("[data-lobby-pet-name]");
 const lobbyRewardCoins = document.querySelector("[data-lobby-reward-coins]");
 const lobbyPetCreature = document.querySelector("[data-lobby-pet-creature]");
+const lobbyPetCharacter = document.querySelector("[data-lobby-pet-character]");
 const lobbyPetStats = {
   hunger: document.querySelector("[data-lobby-pet-hunger]"),
   happy: document.querySelector("[data-lobby-pet-happy]"),
@@ -15,6 +16,13 @@ const lobbyPetStats = {
 
 let selectedGameAge = "all";
 let selectedGameLevel = "all";
+
+const lobbyPetTypes = {
+  bubu: "../images/Character/bubu.gif",
+  bobo: "../images/Character/bobo.gif",
+  "chu-chu": "../images/Character/chu-chu.gif",
+  light: "../images/Character/light.gif",
+};
 
 function filterGames() {
   gameCards.forEach((card) => {
@@ -97,6 +105,7 @@ function renderLobbyPet() {
   const elapsedHours = Math.min(24, Math.max(0, (Date.now() - (savedPet.updatedAt || Date.now())) / 3600000));
   const pet = {
     name: savedPet.name || "小學伴",
+    type: lobbyPetTypes[savedPet.type] ? savedPet.type : "bubu",
     hunger: clampStat((savedPet.hunger ?? 80) - elapsedHours * 3),
     happy: clampStat((savedPet.happy ?? 80) - elapsedHours * 2),
     energy: clampStat((savedPet.energy ?? 80) - elapsedHours * 1.5),
@@ -108,6 +117,7 @@ function renderLobbyPet() {
   if (lobbyPetStats.hunger) lobbyPetStats.hunger.textContent = pet.hunger;
   if (lobbyPetStats.happy) lobbyPetStats.happy.textContent = pet.happy;
   if (lobbyPetStats.energy) lobbyPetStats.energy.textContent = pet.energy;
+  if (lobbyPetCharacter) lobbyPetCharacter.src = lobbyPetTypes[pet.type];
   lobbyPetCreature?.classList.toggle("low", average < 50);
 }
 

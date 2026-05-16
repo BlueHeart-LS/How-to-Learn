@@ -12,7 +12,7 @@
     <link rel="icon" type="image/png" href="../images/icon_logo.png" />
     <link rel="preload" href="../fonts/jf-openhuninn-2.1.ttf" as="font" type="font/ttf" crossorigin />
     <link rel="preload" href="../fonts/Iansui-Regular.ttf" as="font" type="font/ttf" crossorigin />
-    <link rel="stylesheet" href="../css/styles.css?v=bubu-pet-1" />
+    <link rel="stylesheet" href="../css/styles.css?v=pet-type-1" />
   </head>
   <body>
     <div class="page-shell">
@@ -54,7 +54,7 @@
             </div>
 
             <div class="pet-creature" data-pet-creature aria-label="學習寵物狀態">
-              <img class="pet-character" src="../images/Character/bubu.gif" alt="Bubu 學習寵物" />
+              <img class="pet-character" data-pet-character src="../images/Character/bubu.gif" alt="Bubu 學習寵物" />
               <span class="pet-shadow"></span>
             </div>
 
@@ -68,6 +68,25 @@
                 <h2 data-pet-name>小學伴</h2>
               </div>
               <button class="tool-button" type="button" data-pet-rename>改名</button>
+            </div>
+
+            <div class="pet-type-picker" aria-label="選擇寵物類型">
+              <button type="button" data-pet-type="bubu" aria-pressed="true">
+                <img src="../images/Character/bubu.gif" alt="" />
+                <span>Bubu</span>
+              </button>
+              <button type="button" data-pet-type="bobo" aria-pressed="false">
+                <img src="../images/Character/bobo.gif" alt="" />
+                <span>Bobo</span>
+              </button>
+              <button type="button" data-pet-type="chu-chu" aria-pressed="false">
+                <img src="../images/Character/chu-chu.gif" alt="" />
+                <span>Chu-chu</span>
+              </button>
+              <button type="button" data-pet-type="light" aria-pressed="false">
+                <img src="../images/Character/light.gif" alt="" />
+                <span>Light</span>
+              </button>
             </div>
 
             <div class="pet-stat-list">
@@ -147,6 +166,6 @@
       </div>
     </div>
     <script src="../js/main.js"></script>
-    <script src="../js/study-pet-game.js"></script>
+    <script src="../js/study-pet-game.js?v=pet-type-1"></script>
   </body>
 </html>
