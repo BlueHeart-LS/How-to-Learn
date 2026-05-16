@@ -174,8 +174,12 @@ async function importDefaultArticlesToApi() {
   statusText.textContent = "正在把前端預設文章匯入文章管理系統...";
 
   for (const [slug, article] of defaultEntries) {
-    const savedSlug = await saveArticleToApi(slug, prepareManagedArticle(article));
-    if (savedSlug) importedCount += 1;
+    try {
+      const savedSlug = await saveArticleToApi(slug, prepareManagedArticle(article));
+      if (savedSlug) importedCount += 1;
+    } catch (error) {
+      console.warn(`Default article import skipped: ${slug}`, error);
+    }
   }
 
   if (importedCount > 0) {
@@ -505,6 +509,7 @@ async function initAdmin() {
   if (!(await requireAdminAccess())) return;
   renderList();
   await loadApiArticles();
+  renderList();
   try {
     await importDefaultArticlesToApi();
   } catch (error) {
