@@ -519,7 +519,7 @@ function createArticleListItem(slug, article) {
 
   const preview = document.createElement("a");
   preview.className = "secondary-button small";
-  preview.href = `article.html?slug=${encodeURIComponent(slug)}`;
+  preview.href = `article.html?slug=${encodeURIComponent(slug)}&preview=1`;
   preview.target = "_blank";
   preview.rel = "noreferrer";
   preview.textContent = "預覽";

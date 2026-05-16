@@ -401,6 +401,8 @@ function renderArticlePage() {
 }
 
 async function reportArticleView(slug) {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("preview") === "1") return;
   if (!canUseArticleApi() || reportedArticleViews.has(slug)) return;
   reportedArticleViews.add(slug);
 
