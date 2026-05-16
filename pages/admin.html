@@ -54,7 +54,7 @@
           <form class="admin-form" data-article-form>
             <label>
               文章代號
-              <input name="slug" placeholder="由標題自動生成" readonly required />
+              <input name="slug" placeholder="由標題與日期自動生成" readonly required />
             </label>
             <label>
               標題
@@ -84,7 +84,7 @@
             <div class="admin-form-grid">
               <label>
                 上傳日期
-                <input name="date" type="date" />
+                <input name="date" type="date" required />
               </label>
             </div>
             <div class="admin-form-grid">
@@ -128,7 +128,7 @@
     <script src="../js/supabase-client.js"></script>
     <script src="../js/auth.js?v=admin-list-6"></script>
     <script src="../js/articles.js?v=article-read-2"></script>
-    <script src="../js/admin.js?v=article-save-2"></script>
+    <script src="../js/admin.js?v=article-slug-1"></script>
     <script src="../js/main.js?v=admin-list-6"></script>
   </body>
 </html>

@@ -209,7 +209,7 @@ async function loadApiArticles() {
       if (error) throw error;
       apiArticles = Object.fromEntries((data || []).map((row) => [row.slug, mapSupabaseArticle(row)]));
       apiAvailable = true;
-      setStatus("已連線 Supabase 文章資料庫");
+      setStatus((data || []).length ? "已連線 Supabase 文章資料庫" : "已連線 Supabase，但雲端 articles 目前是空的");
       return apiArticles;
     } catch (error) {
       apiAvailable = false;
@@ -253,6 +253,8 @@ async function importDefaultArticlesToApi() {
 
   if (importedCount > 0) {
     setStatus(`已同步 ${importedCount} 篇預設文章到文章資料庫`);
+  } else if (defaultEntries.length > 0) {
+    setStatus("Supabase 文章資料庫目前沒有文章；請執行 supabase/restore-default-articles.sql 重建預設文章");
   }
   return importedCount;
 }
@@ -387,8 +389,8 @@ function getTodayInputDate() {
   return offsetDate.toISOString().slice(0, 10);
 }
 
-function generateSlug(value) {
-  const base = String(value || "")
+function normalizeSlugPart(value) {
+  return String(value || "")
     .trim()
     .toLowerCase()
     .normalize("NFKD")
@@ -396,27 +398,28 @@ function generateSlug(value) {
     .replace(/[^\p{L}\p{N}]+/gu, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 80);
-
-  return base || `article-${Date.now()}`;
 }
 
-function getAvailableSlug(value) {
-  const base = generateSlug(value);
-  const articles = getArticles();
-  if (!articles[base] || base === activeSlug) return base;
+function generateSlug(title, date) {
+  const titlePart = normalizeSlugPart(title);
+  const datePart = normalizeSlugPart(date);
+  return [titlePart, datePart].filter(Boolean).join("-");
+}
 
-  let index = 2;
-  let slug = `${base}-${index}`;
-  while (articles[slug]) {
-    index += 1;
-    slug = `${base}-${index}`;
-  }
-  return slug;
+function getGeneratedSlug() {
+  if (!form) return "";
+  return generateSlug(form.title.value, form.date.value);
+}
+
+function getSlugConflict(slug) {
+  if (!slug) return null;
+  const articles = getArticles();
+  return articles[slug] && slug !== activeSlug ? articles[slug] : null;
 }
 
 function updateGeneratedSlug() {
   if (!form || !isCreatingArticle) return;
-  form.slug.value = getAvailableSlug(form.title.value);
+  form.slug.value = getGeneratedSlug();
   updatePreviewLink();
 }
 
@@ -462,7 +465,7 @@ function getFormArticle(coverImage = activeCoverImage) {
 
 function getPreviewSlug() {
   if (!form) return "";
-  const slug = form.slug.value.trim() || getAvailableSlug(form.title.value);
+  const slug = form.slug.value.trim() || getGeneratedSlug();
   form.slug.value = slug;
   return slug;
 }
@@ -478,7 +481,7 @@ function getPreviewUrl(slug = getPreviewSlug()) {
 
 function updatePreviewLink() {
   if (!previewLink || !form) return;
-  const slug = form.slug.value.trim() || (form.title.value.trim() ? getAvailableSlug(form.title.value) : "preview");
+  const slug = form.slug.value.trim() || getGeneratedSlug() || "preview";
   previewLink.href = getPreviewUrl(slug);
 }
 
@@ -590,6 +593,7 @@ function bindEditorEvents() {
   });
 
   form.title.addEventListener("input", updateGeneratedSlug);
+  form.date.addEventListener("input", updateGeneratedSlug);
   form.addEventListener("input", updatePreviewLink);
   form.category.addEventListener("change", updatePreviewLink);
 
@@ -612,11 +616,21 @@ function bindEditorEvents() {
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    const slug = form.slug.value.trim() || getAvailableSlug(form.title.value);
+    const slug = form.slug.value.trim() || getGeneratedSlug();
     form.slug.value = slug;
 
-    if (!slug || !form.title.value.trim()) {
-      setStatus("請先輸入文章標題");
+    if (!form.title.value.trim() || !form.date.value.trim()) {
+      setStatus("請先輸入文章標題與日期，文章代號會用這兩個欄位生成");
+      return;
+    }
+
+    if (!slug) {
+      setStatus("文章代號無法生成，請確認標題或日期至少包含文字或數字");
+      return;
+    }
+
+    if (getSlugConflict(slug)) {
+      setStatus("這個標題與日期已經有文章使用，請調整標題或日期");
       return;
     }
 
