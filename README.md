@@ -31,15 +31,20 @@
 - 哲學式家教理念
 - 我的故事
 - 學習方法與思考
-- 聯絡資訊
+- 文章列表與文章閱讀頁
+- 文章後台管理
+- 會員註冊、登入與個人資料
+- 學習風格測驗
+- 數學、語文、英文與專注力遊戲
+- 學習寵物養成與遊戲成就紀錄
+- 教學資源與學習平台整理
 
-未來預計加入：
+未來預計持續擴充：
 
-- 學習地圖
-- 心理測驗／互動內容
-- 教學資源
-- 遊戲化學習設計
-- 社群功能
+- 更多主題文章
+- 更多互動學習工具
+- 更完整的社群與學習歷程功能
+- AI 輔助學習與內容推薦
 
 ---
 
@@ -59,7 +64,6 @@
 How-to-Learn/
 ├─ index.html
 ├─ package.json
-├─ render.yaml
 ├─ css/
 │  └─ styles.css
 ├─ data/
@@ -127,28 +131,24 @@ How-to-Learn/
 - HTML
 - CSS
 - JavaScript
+- Node.js 本機後端
+- Supabase Auth / Database / Storage
 
-未來可能加入：
-
-- 小遊戲
-- 心理測驗
-- 動畫互動
-- 後端功能
-- AI 教學工具
+目前沒有使用前端框架，主要以原生 HTML、CSS、JavaScript 維護。
 
 ---
 
 ## 本地開啟方式
 
-直接打開：
+若只要瀏覽靜態頁面，可以直接打開：
 
 ```text
 index.html
 ```
 
-即可在瀏覽器查看網站。
+即可在瀏覽器查看網站。部分功能會使用瀏覽器 localStorage 暫存。
 
-若要使用文章後端管理系統，請改用 Node 啟動本機伺服器：
+若要使用完整功能，例如會員登入、文章 API、文章後台、封面上傳與瀏覽數紀錄，請改用 Node 啟動本機伺服器：
 
 ```text
 npm start
@@ -164,33 +164,45 @@ http://localhost:3000/pages/admin.html
 
 ---
 
-## 部署到 Render
+## 環境變數
 
-專案已包含 `render.yaml`，可用 Render Blueprint 建立 Node Web Service。
+Node 後端可使用下列環境變數：
 
-部署前請先把專案推到 GitHub，然後在 Render：
+```text
+PORT=3000
+DATA_DIR=資料儲存資料夾
+ARTICLE_IMAGES_DIR=文章封面上傳資料夾
+ADMIN_EMAILS=管理員 email，多個帳號用逗號分隔
+```
 
-1. 點選 New → Blueprint。
-2. 選擇這個 GitHub repo。
-3. Render 會讀取 `render.yaml`。
-4. 建立服務後等待部署完成。
+預設管理員 email：
 
-目前設定：
+```text
+lan.learning.tw@gmail.com
+```
 
-- Build Command：`npm install`
-- Start Command：`npm start`
-- Node Version：20
-- Persistent Disk：`/opt/render/project/src/storage`
-- 文章資料：`/opt/render/project/src/storage/data`
-- 上傳封面：`/opt/render/project/src/storage/images/articles`
+若正式部署時要更換管理員，請同步確認：
 
-注意：會員資料、文章資料、封面圖片都需要 persistent disk 才能在 Render 重啟或 redeploy 後保留。Render 官方文件說 Web Service 預設檔案系統是 ephemeral；Persistent Disk 需使用付費 Web Service。
+- `ADMIN_EMAILS`
+- `js/auth.js`
+- `js/admin.js`
+- `supabase/admin-setup.sql`
+
+---
+
+## 安全注意事項
+
+- `data/*.json` 會保存會員、session、文章與瀏覽數資料，不應提交正式站台資料。
+- `.gitignore` 已忽略 `data/*.json` 與 `images/articles/*`，避免把 runtime 資料放進 Git。
+- Node 後端已阻擋 `/data`、`/storage`、`.git`、`.sql` 等敏感檔案的靜態讀取。
+- 文章新增、刪除、封面上傳都需要管理員權限。
+- 更新後端程式後，需要重新啟動本機 server，變更才會生效。
 
 ---
 
 ## 使用 Supabase 取代 Node 後端
 
-若要改成「純前端 + Supabase」，可以不用 Render 的 Node Web Service。
+若要改成「純前端 + Supabase」，可以不用 Node 後端。
 
 設定方式：
 
@@ -215,6 +227,8 @@ window.HowToLearnSupabaseConfig = {
 - 瀏覽數會存在 `article_views` table。
 - 文章封面會上傳到 Supabase Storage 的 `article-covers` bucket。
 
+注意：Supabase RLS 會限制只有 `profiles.role = 'admin'` 的帳號能管理文章與上傳封面。如果後台儲存失敗，請先確認管理員帳號已正確寫入 `profiles`。
+
 如果 `js/supabase-config.js` 還是預設值，網站會回到原本的本機 Node API fallback。
 
 ---
@@ -236,7 +250,7 @@ window.HowToLearnSupabaseConfig = {
 - 新增頭貼功能，更新頭貼與學習寵物圖樣
 - 新增學習寵物類型選擇，補齊寵物屬性並限制滿屬性操作
 - 更新遊戲首頁資訊並同步寵物狀態顯示
-- 完成 Render 部署設定與 Supabase 設定
+- 完成 Supabase 設定
 
 260515
 - 新增後端文章管理系統
