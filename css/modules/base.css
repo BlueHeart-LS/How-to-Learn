@@ -240,6 +240,28 @@ textarea:active,
   gap: 18px;
 }
 
+.menu-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  gap: 7px;
+  padding: 0 14px;
+  color: #4f3f39;
+  border: 1px solid rgba(234, 223, 208, 0.92);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 7px 18px rgba(124, 93, 59, 0.08);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.menu-toggle svg {
+  width: 20px;
+  height: 20px;
+}
+
 .icon-button {
   display: grid;
   width: 36px;

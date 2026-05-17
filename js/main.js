@@ -1,5 +1,6 @@
 ﻿const loginButtons = document.querySelectorAll("[data-login-modal]");
 const modalOverlay = document.querySelector("[data-modal-overlay]");
+const siteHeaders = document.querySelectorAll(".site-header");
 let modalTimer;
 const mainAuthTokenKey = "howToLearnAuthToken";
 
@@ -75,6 +76,61 @@ window.HowToLearnRewards = {
     return { ok: true, state };
   },
 };
+
+siteHeaders.forEach((header, index) => {
+  const nav = header.querySelector(".main-nav");
+  const actions = header.querySelector(".header-actions");
+  if (!nav || !actions || header.querySelector(".menu-toggle")) return;
+
+  const navId = nav.id || `main-nav-${index + 1}`;
+  nav.id = navId;
+
+  const button = document.createElement("button");
+  button.className = "menu-toggle";
+  button.type = "button";
+  button.setAttribute("aria-label", "開啟選單");
+  button.setAttribute("aria-controls", navId);
+  button.setAttribute("aria-expanded", "false");
+  button.innerHTML = `
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 7h16"></path>
+      <path d="M4 12h16"></path>
+      <path d="M4 17h16"></path>
+    </svg>
+    <span>選單</span>
+  `;
+
+  function closeMenu() {
+    header.classList.remove("menu-open");
+    button.setAttribute("aria-expanded", "false");
+    button.setAttribute("aria-label", "開啟選單");
+  }
+
+  function toggleMenu() {
+    const isOpen = header.classList.toggle("menu-open");
+    button.setAttribute("aria-expanded", String(isOpen));
+    button.setAttribute("aria-label", isOpen ? "關閉選單" : "開啟選單");
+  }
+
+  button.addEventListener("click", (event) => {
+    event.stopPropagation();
+    toggleMenu();
+  });
+
+  nav.addEventListener("click", (event) => {
+    if (event.target.closest("a")) closeMenu();
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!header.contains(event.target)) closeMenu();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeMenu();
+  });
+
+  actions.insertBefore(button, actions.firstChild);
+});
 
 function openModal() {
   if (!modalOverlay) return;
